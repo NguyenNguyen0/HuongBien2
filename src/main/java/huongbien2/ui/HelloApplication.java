@@ -1,4 +1,4 @@
-package huongbien2.gui;
+package huongbien2.ui;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

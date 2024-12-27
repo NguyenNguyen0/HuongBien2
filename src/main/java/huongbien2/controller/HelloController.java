@@ -1,4 +1,4 @@
-package huongbien2;
+package huongbien2.controller;
 
 import huongbien2.entity.Customer;
 import huongbien2.util.JPAUtil;
@@ -17,9 +17,9 @@ public class HelloController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         Customer customer = new Customer();
-        customer.setId("C001");
-        customer.setName("John Doe");
-        customer.setAddress("123 Main Street, New York, NY 10001");
+        customer.setId(Customer.randomId());
+        customer.setName("John Joestar");
+        customer.setAddress("123 Street, City, Country");
         customer.setGender(1);
         customer.setPhoneNumber("1234567890");
         customer.setEmail("join@lmail.com");
@@ -27,13 +27,15 @@ public class HelloController implements Initializable {
         customer.setRegistrationDate(java.time.LocalDate.now());
         customer.setAccumulatedPoints(1000);
         customer.setMembershipLevel(1);
+
+//        Sử dụng lớp JPAUtil để lấy instance EntityManager
         EntityManager entityManager = JPAUtil.getEntityManager();
 
         try {
             entityManager.getTransaction().begin();
             entityManager.persist(customer);
             entityManager.getTransaction().commit();
-            welcomeText.setText("Customer has been saved!");
+            welcomeText.setText("Customer has been saved!: " + customer);
         } catch (Exception e) {
             e.printStackTrace();
             entityManager.getTransaction().rollback();

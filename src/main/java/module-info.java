@@ -1,3 +1,4 @@
+@SuppressWarnings("JavaModuleNaming")
 module java.huongbien2 {
     requires javafx.controls;
     requires javafx.fxml;
@@ -9,7 +10,10 @@ module java.huongbien2 {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires jakarta.persistence;
 
-    opens java.huongbien2 to javafx.fxml;
-    exports java.huongbien2;
+    exports huongbien2.ui;
+    opens huongbien2.ui to javafx.fxml;
+    exports huongbien2.controller;
+    opens huongbien2.controller to javafx.fxml;
 }
