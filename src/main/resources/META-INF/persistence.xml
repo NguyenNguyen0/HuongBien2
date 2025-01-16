@@ -34,8 +34,12 @@
         <class>huongbien.entity.Cuisine</class>
         <class>huongbien.entity.Customer</class>
         <class>huongbien.entity.Employee</class>
+        <class>huongbien.entity.FoodOrder</class>
+        <class>huongbien.entity.OrderDetail</class>
+        <class>huongbien.entity.Order</class>
         <class>huongbien.entity.Payment</class>
         <class>huongbien.entity.Promotion</class>
+        <class>huongbien.entity.Reservation</class>
         <class>huongbien.entity.RestaurantTable</class>
         <class>huongbien.entity.TableType</class>
         <properties>
@@ -58,8 +62,12 @@
         <class>huongbien.entity.Cuisine</class>
         <class>huongbien.entity.Customer</class>
         <class>huongbien.entity.Employee</class>
+        <class>huongbien.entity.FoodOrder</class>
+        <class>huongbien.entity.OrderDetail</class>
+        <class>huongbien.entity.Order</class>
         <class>huongbien.entity.Payment</class>
         <class>huongbien.entity.Promotion</class>
+        <class>huongbien.entity.Reservation</class>
         <class>huongbien.entity.RestaurantTable</class>
         <class>huongbien.entity.TableType</class>
         <properties>
@@ -85,6 +93,8 @@
         <class>huongbien.entity.Customer</class>
         <class>huongbien.entity.Employee</class>
         <class>huongbien.entity.FoodOrder</class>
+        <class>huongbien.entity.OrderDetail</class>
+        <class>huongbien.entity.Order</class>
         <class>huongbien.entity.Payment</class>
         <class>huongbien.entity.Promotion</class>
         <class>huongbien.entity.Reservation</class>
