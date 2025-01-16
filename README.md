@@ -2,6 +2,9 @@
 
 Huong Bien 2 is a Java application that leverages JavaFX for its graphical user interface and JPA Hibernate for its data persistence layer. The project is designed to demonstrate the integration of modern Java technologies to create a robust and interactive desktop application.
 
+## Members
+- Nguyễn Trung Nguyên
+
 ## Key Features
 - **JavaFX**: Utilized for building the user interface, providing a rich set of UI controls and capabilities.
 - **JPA Hibernate**: Used for ORM (Object-Relational Mapping) to manage database interactions seamlessly.
