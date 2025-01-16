@@ -8,7 +8,7 @@ import jakarta.persistence.TypedQuery;
 
 import java.util.List;
 
-public class GenericDAO <T> {
+public abstract class GenericDAO <T> {
     private final EntityManager entityManager;
 
     public GenericDAO() {
@@ -55,6 +55,12 @@ public class GenericDAO <T> {
         TypedQuery<T> query = entityManager.createQuery(jpql, clazz);
         setQueryParameters(query, params);
         return query.getResultList();
+    }
+
+    public int count(String jpql, Object ...params) {
+        Query query = entityManager.createQuery(jpql);
+        setQueryParameters(query, params);
+        return ((Number) query.getSingleResult()).intValue();
     }
 
     private void setQueryParameters(Query query, Object... params) {

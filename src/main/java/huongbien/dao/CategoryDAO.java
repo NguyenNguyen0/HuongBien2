@@ -4,30 +4,20 @@ import huongbien.entity.Category;
 import huongbien.jpa.JPAUtil;
 import huongbien.jpa.PersistenceUnit;
 import jakarta.persistence.TypedQuery;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-public class CategoryDAO {
-    private final GenericDAO<Category> genericDAO;
+@NoArgsConstructor
+public class CategoryDAO extends GenericDAO<Category> {
 
-    public CategoryDAO() {
-        genericDAO = new GenericDAO<>();
-    }
-
+//    tạo constructor để truyền vào persistenceUnit
     public CategoryDAO(PersistenceUnit persistenceUnit) {
-        genericDAO = new GenericDAO<>(persistenceUnit);
-    }
-
-    public void add(Category category) {
-        genericDAO.add(category);
-    }
-
-    public void update(Category category) {
-        genericDAO.update(category);
+        super(persistenceUnit);
     }
 
     public Category getById(String id) {
-        return genericDAO.findOne("SELECT c FROM Category c WHERE c.id = ?1", Category.class, id);
+        return findOne("SELECT c FROM Category c WHERE c.id = ?1", Category.class, id);
     }
 
     public Category getOne(String name, String id) {
@@ -40,7 +30,15 @@ public class CategoryDAO {
         return query.getSingleResult();
     }
 
+    public List<Category> getAll() {
+        return findMany("SELECT c FROM Category c", Category.class);
+    }
+
     public List<Category> getByName(String name) {
-        return genericDAO.findMany("SELECT c FROM Category c WHERE c.name LIKE ?1", Category.class, "%" + name + "%");
+        return findMany("SELECT c FROM Category c WHERE c.name LIKE ?1", Category.class, "%" + name + "%");
+    }
+
+    public int countAll() {
+        return count("SELECT COUNT(c) FROM Category c");
     }
 }
