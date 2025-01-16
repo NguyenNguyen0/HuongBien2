@@ -22,8 +22,8 @@ tasks.withType(JavaCompile) {
 }
 
 application {
-  mainModule = 'java.huongbien2'
-  mainClass = 'java.huongbien2.HelloApplication'
+  mainModule = 'java.huongbien'
+  mainClass = 'java.huongbien.HelloApplication'
 }
 
 javafx {
@@ -46,6 +46,13 @@ dependencies {
     exclude(group: 'org.openjfx')
     exclude(group: 'org.jetbrains.kotlin')
   }
+  //  Lombok
+  compileOnly 'org.projectlombok:lombok:1.18.36'
+  annotationProcessor 'org.projectlombok:lombok:1.18.36'
+
+  //  Jackson JSON
+  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.4'
+  implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.13.4'
 
   //  MSSQL Driver
   implementation 'com.microsoft.sqlserver:mssql-jdbc:11.2.3.jre17'

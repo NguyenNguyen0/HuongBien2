@@ -1,5 +1,4 @@
-@SuppressWarnings("JavaModuleNaming")
-module java.huongbien2 {
+module java.huongbien {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.web;
@@ -11,9 +10,12 @@ module java.huongbien2 {
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
     requires jakarta.persistence;
+    requires com.fasterxml.jackson.datatype.jsr310;
+    requires com.fasterxml.jackson.databind;
+    requires static lombok;
 
-    exports huongbien2.ui;
-    opens huongbien2.ui to javafx.fxml;
-    exports huongbien2.controller;
-    opens huongbien2.controller to javafx.fxml;
+    exports huongbien.ui;
+    opens huongbien.ui to javafx.fxml;
+    exports huongbien.controller;
+    opens huongbien.controller to javafx.fxml;
 }
