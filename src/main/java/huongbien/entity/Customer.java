@@ -1,12 +1,16 @@
-package huongbien2.entity;
+package huongbien.entity;
+
+import huongbien.util.Util;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
-import huongbien2.util.Util;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-
+@Setter
+@Getter
 @Entity
 public class Customer {
     @Id
@@ -21,12 +25,13 @@ public class Customer {
     private int accumulatedPoints;
     private int membershipLevel;
 
-    public Customer() {}
+    public Customer() {
+    }
 
     public Customer(
-        String id, String name, String address, int gender,
-        String phoneNumber, String email, LocalDate birthday,
-        LocalDate registrationDate, int accumulatedPoints, int membershipLevel
+            String id, String name, String address, int gender,
+            String phoneNumber, String email, LocalDate birthday,
+            LocalDate registrationDate, int accumulatedPoints, int membershipLevel
     ) {
         this.id = id;
         this.name = name;
@@ -48,86 +53,6 @@ public class Customer {
                 now.getDayOfMonth(),
                 Util.randomNumber(1, 999)
         );
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public void setGender(int gender) {
-        this.gender = gender;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setBirthday(LocalDate birthday) {
-        this.birthday = birthday;
-    }
-
-    public void setRegistrationDate(LocalDate registrationDate) {
-        this.registrationDate = registrationDate;
-    }
-
-    public void setAccumulatedPoints(int accumulatedPoints) {
-        this.accumulatedPoints = accumulatedPoints;
-    }
-
-    public void setMembershipLevel(int membershipLevel) {
-        this.membershipLevel = membershipLevel;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public int getGender() {
-        return gender;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public LocalDate getBirthday() {
-        return birthday;
-    }
-
-    public LocalDate getRegistrationDate() {
-        return registrationDate;
-    }
-
-    public int getAccumulatedPoints() {
-        return accumulatedPoints;
-    }
-
-    public int getMembershipLevel() {
-        return membershipLevel;
     }
 
     @Override

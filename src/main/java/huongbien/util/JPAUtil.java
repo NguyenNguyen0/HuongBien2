@@ -1,6 +1,6 @@
-package huongbien2.util;
+package huongbien.util;
 
-import huongbien2.config.Config;
+import huongbien.config.Config;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -9,7 +9,7 @@ public class JPAUtil {
     private static final EntityManagerFactory entityManagerFactory;
 
     static {
-        entityManagerFactory = Persistence.createEntityManagerFactory(Config.PERSISTENCE_UNIT_NAME);
+        entityManagerFactory = Persistence.createEntityManagerFactory(Config.MSSQL_JPA_CREATE.getValue());
     }
 
     public static EntityManager getEntityManager() {
