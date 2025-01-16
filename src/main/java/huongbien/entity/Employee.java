@@ -41,7 +41,7 @@ public class Employee {
     private double salary;
 
     @Lob
-    @Column(name = "profile_image")
+    @Column(name = "profile_image", columnDefinition = "LONGBLOB")
     private byte[] profileImage;
 
     @ManyToOne

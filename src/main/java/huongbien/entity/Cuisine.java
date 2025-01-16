@@ -19,6 +19,7 @@ public class Cuisine {
     private String status;
 
     @Lob
+    @Column(name = "image", columnDefinition = "LONGBLOB")
     private byte[] image;
 
     @ManyToOne

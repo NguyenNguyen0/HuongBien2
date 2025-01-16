@@ -16,16 +16,17 @@ import java.util.List;
 @Entity
 @Table(name = "orders")
 public class Order {
-    @Column(name = "vat_tax")
-    private final double vatTax = Constant.VAT.getValue();
     @Id
     @Column(name = "order_id")
     private String id;
+
     @Column(name = "order_date")
     private LocalDate orderDate;
+
     @Column(name = "order_time")
     private LocalTime orderTime;
     private String notes;
+
     @Column(name = "payment_amount")
     private double paymentAmount;
 
@@ -35,6 +36,9 @@ public class Order {
     @Column(name = "total_amount")
     private double totalAmount;
     private double discount;
+
+    @Column(name = "vat_tax")
+    private final double vatTax = Constant.VAT.getValue();
 
     @ManyToOne
     private Customer customer;
@@ -46,6 +50,7 @@ public class Order {
     private Promotion promotion;
 
     @OneToOne
+    @JoinColumn(name = "payment_id", nullable = false, unique = true)
     private Payment payment;
 
     @OneToMany(mappedBy = "order")
@@ -53,7 +58,7 @@ public class Order {
 
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
-            name = "order_table",
+            name = "orders_tables",
             joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "table_id")
     )

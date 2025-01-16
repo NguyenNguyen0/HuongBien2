@@ -45,6 +45,7 @@ public class Reservation {
     private String note;
 
     @OneToOne
+    @JoinColumn(name = "payment_id", nullable = false, unique = true)
     private Payment payment;
 
     @ManyToOne
@@ -58,7 +59,7 @@ public class Reservation {
 
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
-            name = "reservation_table",
+            name = "reservations_tables",
             joinColumns = @JoinColumn(name = "reservation_id"),
             inverseJoinColumns = @JoinColumn(name = "table_id")
     )
