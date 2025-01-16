@@ -1,41 +1,65 @@
 package huongbien.dao;
 
-import huongbien.util.JPAUtil;
+import huongbien.jpa.JPAUtil;
+import huongbien.jpa.PersistenceUnit;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import java.util.List;
 
 public class GenericDAO <T> {
-    public void save(T object) {
-        EntityManager entityManager = JPAUtil.getEntityManager();
+    private final EntityManager entityManager;
+
+    public GenericDAO() {
+        entityManager = JPAUtil.getEntityManager();
+    }
+
+    public GenericDAO(PersistenceUnit persistenceUnit) {
+        this.entityManager = JPAUtil.getEntityManager(persistenceUnit);
+    }
+
+    public boolean add(T object) {
         entityManager.getTransaction().begin();
         try {
             entityManager.persist(object);
             entityManager.getTransaction().commit();
+            return true;
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
-            throw e;
+            e.printStackTrace();
+            return false;
         }
     }
 
-    public void update(T object) {
-        EntityManager entityManager = JPAUtil.getEntityManager();
+    public boolean update(T object) {
         entityManager.getTransaction().begin();
         try {
             entityManager.merge(object);
             entityManager.getTransaction().commit();
+            return true;
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
-            throw e;
+            e.printStackTrace();
+            return false;
         }
     }
 
-    public T findOne(Query query) {
-        return null;
+    public T findOne(String jpql, Class<T> clazz, Object ...params) {
+        TypedQuery<T> query = entityManager.createQuery(jpql, clazz);
+        setQueryParameters(query, params);
+        return query.getSingleResult();
     }
 
-    public List<T> findMany(Query query) {
-        return null;
+    public List<T> findMany(String jpql, Class<T> clazz, Object ...params) {
+        TypedQuery<T> query = entityManager.createQuery(jpql, clazz);
+        setQueryParameters(query, params);
+        return query.getResultList();
+    }
+
+    private void setQueryParameters(Query query, Object... params) {
+        for (int i = 0; i < params.length; i++) {
+            query.setParameter(i + 1, params[i]);
+        }
     }
 }
