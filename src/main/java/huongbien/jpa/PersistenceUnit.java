@@ -1,9 +1,9 @@
-package huongbien.config;
+package huongbien.jpa;
 
 import lombok.Getter;
 
 @Getter
-public enum Config {
+public enum PersistenceUnit {
     MSSQL_JPA("mssql-jpa"),
     MSSQL_JPA_CREATE("mssql-jpa-create"),
     MARIADB_JPA("mariadb-jpa"),
@@ -11,7 +11,7 @@ public enum Config {
 
     private final String value;
 
-    Config(String value) {
+    PersistenceUnit(String value) {
         this.value = value;
     }
 }

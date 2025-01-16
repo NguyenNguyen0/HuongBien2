@@ -1,8 +1,9 @@
 package huongbien.controller;
 
+import huongbien.entity.Category;
 import huongbien.entity.Cuisine;
-import huongbien.entity.Customer;
-import huongbien.util.JPAUtil;
+import huongbien.jpa.JPAUtil;
+import huongbien.jpa.PersistenceUnit;
 import jakarta.persistence.EntityManager;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -18,17 +19,21 @@ public class HelloController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 //        Sử dụng lớp JPAUtil để lấy instance EntityManager
-        EntityManager entityManager = JPAUtil.getEntityManager();
+//        Mặc định lấy EntityManager của PersistenceUnit.MARIADB_JPA còn không thì truyền vào tham số PersistenceUnit
+        EntityManager entityManager = JPAUtil.getEntityManager(PersistenceUnit.MARIADB_JPA_CREATE);
 
         try {
-            Cuisine cuisine = entityManager.find(Cuisine.class, "CU001");
-            welcomeText.setText("Customer has been saved!: " + cuisine);
+
+            entityManager.getTransaction().begin();
+            Category category = new Category();
+            category.setId("C001");
+            category.setName("Loại món 1");
+            entityManager.persist(category);
+            entityManager.getTransaction().commit();
+            welcomeText.setText(entityManager.find(Category.class, "C001").getName());
         } catch (Exception e) {
             e.printStackTrace();
             entityManager.getTransaction().rollback();
-            welcomeText.setText("Customer cannot saved!");
-        } finally {
-            JPAUtil.close();
         }
     }
 
