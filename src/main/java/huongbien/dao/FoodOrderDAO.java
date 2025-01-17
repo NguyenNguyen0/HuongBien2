@@ -1,6 +1,5 @@
 package huongbien.dao;
 
-import huongbien.entity.Category;
 import huongbien.entity.FoodOrder;
 import huongbien.jpa.PersistenceUnit;
 import lombok.NoArgsConstructor;
@@ -18,10 +17,10 @@ public class FoodOrderDAO extends GenericDAO<FoodOrder> {
     }
 
     public List<FoodOrder> getAllByReservationId(String reservationId) {
-        return findMany("SELECT f FROM FoodOrder f WHERE f.reservation.id = :reservationId", FoodOrder.class, reservationId);
+        return findMany("SELECT f FROM FoodOrder f WHERE f.reservation.id = ?1", FoodOrder.class, reservationId);
     }
 
     public FoodOrder getById(String foodOrderId) {
-        return findOne("SELECT f FROM FoodOrder f WHERE f.id = :foodOrderId", FoodOrder.class, foodOrderId);
+        return findOne("SELECT f FROM FoodOrder f WHERE f.id = ?1", FoodOrder.class, foodOrderId);
     }
 }

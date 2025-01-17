@@ -49,17 +49,17 @@ public class EmployeeDAO extends GenericDAO<Employee> {
         int parameterCase = 0;
 
         if (phoneNumber != null && !phoneNumber.isEmpty()) {
-            jpqlBuilder.append(" AND e.phoneNumber LIKE :phoneNumber");
+            jpqlBuilder.append(" AND e.phoneNumber LIKE ?1");
             phoneNumber += "%";
             parameterCase += 4;
         }
         if (name != null && !name.isEmpty()) {
-            jpqlBuilder.append(" AND e.name LIKE :name");
+            jpqlBuilder.append(" AND e.name LIKE ?2");
             name = "%" + name + "%";
             parameterCase += 2;
         }
         if (employeeId != null && !employeeId.isEmpty()) {
-            jpqlBuilder.append(" AND e.id LIKE :employeeId");
+            jpqlBuilder.append(" AND e.id LIKE ?3");
             employeeId += "%";
             parameterCase += 1;
         }
@@ -83,35 +83,35 @@ public class EmployeeDAO extends GenericDAO<Employee> {
     }
 
     public List<Employee> getAllStillWorkingWithPagination(int offset, int limit) {
-        return findMany("SELECT e FROM Employee e WHERE e.status = :status ORDER BY e.position", Employee.class, offset, limit, "Đang làm");
+        return findMany("SELECT e FROM Employee e WHERE e.status = ?1 ORDER BY e.position", Employee.class, offset, limit, "Đang làm");
     }
 
     public List<Employee> getByPositionWithPagination(String position, int offset, int limit) {
-        return findMany("SELECT e FROM Employee e WHERE e.position LIKE :position ORDER BY e.status", Employee.class, offset, limit, "%" + position + "%");
+        return findMany("SELECT e FROM Employee e WHERE e.position LIKE ?1 ORDER BY e.status", Employee.class, offset, limit, "%" + position + "%");
     }
 
     public List<Employee> getByPhoneNumberWithPagination(String phoneNumber, int offset, int limit) {
-        return findMany("SELECT e FROM Employee e WHERE e.phoneNumber LIKE :phoneNumber ORDER BY e.status", Employee.class, offset, limit, phoneNumber + "%");
+        return findMany("SELECT e FROM Employee e WHERE e.phoneNumber LIKE ?1 ORDER BY e.status", Employee.class, offset, limit, phoneNumber + "%");
     }
 
     public List<Employee> getByNameWithPagination(String name, int offset, int limit) {
-        return findMany("SELECT e FROM Employee e WHERE e.name LIKE :name ORDER BY e.status", Employee.class, offset, limit, "%" + name + "%");
+        return findMany("SELECT e FROM Employee e WHERE e.name LIKE ?1 ORDER BY e.status", Employee.class, offset, limit, "%" + name + "%");
     }
 
     public int countByPhoneNumber(String phoneNumber) {
-        return count("SELECT COUNT(e) FROM Employee e WHERE e.phoneNumber LIKE :phoneNumber", phoneNumber + "%");
+        return count("SELECT COUNT(e) FROM Employee e WHERE e.phoneNumber LIKE ?1", phoneNumber + "%");
     }
 
     public int countByName(String name) {
-        return count("SELECT COUNT(e) FROM Employee e WHERE e.name LIKE :name", "%" + name + "%");
+        return count("SELECT COUNT(e) FROM Employee e WHERE e.name LIKE ?1", "%" + name + "%");
     }
 
     public int countByPosition(String position) {
-        return count("SELECT COUNT(e) FROM Employee e WHERE e.position LIKE :position", "%" + position + "%");
+        return count("SELECT COUNT(e) FROM Employee e WHERE e.position LIKE ?1", "%" + position + "%");
     }
 
     public int countStillWorking() {
-        return count("SELECT COUNT(e) FROM Employee e WHERE e.status = :status", "Đang làm");
+        return count("SELECT COUNT(e) FROM Employee e WHERE e.status = ?1", "Đang làm");
     }
 
     public int countAll() {
