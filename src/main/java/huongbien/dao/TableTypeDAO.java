@@ -2,9 +2,11 @@ package huongbien.dao;
 
 import huongbien.entity.TableType;
 import huongbien.jpa.PersistenceUnit;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@NoArgsConstructor
 public class TableTypeDAO extends GenericDAO<TableType> {
     public TableTypeDAO(PersistenceUnit persistenceUnit) {
         super(persistenceUnit);

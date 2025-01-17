@@ -2,10 +2,12 @@ package huongbien.dao;
 
 import huongbien.entity.RestaurantTable;
 import huongbien.jpa.PersistenceUnit;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@NoArgsConstructor
 public class RestaurantTableDAO extends GenericDAO<RestaurantTable> {
     public RestaurantTableDAO(PersistenceUnit persistenceUnit) {
         super(persistenceUnit);
