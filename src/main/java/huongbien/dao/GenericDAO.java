@@ -57,6 +57,12 @@ public abstract class GenericDAO <T> {
         return query.getResultList();
     }
 
+    public <T> List<T> executeQuery(String query, Class<T> resultClass, Object... params) {
+        TypedQuery<T> executeQuery = entityManager.createQuery(query, resultClass);
+        setQueryParameters(executeQuery, params);
+        return executeQuery.getResultList();
+    }
+
     public int count(String jpql, Object ...params) {
         Query query = entityManager.createQuery(jpql);
         setQueryParameters(query, params);

@@ -18,10 +18,11 @@ public class AccountDAO extends GenericDAO<Account> {
     }
 
     public Account getByUsername(String username) {
-        return findOne("SELECT a FROM Account a WHERE a.username LIKE :username", Account.class, "%" + username + "%");
+        return findOne("SELECT a FROM Account a WHERE a.username LIKE ?1", Account.class, "%" + username + "%");
     }
 
     public Account getByEmail(String email) {
-        return findOne("SELECT a FROM Account a WHERE a.email = :email", Account.class, email);
+        return findOne("SELECT a FROM Account a WHERE a.email = ?1", Account.class, email);
     }
 }
+

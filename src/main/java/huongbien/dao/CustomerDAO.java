@@ -22,16 +22,16 @@ public class CustomerDAO extends GenericDAO<Customer> {
         return findMany("SELECT c FROM Customer c", Customer.class);
     }
 
-    public Customer getByOnePhoneNumber(String phoneNumber) {
-        return findOne("SELECT c FROM Customer c WHERE c.phoneNumber = :phoneNumber", Customer.class, "phoneNumber", phoneNumber);
+    public Customer getByPhoneNumber(String phoneNumber) {
+        return findOne("SELECT c FROM Customer c WHERE c.phoneNumber = ?1", Customer.class, phoneNumber);
     }
 
-    public List<Customer> getByManyPhoneNumber(String phoneNumber) {
-        return findMany("SELECT c FROM Customer c WHERE c.phoneNumber LIKE :phoneNumber", Customer.class, "phoneNumber", phoneNumber + "%");
+    public List<Customer> getByPhoneNumberPattern(String phoneNumber) {
+        return findMany("SELECT c FROM Customer c WHERE c.phoneNumber LIKE ?1", Customer.class, phoneNumber + "%");
     }
 
     public List<Customer> getByName(String name) {
-        return findMany("SELECT c FROM Customer c WHERE c.name LIKE :name", Customer.class, "name", "%" + name + "%");
+        return findMany("SELECT c FROM Customer c WHERE c.name LIKE ?1", Customer.class, "%" + name + "%");
     }
 
     public List<Customer> getAllWithPagination(int offset, int limit) {
@@ -39,35 +39,35 @@ public class CustomerDAO extends GenericDAO<Customer> {
     }
 
     public List<Customer> getAllWithPaginationByPhoneNumber(String phoneNumber, int offset, int limit) {
-        return findMany("SELECT c FROM Customer c WHERE c.phoneNumber LIKE :phoneNumber ORDER BY c.id", Customer.class, offset, limit, "phoneNumber", phoneNumber + "%");
+        return findMany("SELECT c FROM Customer c WHERE c.phoneNumber LIKE ?1 ORDER BY c.id", Customer.class, offset, limit, phoneNumber + "%");
     }
 
     public List<Customer> getAllWithPaginationByName(String name, int offset, int limit) {
-        return findMany("SELECT c FROM Customer c WHERE c.name LIKE :name ORDER BY c.id", Customer.class, offset, limit, "name", "%" + name + "%");
+        return findMany("SELECT c FROM Customer c WHERE c.name LIKE ?1 ORDER BY c.id", Customer.class, offset, limit, "%" + name + "%");
     }
 
     public List<Customer> getAllWithPaginationById(String id, int offset, int limit) {
-        return findMany("SELECT c FROM Customer c WHERE c.id LIKE :id ORDER BY c.id", Customer.class, offset, limit, "id", id + "%");
+        return findMany("SELECT c FROM Customer c WHERE c.id = ?1 ORDER BY c.id", Customer.class, offset, limit, id);
     }
 
     public List<Customer> getCustomerInDay(LocalDate date) {
-        return findMany("SELECT c FROM Customer c WHERE c.registrationDate = :date", Customer.class, "date", date);
+        return findMany("SELECT c FROM Customer c WHERE c.registrationDate = ?1", Customer.class, date);
     }
 
     public List<Customer> getNewCustomersInYear(int year) {
-        return findMany("SELECT c FROM Customer c WHERE FUNCTION('YEAR', c.registrationDate) = :year", Customer.class, "year", year);
+        return findMany("SELECT c FROM Customer c WHERE FUNCTION('YEAR', c.registrationDate) = ?1", Customer.class, year);
     }
 
     public List<Customer> getTopMembershipCustomers(int year, int limit) {
-        return findMany("SELECT c FROM Customer c WHERE FUNCTION('YEAR', c.registrationDate) = :year ORDER BY c.membershipLevel DESC", Customer.class, limit, "year", year);
+        return findMany("SELECT c FROM Customer c WHERE FUNCTION('YEAR', c.registrationDate) = ?1 ORDER BY c.membershipLevel DESC", Customer.class, limit, year);
     }
 
     public int countNewCustomerQuantityByYear(int year) {
-        return count("SELECT COUNT(c) FROM Customer c WHERE FUNCTION('YEAR', c.registrationDate) = :year", "year", year);
+        return count("SELECT COUNT(c) FROM Customer c WHERE FUNCTION('YEAR', c.registrationDate) = ?1", year);
     }
 
     public int countTotalById(String id) {
-        return count("SELECT COUNT(c) FROM Customer c WHERE c.id LIKE :id", "id", id + "%");
+        return count("SELECT COUNT(c) FROM Customer c WHERE c.id = ?1", id);
     }
 
     public int countTotal() {
@@ -75,26 +75,22 @@ public class CustomerDAO extends GenericDAO<Customer> {
     }
 
     public int countTotalByPhoneNumber(String phoneNumber) {
-        return count("SELECT COUNT(c) FROM Customer c WHERE c.phoneNumber LIKE :phoneNumber", "phoneNumber", phoneNumber + "%");
+        return count("SELECT COUNT(c) FROM Customer c WHERE c.phoneNumber LIKE ?1", phoneNumber + "%");
     }
 
     public int countTotalByName(String name) {
-        return count("SELECT COUNT(c) FROM Customer c WHERE c.name LIKE :name", "name", "%" + name + "%");
+        return count("SELECT COUNT(c) FROM Customer c WHERE c.name LIKE ?1", "%" + name + "%");
     }
 
     public List<String> getPhoneNumber() {
-        EntityManager em = getEntityManager();
-        String jpql = "SELECT c.phoneNumber FROM Customer c";
-        Query query = em.createQuery(jpql);
-        List<String> customersPhone = query.getResultList();
-        return customersPhone;
+        return executeQuery("SELECT c.phoneNumber FROM Customer c", String.class);
     }
 
     public Customer getById(String customerId) {
-        return findOne("SELECT c FROM Customer c WHERE c.id = :customerId", Customer.class, "customerId", customerId);
+        return findOne("SELECT c FROM Customer c WHERE c.id = ?1", Customer.class, customerId);
     }
 
     public Customer getCustomerSearchReservation(String search) {
-        return findOne("SELECT c FROM Customer c WHERE c.phoneNumber LIKE :search", Customer.class, "search", "%" + search + "%");
+        return findOne("SELECT c FROM Customer c WHERE c.phoneNumber LIKE ?1", Customer.class, "%" + search + "%");
     }
 }
