@@ -2,9 +2,11 @@ package huongbien.dao;
 
 import huongbien.entity.OrderDetail;
 import huongbien.jpa.PersistenceUnit;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@NoArgsConstructor
 public class OrderDetailDAO extends GenericDAO<OrderDetail> {
     public OrderDetailDAO(PersistenceUnit persistenceUnit) {
         super(persistenceUnit);

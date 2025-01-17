@@ -3,9 +3,11 @@ package huongbien.dao;
 import huongbien.entity.Category;
 import huongbien.entity.FoodOrder;
 import huongbien.jpa.PersistenceUnit;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@NoArgsConstructor
 public class FoodOrderDAO extends GenericDAO<FoodOrder> {
     public FoodOrderDAO(PersistenceUnit persistenceUnit) {
         super(persistenceUnit);

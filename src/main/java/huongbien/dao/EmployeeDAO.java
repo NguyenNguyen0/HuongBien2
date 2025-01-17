@@ -2,9 +2,11 @@ package huongbien.dao;
 
 import huongbien.entity.Employee;
 import huongbien.jpa.PersistenceUnit;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@NoArgsConstructor
 public class EmployeeDAO extends GenericDAO<Employee> {
     public EmployeeDAO(PersistenceUnit persistenceUnit) {
         super(persistenceUnit);
