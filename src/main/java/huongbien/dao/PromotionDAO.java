@@ -62,15 +62,15 @@ public class PromotionDAO extends GenericDAO<Promotion> {
     }
 
     public List<String> getDistinctPromotionDiscount() {
-        return findMany("SELECT DISTINCT p.discount FROM Promotion p", String.class);
+        return executeQuery("SELECT DISTINCT p.discount FROM Promotion p", String.class);
     }
 
     public List<String> getDistinctPromotionStatus() {
-        return findMany("SELECT DISTINCT p.status FROM Promotion p", String.class);
+        return executeQuery("SELECT DISTINCT p.status FROM Promotion p", String.class);
     }
 
     public List<String> getDistinctPromotionMinimumOrderAmount() {
-        return findMany("SELECT DISTINCT p.minimumOrderAmount FROM Promotion p", String.class);
+        return executeQuery("SELECT DISTINCT p.minimumOrderAmount FROM Promotion p", String.class);
     }
 
     public List<Promotion> getLookUpPromotion(String promotionName, LocalDate startDate, LocalDate endDate, double discount, double minimumOrderAmount, String status, int pageIndex) {

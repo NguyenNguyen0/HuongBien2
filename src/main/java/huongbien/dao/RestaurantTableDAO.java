@@ -80,11 +80,11 @@ public class RestaurantTableDAO extends GenericDAO<RestaurantTable> {
     }
 
     public List<String> getDistinctFloor() {
-        return findMany("SELECT DISTINCT t.floor FROM RestaurantTable t", String.class);
+        return executeQuery("SELECT DISTINCT t.floor FROM RestaurantTable t", String.class);
     }
 
     public List<String> getDistinctSeat() {
-        return findMany("SELECT DISTINCT t.seats FROM RestaurantTable t", String.class);
+        return executeQuery("SELECT DISTINCT t.seats FROM RestaurantTable t", String.class);
     }
 
     public RestaurantTable getTopFloor() {
@@ -96,19 +96,19 @@ public class RestaurantTableDAO extends GenericDAO<RestaurantTable> {
     }
 
     public List<String> getDistinctStatuses() {
-        return findMany("SELECT DISTINCT t.status FROM RestaurantTable t WHERE t.status != 'Bàn đóng'", String.class);
+        return executeQuery("SELECT DISTINCT t.status FROM RestaurantTable t WHERE t.status != 'Bàn đóng'", String.class);
     }
 
     public List<Integer> getDistinctFloors() {
-        return findMany("SELECT DISTINCT t.floor FROM RestaurantTable t", Integer.class);
+        return executeQuery("SELECT DISTINCT t.floor FROM RestaurantTable t", Integer.class);
     }
 
     public List<Integer> getDistinctSeats() {
-        return findMany("SELECT DISTINCT t.seats FROM RestaurantTable t", Integer.class);
+        return executeQuery("SELECT DISTINCT t.seats FROM RestaurantTable t", Integer.class);
     }
 
     public List<String> getDistinctTableType() {
-        return findMany("SELECT DISTINCT t.tableType.id FROM RestaurantTable t", String.class);
+        return executeQuery("SELECT DISTINCT t.tableType.id FROM RestaurantTable t", String.class);
     }
 
     public List<RestaurantTable> getLookUpTable(int floor, String name, int seat, String type, String status, int pageIndex) {

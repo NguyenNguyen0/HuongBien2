@@ -32,10 +32,10 @@ public class TableTypeDAO extends GenericDAO<TableType> {
     public String getTypeName(String name) {
         String query = "SELECT t FROM TableType t WHERE t.name LIKE ?1";
         TableType tableType = findOne(query, TableType.class, "%" + name + "%");
-        return tableType != null ? tableType.getTableId() : null;
+        return tableType != null ? tableType.getId() : null;
     }
 
     public List<String> getDistinctTableType() {
-        return findMany("SELECT DISTINCT t.name FROM TableType t", String.class);
+        return executeQuery("SELECT DISTINCT t.name FROM TableType t", String.class);
     }
 }
