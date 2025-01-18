@@ -4,6 +4,9 @@ Huong Bien 2 is a Java application that leverages JavaFX for its graphical user 
 
 ## Members
 - Nguyễn Trung Nguyên
+- Nguy Trần Gia Sĩ
+- Nguyễn Văn Minh
+- Trần Di Phong
 
 ## Key Features
 - **JavaFX**: Utilized for building the user interface, providing a rich set of UI controls and capabilities.
