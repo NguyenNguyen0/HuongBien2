@@ -1,7 +1,13 @@
 package huongbien.entity;
 
+import huongbien.jpa.converter.CuisineStatusConverter;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.Objects;
 
 @Setter
 @Getter
@@ -16,7 +22,9 @@ public class Cuisine {
     private String name;
     private String description;
     private double price;
-    private String status;
+
+    @Convert(converter = CuisineStatusConverter.class)
+    private CuisineStatus status;
 
     @Lob
     @Column(name = "image", columnDefinition = "LONGBLOB")
@@ -37,5 +45,17 @@ public class Cuisine {
                 ", image=" + (image == null ? "null" : String.format("byte[%d]", image.length)) +
                 ", category=" + category +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Cuisine cuisine = (Cuisine) o;
+        return Objects.equals(id, cuisine.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

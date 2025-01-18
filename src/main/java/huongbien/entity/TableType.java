@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.util.List;
+import java.util.Objects;
 
 @Setter
 @Getter
@@ -22,4 +23,16 @@ public class TableType {
     @ToString.Exclude
     @OneToMany(mappedBy = "tableType")
     private List<RestaurantTable> tables;
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        TableType tableType = (TableType) o;
+        return Objects.equals(id, tableType.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 }

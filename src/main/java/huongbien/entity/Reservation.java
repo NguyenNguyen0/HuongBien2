@@ -1,7 +1,10 @@
 package huongbien.entity;
 
+import huongbien.jpa.converter.ReservationStatusConverter;
+import huongbien.util.Util;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -13,6 +16,7 @@ import java.util.List;
 @Setter
 @Getter
 @ToString
+@NoArgsConstructor
 @Entity
 @Table(name = "reservations")
 public class Reservation {
@@ -37,15 +41,17 @@ public class Reservation {
 
     @Column(name = "receive_time")
     private LocalTime receiveTime;
-    private String status;
+
+    @Convert(converter = ReservationStatusConverter.class)
+    private ReservationStatus status;
     private double deposit;
 
     @Column(name = "refund_deposit")
     private double refundDeposit;
     private String note;
 
-    @OneToOne
-    @JoinColumn(name = "payment_id", nullable = false, unique = true)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+    @JoinColumn(name = "payment_id", unique = true)
     private Payment payment;
 
     @ManyToOne
@@ -54,7 +60,8 @@ public class Reservation {
     @ManyToOne
     private Customer customer;
 
-    @OneToMany(mappedBy = "reservation", cascade = CascadeType.PERSIST)
+    @ToString.Exclude
+    @OneToMany(mappedBy = "reservation", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<FoodOrder> foodOrders;
 
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
@@ -66,11 +73,33 @@ public class Reservation {
     @ToString.Exclude
     private List<RestaurantTable> tables;
 
-    public void addFoodOrder(FoodOrder foodOrder) {
-        if (foodOrders == null) {
-            foodOrders = new ArrayList<>();
+    public static String generateId(LocalDate localDate, LocalTime localTime) {
+        LocalDate currentDate = localDate == null ? LocalDate.now() : localDate;
+        LocalTime currentTime = localTime == null ? LocalTime.now() : localTime;
+        return String.format("DB%02d%02d%02d%02d%02d%02d%03d",
+                currentDate.getYear() % 100,
+                currentDate.getMonthValue(),
+                currentDate.getDayOfMonth(),
+                currentTime.getHour(),
+                currentTime.getMinute(),
+                currentTime.getSecond(),
+                Util.randomNumber(1, 999)
+        );
+    }
+
+    public void setPayment(Payment payment) {
+        if (payment == null) {
+            return;
         }
-        foodOrders.add(foodOrder);
-        foodOrder.setReservation(this);
+        this.payment = payment;
+        payment.setReservation(this);
+    }
+
+    public void setFoodOrders(List<FoodOrder> foodOrders) {
+        if (foodOrders == null) {
+            return;
+        }
+        this.foodOrders = foodOrders;
+        foodOrders.forEach(foodOrder -> foodOrder.setReservation(this));
     }
 }

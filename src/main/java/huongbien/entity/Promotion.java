@@ -1,9 +1,8 @@
 package huongbien.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import huongbien.jpa.converter.MembershipLevelConverter;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -18,7 +17,7 @@ import java.time.LocalDate;
 public class Promotion {
     @Id
     @Column(name = "promotion_id")
-    private String promotionId;
+    private String id;
     private String name;
 
     @Column(name = "start_date")
@@ -32,7 +31,11 @@ public class Promotion {
     @Column(name = "minimum_order_amount")
     private double minimumOrderAmount;
 
+    @Convert(converter = MembershipLevelConverter.class)
     @Column(name = "membership_level")
-    private int membershipLevel;
-    private String status;
+    private MembershipLevel membershipLevel;
+
+    @JsonProperty("isAvailable")
+    @Column(name = "is_available")
+    private boolean isAvailable;
 }

@@ -1,6 +1,7 @@
 package huongbien.entity;
 
 import huongbien.config.Constant;
+import huongbien.util.Util;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,7 +9,9 @@ import lombok.ToString;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Setter
 @Getter
@@ -41,27 +44,94 @@ public class Order {
     private final double vatTax = Constant.VAT.getValue();
 
     @ManyToOne
+    @JoinColumn(name = "customer_id")
     private Customer customer;
 
     @ManyToOne
+    @JoinColumn(name = "employee_id")
     private Employee employee;
 
     @ManyToOne
+    @JoinColumn(name = "promotion_id")
     private Promotion promotion;
 
-    @OneToOne
-    @JoinColumn(name = "payment_id", nullable = false, unique = true)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+    @JoinColumn(name = "payment_id", unique = true)
     private Payment payment;
 
-    @OneToMany(mappedBy = "order")
+    @ToString.Exclude
+    @OneToMany(mappedBy = "order", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<OrderDetail> orderDetails;
 
+    @ToString.Exclude
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
             name = "orders_tables",
             joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "table_id")
     )
-    @ToString.Exclude
     private List<RestaurantTable> tables;
+
+    public double calculateTotalAmount() {
+        return Math.round(orderDetails
+                .stream()
+                .map((OrderDetail::calculateSubTotal))
+                .reduce(0.0, Double::sum));
+    }
+
+    public double calculateReducedAmount() {
+        double discount = (promotion == null ? 0 : promotion.getDiscount());
+        return Math.round(calculateTotalAmount() * discount);
+    }
+
+    public double calculateVatTaxAmount() {
+        return Math.round((calculateTotalAmount() - calculateReducedAmount()) * vatTax);
+    }
+
+    public double calculateGrandTotal() {
+        double reducedAmount = calculateReducedAmount();
+        return Math.round((calculateTotalAmount() - reducedAmount) + calculateVatTaxAmount());
+    }
+
+    public static String generateId(LocalDate orderDate, LocalTime orderTime) {
+        LocalDate currentDate = orderDate == null ? LocalDate.now() : orderDate;
+        LocalTime currentTime = orderTime == null ? LocalTime.now() : orderTime;
+        return String.format("HD%02d%02d%02d%02d%02d%02d%03d",
+                currentDate.getYear() % 100,
+                currentDate.getMonthValue(),
+                currentDate.getDayOfMonth(),
+                currentTime.getHour(),
+                currentTime.getMinute(),
+                currentTime.getSecond(),
+                Util.randomNumber(1, 999)
+        );
+    }
+
+    public void setPayment(Payment payment) {
+        if (payment == null) {
+            return;
+        }
+        this.payment = payment;
+        payment.setOrder(this);
+    }
+
+    public void setOrderDetails(List<OrderDetail> orderDetails) {
+        if (orderDetails == null) {
+            return;
+        }
+        this.orderDetails = orderDetails;
+        orderDetails.forEach(orderDetail -> orderDetail.setOrder(this));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Order order = (Order) o;
+        return Objects.equals(id, order.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 }

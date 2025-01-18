@@ -20,16 +20,6 @@ public class CategoryDAO extends GenericDAO<Category> {
         return findOne("SELECT c FROM Category c WHERE c.id = ?1", Category.class, id);
     }
 
-    public Category getOne(String name, String id) {
-        TypedQuery<Category> query = JPAUtil.getEntityManager().createQuery(
-                "SELECT c FROM Category c WHERE c.name = :name AND c.id = :id",
-                Category.class
-        );
-        query.setParameter("name", name);
-        query.setParameter("id", id);
-        return query.getSingleResult();
-    }
-
     public List<Category> getAll() {
         return findMany("SELECT c FROM Category c", Category.class);
     }

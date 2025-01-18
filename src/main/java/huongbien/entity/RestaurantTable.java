@@ -1,9 +1,12 @@
 package huongbien.entity;
 
+import huongbien.jpa.converter.TableStatusConverter;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.util.Objects;
 
 @Setter
 @Getter
@@ -17,8 +20,22 @@ public class RestaurantTable {
     private String name;
     private int seats;
     private int floor;
-    private String status;
+
+    @Convert(converter = TableStatusConverter.class)
+    private TableStatus status;
 
     @ManyToOne
     private TableType tableType;
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        RestaurantTable that = (RestaurantTable) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 }

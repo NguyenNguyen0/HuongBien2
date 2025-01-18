@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @Setter
 @Getter
@@ -16,9 +17,7 @@ public class Category {
     @Id
     @Column(name = "category_id")
     private String id;
-
     private String name;
-
     private String description;
 
     @ToString.Exclude
@@ -29,5 +28,17 @@ public class Category {
         this.id = id;
         this.name = name;
         this.description = description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Category category = (Category) o;
+        return Objects.equals(id, category.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

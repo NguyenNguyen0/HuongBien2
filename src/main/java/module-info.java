@@ -13,6 +13,7 @@ module java.huongbien {
     requires com.fasterxml.jackson.datatype.jsr310;
     requires com.fasterxml.jackson.databind;
     requires static lombok;
+    requires net.datafaker;
 
     exports huongbien.ui;
     opens huongbien.ui to javafx.fxml;
