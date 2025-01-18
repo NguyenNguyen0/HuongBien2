@@ -1,0 +1,35 @@
+[
+  {
+    "id": "KM231023001",
+    "name": "Ưu đãi cho thành viên bạc",
+    "startDate": "2023-10-23",
+    "endDate": "2025-10-23",
+    "discount": 0.10,
+    "description": "Giảm 10% cho hóa đơn trên 500.000đ cho thành viên bạc",
+    "minimumOrderAmount": 500000.0,
+    "membershipLevel": 1,
+    "isAvailable": true
+  },
+  {
+    "id": "KM231023002",
+    "name": "Ưu đãi cho thành viên vàng",
+    "startDate": "2023-10-23",
+    "endDate": "2025-10-23",
+    "discount": 0.20,
+    "description": "Giảm 20% cho hóa đơn trên 500.000đ cho thành viên vàng",
+    "minimumOrderAmount": 500000.0,
+    "membershipLevel": 2,
+    "isAvailable": true
+  },
+  {
+    "id": "KM231023003",
+    "name": "Ưu đãi cho thành viên kim cương",
+    "startDate": "2023-10-23",
+    "endDate": "2025-10-23",
+    "discount": 0.30,
+    "description": "Giảm 30% cho hóa đơn trên 500.000đ cho thành viên kim cương",
+    "minimumOrderAmount": 500000.0,
+    "membershipLevel": 3,
+    "isAvailable": true
+  }
+]

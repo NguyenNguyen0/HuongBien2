@@ -1,0 +1,652 @@
+[
+    {
+        "id": "M001",
+        "name": "Gỏi tôm",
+        "price": 120000.0,
+        "description": "Tôm tươi trộn cùng rau và sốt chua ngọt.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG001",
+            "name": "Khai vị",
+            "description": "Món ăn nhẹ nhàng, kích thích vị giác."
+        }
+    },
+    {
+        "id": "M002",
+        "name": "Chả mực",
+        "price": 150000.0,
+        "description": "Mực giã nhuyễn, chiên giòn, thơm ngon.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG001",
+            "name": "Khai vị",
+            "description": "Món ăn nhẹ nhàng, kích thích vị giác."
+        }
+    },
+    {
+        "id": "M003",
+        "name": "Gỏi cá hồi",
+        "price": 170000.0,
+        "description": "Cá hồi tươi trộn rau củ và nước sốt.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG001",
+            "name": "Khai vị",
+            "description": "Món ăn nhẹ nhàng, kích thích vị giác."
+        }
+    },
+    {
+        "id": "M004",
+        "name": "Nghêu hấp",
+        "price": 110000.0,
+        "description": "Nghêu hấp với sả và ớt, thơm lừng.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG001",
+            "name": "Khai vị",
+            "description": "Món ăn nhẹ nhàng, kích thích vị giác."
+        }
+    },
+    {
+        "id": "M005",
+        "name": "Tôm chiên",
+        "price": 140000.0,
+        "description": "Tôm chiên giòn rụm, ăn kèm nước chấm.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG001",
+            "name": "Khai vị",
+            "description": "Món ăn nhẹ nhàng, kích thích vị giác."
+        }
+    },
+    {
+        "id": "M006",
+        "name": "Súp cua",
+        "price": 90000.0,
+        "description": "Súp cua bổ dưỡng với thịt cua tươi ngon.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG002",
+            "name": "Súp",
+            "description": "Món súp nóng hổi, dễ ăn, giàu dinh dưỡng."
+        }
+    },
+    {
+        "id": "M007",
+        "name": "Súp tôm",
+        "price": 95000.0,
+        "description": "Súp tôm ngọt, đậm đà với rau củ.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG002",
+            "name": "Súp",
+            "description": "Món súp nóng hổi, dễ ăn, giàu dinh dưỡng."
+        }
+    },
+    {
+        "id": "M008",
+        "name": "Súp hải sản",
+        "price": 120000.0,
+        "description": "Súp hải sản tổng hợp, thơm ngọt.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG002",
+            "name": "Súp",
+            "description": "Món súp nóng hổi, dễ ăn, giàu dinh dưỡng."
+        }
+    },
+    {
+        "id": "M009",
+        "name": "Súp cá hồi",
+        "price": 130000.0,
+        "description": "Súp từ cá hồi, giàu dinh dưỡng.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG002",
+            "name": "Súp",
+            "description": "Món súp nóng hổi, dễ ăn, giàu dinh dưỡng."
+        }
+    },
+    {
+        "id": "M010",
+        "name": "Súp nghêu",
+        "price": 85000.0,
+        "description": "Nghêu nấu súp cùng rau củ, đậm vị.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG002",
+            "name": "Súp",
+            "description": "Món súp nóng hổi, dễ ăn, giàu dinh dưỡng."
+        }
+    },
+    {
+        "id": "M011",
+        "name": "Salad tôm",
+        "price": 100000.0,
+        "description": "Tôm tươi kết hợp rau xanh và sốt.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG003",
+            "name": "Salad",
+            "description": "Rau xanh tươi mát, ăn kèm với sốt."
+        }
+    },
+    {
+        "id": "M012",
+        "name": "Salad cá ngừ",
+        "price": 120000.0,
+        "description": "Cá ngừ cùng rau xanh tươi mát.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG003",
+            "name": "Salad",
+            "description": "Rau xanh tươi mát, ăn kèm với sốt."
+        }
+    },
+    {
+        "id": "M013",
+        "name": "Salad mực",
+        "price": 110000.0,
+        "description": "Mực tươi và rau sống, sốt chua ngọt.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG003",
+            "name": "Salad",
+            "description": "Rau xanh tươi mát, ăn kèm với sốt."
+        }
+    },
+    {
+        "id": "M014",
+        "name": "Salad hải sản",
+        "price": 130000.0,
+        "description": "Hải sản kết hợp cùng salad rau.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG003",
+            "name": "Salad",
+            "description": "Rau xanh tươi mát, ăn kèm với sốt."
+        }
+    },
+    {
+        "id": "M015",
+        "name": "Sasimi bạch tuộc",
+        "price": 140000.0,
+        "description": "Sasimi bạch tuộc tươi ngon.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG003",
+            "name": "Salad",
+            "description": "Rau xanh tươi mát, ăn kèm với sốt."
+        }
+    },
+    {
+        "id": "M016",
+        "name": "Tôm nướng",
+        "price": 180000.0,
+        "description": "Tôm nướng muối ớt thơm lừng.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG004",
+            "name": "Món nướng",
+            "description": "Các loại thịt nướng thơm ngon."
+        }
+    },
+    {
+        "id": "M017",
+        "name": "Cá nướng giấy bạc",
+        "price": 200000.0,
+        "description": "Cá nướng giấy bạc giữ nguyên hương vị.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG004",
+            "name": "Món nướng",
+            "description": "Các loại thịt nướng thơm ngon."
+        }
+    },
+    {
+        "id": "M018",
+        "name": "Mực nướng sa tế",
+        "price": 170000.0,
+        "description": "Mực tươi nướng sa tế cay nồng.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG004",
+            "name": "Món nướng",
+            "description": "Các loại thịt nướng thơm ngon."
+        }
+    },
+    {
+        "id": "M019",
+        "name": "Hàu nướng phô mai",
+        "price": 190000.0,
+        "description": "Hàu nướng phô mai béo ngậy.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG004",
+            "name": "Món nướng",
+            "description": "Các loại thịt nướng thơm ngon."
+        }
+    },
+    {
+        "id": "M020",
+        "name": "Sò điệp nướng",
+        "price": 150000.0,
+        "description": "Sò điệp nướng thơm ngon.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG004",
+            "name": "Món nướng",
+            "description": "Các loại thịt nướng thơm ngon."
+        }
+    },
+    {
+        "id": "M021",
+        "name": "Cua hấp bia",
+        "price": 220000.0,
+        "description": "Cua biển hấp bia, giữ nguyên vị ngọt.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG005",
+            "name": "Món hấp",
+            "description": "Món ăn lành mạnh, giữ nguyên hương vị."
+        }
+    },
+    {
+        "id": "M022",
+        "name": "Tôm hấp nước dừa",
+        "price": 180000.0,
+        "description": "Tôm hấp với nước dừa tươi.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG005",
+            "name": "Món hấp",
+            "description": "Món ăn lành mạnh, giữ nguyên hương vị."
+        }
+    },
+    {
+        "id": "M023",
+        "name": "Nghêu hấp sả",
+        "price": 120000.0,
+        "description": "Nghêu hấp sả, cay thơm.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG005",
+            "name": "Món hấp",
+            "description": "Món ăn lành mạnh, giữ nguyên hương vị."
+        }
+    },
+    {
+        "id": "M024",
+        "name": "Mực hấp gừng",
+        "price": 160000.0,
+        "description": "Mực hấp với gừng tươi, thơm ngon.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG005",
+            "name": "Món hấp",
+            "description": "Món ăn lành mạnh, giữ nguyên hương vị."
+        }
+    },
+    {
+        "id": "M025",
+        "name": "Cá hồi hấp xì dầu",
+        "price": 200000.0,
+        "description": "Cá hồi hấp xì dầu.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG005",
+            "name": "Món hấp",
+            "description": "Món ăn lành mạnh, giữ nguyên hương vị."
+        }
+    },
+    {
+        "id": "M026",
+        "name": "Tôm chiên xù",
+        "price": 150000.0,
+        "description": "Tôm chiên giòn, ăn kèm nước sốt.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG006",
+            "name": "Món chiên",
+            "description": "Giòn rụm, đậm đà gia vị."
+        }
+    },
+    {
+        "id": "M027",
+        "name": "Mực chiên giòn",
+        "price": 140000.0,
+        "description": "Mực chiên giòn, vàng ươm.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG006",
+            "name": "Món chiên",
+            "description": "Giòn rụm, đậm đà gia vị."
+        }
+    },
+    {
+        "id": "M028",
+        "name": "Cá chiên sốt me",
+        "price": 160000.0,
+        "description": "Cá chiên giòn sốt me chua ngọt.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG006",
+            "name": "Món chiên",
+            "description": "Giòn rụm, đậm đà gia vị."
+        }
+    },
+    {
+        "id": "M029",
+        "name": "Tôm chiên tempura",
+        "price": 170000.0,
+        "description": "Tôm chiên tNV0ura kiểu Nhật.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG006",
+            "name": "Món chiên",
+            "description": "Giòn rụm, đậm đà gia vị."
+        }
+    },
+    {
+        "id": "M030",
+        "name": "Cua chiên bơ tỏi",
+        "price": 210000.0,
+        "description": "Cua chiên với bơ tỏi.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG006",
+            "name": "Món chiên",
+            "description": "Giòn rụm, đậm đà gia vị."
+        }
+    },
+    {
+        "id": "M031",
+        "name": "Gỏi cá trích",
+        "price": 130000.0,
+        "description": "Cá trích tươi trộn rau và nước mắm.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG007",
+            "name": "Hải sản",
+            "description": "Các món chế biến từ tôm, cua, cá."
+        }
+    },
+    {
+        "id": "M032",
+        "name": "Tôm hùm hấp",
+        "price": 350000.0,
+        "description": "Tôm hùm hấp giữ nguyên hương vị.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG007",
+            "name": "Hải sản",
+            "description": "Các món chế biến từ tôm, cua, cá."
+        }
+    },
+    {
+        "id": "M033",
+        "name": "Cua rang me",
+        "price": 250000.0,
+        "description": "Cua rang me chua ngọt.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG007",
+            "name": "Hải sản",
+            "description": "Các món chế biến từ tôm, cua, cá."
+        }
+    },
+    {
+        "id": "M034",
+        "name": "Hàu nướng phô mai",
+        "price": 180000.0,
+        "description": "Hàu nướng phô mai béo ngậy.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG007",
+            "name": "Hải sản",
+            "description": "Các món chế biến từ tôm, cua, cá."
+        }
+    },
+    {
+        "id": "M035",
+        "name": "Sò huyết sốt me",
+        "price": 140000.0,
+        "description": "Sò huyết sốt me đậm vị.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG007",
+            "name": "Hải sản",
+            "description": "Các món chế biến từ tôm, cua, cá."
+        }
+    },
+    {
+        "id": "M036",
+        "name": "Cơm chiên hải sản",
+        "price": 120000.0,
+        "description": "Cơm chiên với tôm, mực, sò.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG008",
+            "name": "Cơm",
+            "description": "Món cơm trắng kết hợp với nhiều nguyên liệu."
+        }
+    },
+    {
+        "id": "M037",
+        "name": "Cơm chiên Dương Châu",
+        "price": 100000.0,
+        "description": "Cơm chiên kiểu Dương Châu.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG008",
+            "name": "Cơm",
+            "description": "Món cơm trắng kết hợp với nhiều nguyên liệu."
+        }
+    },
+    {
+        "id": "M038",
+        "name": "Cơm hải sản xốt XO",
+        "price": 140000.0,
+        "description": "Cơm xào hải sản với xốt XO.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG008",
+            "name": "Cơm",
+            "description": "Món cơm trắng kết hợp với nhiều nguyên liệu."
+        }
+    },
+    {
+        "id": "M039",
+        "name": "Cơm chiên cua",
+        "price": 130000.0,
+        "description": "Cơm chiên cùng cua tươi ngon.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG008",
+            "name": "Cơm",
+            "description": "Món cơm trắng kết hợp với nhiều nguyên liệu."
+        }
+    },
+    {
+        "id": "M040",
+        "name": "Cơm chiên hải sản trứng muối",
+        "price": 150000.0,
+        "description": "Cơm chiên hải sản với trứng muối.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG008",
+            "name": "Cơm",
+            "description": "Món cơm trắng kết hợp với nhiều nguyên liệu."
+        }
+    },
+    {
+        "id": "M041",
+        "name": "Lẩu hải sản",
+        "price": 300000.0,
+        "description": "Lẩu tổng hợp các loại hải sản.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG009",
+            "name": "Lẩu",
+            "description": "Món lẩu đa dạng, phù hợp ăn chung nhóm."
+        }
+    },
+    {
+        "id": "M042",
+        "name": "Lẩu cua đồng",
+        "price": 280000.0,
+        "description": "Lẩu cua đồng tươi ngon.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG009",
+            "name": "Lẩu",
+            "description": "Món lẩu đa dạng, phù hợp ăn chung nhóm."
+        }
+    },
+    {
+        "id": "M043",
+        "name": "Lẩu tôm chua cay",
+        "price": 270000.0,
+        "description": "Tôm nấu lẩu chua cay.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG009",
+            "name": "Lẩu",
+            "description": "Món lẩu đa dạng, phù hợp ăn chung nhóm."
+        }
+    },
+    {
+        "id": "M044",
+        "name": "Lẩu cá hồi",
+        "price": 320000.0,
+        "description": "Lẩu cá hồi giàu dinh dưỡng.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG009",
+            "name": "Lẩu",
+            "description": "Món lẩu đa dạng, phù hợp ăn chung nhóm."
+        }
+    },
+    {
+        "id": "M045",
+        "name": "Lẩu nghêu",
+        "price": 250000.0,
+        "description": "Nghêu nấu lẩu thanh ngọt.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG009",
+            "name": "Lẩu",
+            "description": "Món lẩu đa dạng, phù hợp ăn chung nhóm."
+        }
+    },
+    {
+        "id": "M046",
+        "name": "Coca cola",
+        "price": 15000.0,
+        "description": "Nước uống có ga Coca cola.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG010",
+            "name": "Nước uống",
+            "description": "Nước uống giải khát."
+        }
+    },
+    {
+        "id": "M047",
+        "name": "Pepsi",
+        "price": 15000.0,
+        "description": "Nước uống có ga Pepsi.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG010",
+            "name": "Nước uống",
+            "description": "Nước uống giải khát."
+        }
+    },
+    {
+        "id": "M048",
+        "name": "Bia Tiger",
+        "price": 37000.0,
+        "description": "Đồ uống có cồn bia Tiger.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG010",
+            "name": "Nước uống",
+            "description": "Nước uống giải khát."
+        }
+    },
+    {
+        "id": "M049",
+        "name": "Bia Sài Gòn",
+        "price": 32000.0,
+        "description": "Đồ uống có cồn bia Sài Gòn.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG010",
+            "name": "Nước uống",
+            "description": "Nước uống giải khát."
+        }
+    },
+    {
+        "id": "M050",
+        "name": "Bia Heineken",
+        "price": 35000.0,
+        "description": "Đồ uống có cồn bia Heineken.",
+        "image": [],
+        "status": "Còn bán",
+        "category": {
+            "id": "CG010",
+            "name": "Nước uống",
+            "description": "Nước uống giải khát."
+        }
+    }
+]
