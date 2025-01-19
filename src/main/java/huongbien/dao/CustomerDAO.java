@@ -5,7 +5,9 @@ import huongbien.jpa.PersistenceUnit;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @NoArgsConstructor
 public class CustomerDAO extends GenericDAO<Customer> {
@@ -31,19 +33,43 @@ public class CustomerDAO extends GenericDAO<Customer> {
     }
 
     public List<Customer> getAllWithPagination(int offset, int limit) {
-        return findMany("SELECT c FROM Customer c ORDER BY c.id", Customer.class, offset, limit);
+        return findManyWithPagination("SELECT c FROM Customer c ORDER BY c.id", Customer.class, null, offset, limit);
     }
 
     public List<Customer> getAllWithPaginationByPhoneNumber(String phoneNumber, int offset, int limit) {
-        return findMany("SELECT c FROM Customer c WHERE c.phoneNumber LIKE ?1 ORDER BY c.id", Customer.class, offset, limit, phoneNumber + "%");
+        Map<String, Object> params = new HashMap<>();
+        params.put("phoneNumber", phoneNumber + "%");
+        return findManyWithPagination(
+                "SELECT c FROM Customer c WHERE c.phoneNumber LIKE :phoneNumber ORDER BY c.id",
+                Customer.class,
+                params,
+                offset,
+                limit
+        );
     }
 
     public List<Customer> getAllWithPaginationByName(String name, int offset, int limit) {
-        return findMany("SELECT c FROM Customer c WHERE c.name LIKE ?1 ORDER BY c.id", Customer.class, offset, limit, "%" + name + "%");
+        Map<String, Object> params = new HashMap<>();
+        params.put("name", "%" + name + "%");
+        return findManyWithPagination(
+                "SELECT c FROM Customer c WHERE c.name LIKE :name ORDER BY c.id",
+                Customer.class,
+                params,
+                offset,
+                limit
+        );
     }
 
     public List<Customer> getAllWithPaginationById(String id, int offset, int limit) {
-        return findMany("SELECT c FROM Customer c WHERE c.id = ?1 ORDER BY c.id", Customer.class, offset, limit, id);
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", id + "%");
+        return findManyWithPagination(
+                "SELECT c FROM Customer c WHERE c.id LIKE :id ORDER BY c.id",
+                Customer.class,
+                params,
+                offset,
+                limit
+        );
     }
 
     public List<Customer> getCustomerInDay(LocalDate date) {

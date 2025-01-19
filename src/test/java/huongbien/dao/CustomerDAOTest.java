@@ -1,92 +1,135 @@
 package huongbien.dao;
 
+import huongbien.data.DataGenerator;
+import huongbien.entity.Customer;
 import huongbien.jpa.PersistenceUnit;
 import org.junit.jupiter.api.Test;
 
-class CustomerDAOTest {
+import java.time.LocalDate;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+
+public class CustomerDAOTest {
     private static final CustomerDAO customerDAO = new CustomerDAO(PersistenceUnit.MARIADB_JPA);
 
     @Test
-    void add() {
+    public void add() {
+        assertTrue(customerDAO.add(DataGenerator.fakeCustomer(LocalDate.now())));
+        assertFalse(customerDAO.add(DataGenerator.getRandomCustomer()));
     }
 
     @Test
-    void update() {
+    public void update() {
+        Customer customer = DataGenerator.fakeCustomer(LocalDate.now());
+        customer.setId("C001");
+        customer.setName("Updated Name");
+        assertTrue(customerDAO.update(customer));
     }
 
     @Test
-    void getAll() {
+    public void getAll() {
+        assertNotNull(customerDAO.getAll());
     }
 
     @Test
-    void getByPhoneNumber() {
+    public void getByPhoneNumber() {
+        assertNotNull(customerDAO.getByPhoneNumber("(472) 427-8162"));
     }
 
     @Test
-    void getByPhoneNumberPattern() {
+    public void getByPhoneNumberPattern() {
+        List<Customer> customers = customerDAO.getByPhoneNumberPattern("(305) 299-5503");
+        assertFalse(customers.isEmpty());
     }
 
     @Test
-    void getByName() {
+    public void getByName() {
+        List<Customer> customers = customerDAO.getByName("John");
+        assertFalse(customers.isEmpty());
     }
 
     @Test
-    void getAllWithPagination() {
+    public void getAllWithPagination() {
+        List<Customer> customers = customerDAO.getAllWithPagination(0, 10);
+        assertFalse(customers.isEmpty());
     }
 
     @Test
-    void getAllWithPaginationByPhoneNumber() {
+    public void getAllWithPaginationByPhoneNumber() {
+        List<Customer> customers = customerDAO.getAllWithPaginationByPhoneNumber("(730) 647-8582", 0, 10);
+        assertFalse(customers.isEmpty());
     }
 
     @Test
-    void getAllWithPaginationByName() {
+    public void getAllWithPaginationByName() {
+        List<Customer> customers = customerDAO.getAllWithPaginationByName("John", 0, 10);
+        assertFalse(customers.isEmpty());
     }
 
     @Test
-    void getAllWithPaginationById() {
+    public void getAllWithPaginationById() {
+        List<Customer> customers = customerDAO.getAllWithPaginationById("C001", 0, 10);
+        assertFalse(customers.isEmpty());
     }
 
     @Test
-    void getCustomerInDay() {
+    public void getCustomerInDay() {
+        List<Customer> customers = customerDAO.getCustomerInDay(LocalDate.now());
+        assertFalse(customers.isEmpty());
     }
 
     @Test
-    void getNewCustomersInYear() {
+    public void getNewCustomersInYear() {
+        List<Customer> customers = customerDAO.getNewCustomersInYear(2024);
+        assertFalse(customers.isEmpty());
     }
 
     @Test
-    void getTopMembershipCustomers() {
+    public void getTopMembershipCustomers() {
+        List<Customer> customers = customerDAO.getTopMembershipCustomers(2024, 5);
+        assertFalse(customers.isEmpty());
     }
 
     @Test
-    void countNewCustomerQuantityByYear() {
+    public void countNewCustomerQuantityByYear() {
+        assertTrue(customerDAO.countNewCustomerQuantityByYear(2024) > 0);
     }
 
     @Test
-    void countTotalById() {
+    public void countTotalById() {
+        assertTrue(customerDAO.countTotalById("C001") > 0);
     }
 
     @Test
-    void countTotal() {
+    public void countTotal() {
+        assertTrue(customerDAO.countTotal() > 0);
     }
 
     @Test
-    void countTotalByPhoneNumber() {
+    public void countTotalByPhoneNumber() {
+        assertTrue(customerDAO.countTotalByPhoneNumber("(983) 855-1919") > 0);
     }
 
     @Test
-    void countTotalByName() {
+    public void countTotalByName() {
+        assertTrue(customerDAO.countTotalByName("John") > 0);
     }
 
     @Test
-    void getPhoneNumber() {
+    public void getPhoneNumber() {
+        List<String> phoneNumbers = customerDAO.getPhoneNumber();
+        assertFalse(phoneNumbers.isEmpty());
     }
 
     @Test
-    void getById() {
+    public void getById() {
+        assertNotNull(customerDAO.getById("C001"));
     }
 
     @Test
-    void getCustomerSearchReservation() {
+    public void getCustomerSearchReservation() {
+        assertNotNull(customerDAO.getCustomerSearchReservation(""));
     }
 }

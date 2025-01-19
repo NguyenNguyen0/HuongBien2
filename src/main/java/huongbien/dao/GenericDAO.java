@@ -7,6 +7,7 @@ import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 
 import java.util.List;
+import java.util.Map;
 
 public abstract class GenericDAO<T> {
     private final EntityManager entityManager;
@@ -65,6 +66,21 @@ public abstract class GenericDAO<T> {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public <T> List<T> findManyWithPagination(String jpql, Class<T> type, Map<String, Object> parameters, int offset, int limit) {
+        TypedQuery<T> query = entityManager.createQuery(jpql, type);
+
+        if (parameters != null) {
+            for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+                query.setParameter(entry.getKey(), entry.getValue());
+            }
+        }
+
+        query.setFirstResult(offset);
+        query.setMaxResults(limit);
+
+        return query.getResultList();
     }
 
     public <T> List<T> executeQuery(String query, Class<T> resultClass, Object... params) {

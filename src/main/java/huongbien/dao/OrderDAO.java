@@ -4,7 +4,9 @@ import huongbien.entity.Order;
 import huongbien.jpa.PersistenceUnit;
 import lombok.NoArgsConstructor;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @NoArgsConstructor
 public class OrderDAO extends GenericDAO<Order> {
@@ -21,19 +23,29 @@ public class OrderDAO extends GenericDAO<Order> {
     }
 
     public List<Order> getAllWithPagination(int offset, int limit) {
-        return findMany("SELECT o FROM Order o ORDER BY o.orderDate DESC", Order.class, offset, limit);
+        String jpql = "SELECT o FROM Order o ORDER BY o.orderDate DESC";
+        return findManyWithPagination(jpql, Order.class, null, offset, limit);
     }
 
     public List<Order> getAllByCustomerPhoneNumberWithPagination(int offset, int limit, String customerPhoneNumber) {
-        return findMany("SELECT o FROM Order o WHERE o.customer.phoneNumber LIKE ?1 ORDER BY o.orderDate DESC", Order.class, customerPhoneNumber + "%", offset, limit);
+        String jpql = "SELECT o FROM Order o WHERE o.customer.id IN (SELECT c.id FROM Customer c WHERE c.phoneNumber LIKE :phoneNumber) ORDER BY o.orderDate DESC";
+        Map<String, Object> params = new HashMap<>();
+        params.put("phoneNumber", customerPhoneNumber + "%");
+        return findManyWithPagination(jpql, Order.class, params, offset, limit);
     }
 
     public List<Order> getAllByEmployeeIdWithPagination(int offset, int limit, String employeeId) {
-        return findMany("SELECT o FROM Order o WHERE o.employee.id LIKE ?1 ORDER BY o.orderDate DESC", Order.class, employeeId + "%", offset, limit);
+        String jpql = "SELECT o FROM Order o WHERE o.employee.id LIKE :employeeId ORDER BY o.orderDate DESC";
+        Map<String, Object> params = new HashMap<>();
+        params.put("employeeId", employeeId + "%");
+        return findManyWithPagination(jpql, Order.class, params, offset, limit);
     }
 
     public List<Order> getAllByIdWithPagination(int offset, int limit, String orderId) {
-        return findMany("SELECT o FROM Order o WHERE o.id LIKE ?1 ORDER BY o.orderDate DESC", Order.class, orderId + "%", offset, limit);
+        String jpql = "SELECT o FROM Order o WHERE o.id LIKE :orderId ORDER BY o.orderDate DESC";
+        Map<String, Object> params = new HashMap<>();
+        params.put("orderId", orderId + "%");
+        return findManyWithPagination(jpql, Order.class, params, offset, limit);
     }
 
     public List<Order> getAll() {

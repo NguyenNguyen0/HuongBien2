@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @NoArgsConstructor
 public class RestaurantTableDAO extends GenericDAO<RestaurantTable> {
@@ -138,16 +139,20 @@ public class RestaurantTableDAO extends GenericDAO<RestaurantTable> {
     }
 
     public List<RestaurantTable> getAllWithPagination(int offset, int limit) {
-        return findMany("SELECT t FROM RestaurantTable t ORDER BY t.floor", RestaurantTable.class, offset, limit);
+        String jpql = "SELECT t FROM Table t ORDER BY t.floor";
+        return findManyWithPagination(jpql, RestaurantTable.class, null, offset, limit);
     }
 
     public List<RestaurantTable> getByNameWithPagination(String name, int offset, int limit) {
-        return findMany("SELECT t FROM RestaurantTable t WHERE t.name LIKE ?1 ORDER BY t.floor", RestaurantTable.class, "%" + name + "%", offset, limit);
+        String jpql = "SELECT t FROM Table t WHERE t.name LIKE :name ORDER BY t.floor";
+        return findManyWithPagination(jpql, RestaurantTable.class, Map.of("name", "%" + name + "%"), offset, limit);
     }
 
     public List<RestaurantTable> getByFloorWithPagination(int offset, int limit, int floor) {
-        return findMany("SELECT t FROM RestaurantTable t WHERE t.floor = ?1 ORDER BY t.floor", RestaurantTable.class, floor, offset, limit);
+        String jpql = "SELECT t FROM Table t WHERE t.floor = :floor ORDER BY t.floor";
+        return findManyWithPagination(jpql, RestaurantTable.class, Map.of("floor", floor), offset, limit);
     }
+
 
     public int countTotalTables() {
         return count("SELECT COUNT(t) FROM RestaurantTable t");
