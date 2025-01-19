@@ -1,9 +1,7 @@
 package huongbien.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -11,6 +9,8 @@ import java.util.Objects;
 @Setter
 @Getter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "table_types")
 public class TableType {
@@ -23,6 +23,12 @@ public class TableType {
     @ToString.Exclude
     @OneToMany(mappedBy = "tableType")
     private List<RestaurantTable> tables;
+
+    public TableType(String id, String name, String description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+    }
 
     @Override
     public boolean equals(Object o) {

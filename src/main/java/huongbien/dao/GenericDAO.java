@@ -46,27 +46,47 @@ public abstract class GenericDAO<T> {
     }
 
     public T findOne(String jpql, Class<T> clazz, Object... params) {
-        TypedQuery<T> query = entityManager.createQuery(jpql, clazz);
-        setQueryParameters(query, params);
-        return query.getSingleResult();
+        try {
+            TypedQuery<T> query = entityManager.createQuery(jpql, clazz);
+            setQueryParameters(query, params);
+            return query.getSingleResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public List<T> findMany(String jpql, Class<T> clazz, Object... params) {
-        TypedQuery<T> query = entityManager.createQuery(jpql, clazz);
-        setQueryParameters(query, params);
-        return query.getResultList();
+        try {
+            TypedQuery<T> query = entityManager.createQuery(jpql, clazz);
+            setQueryParameters(query, params);
+            return query.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public <T> List<T> executeQuery(String query, Class<T> resultClass, Object... params) {
-        TypedQuery<T> executeQuery = entityManager.createQuery(query, resultClass);
-        setQueryParameters(executeQuery, params);
-        return executeQuery.getResultList();
+        try {
+            TypedQuery<T> executeQuery = entityManager.createQuery(query, resultClass);
+            setQueryParameters(executeQuery, params);
+            return executeQuery.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public int count(String jpql, Object... params) {
-        Query query = entityManager.createQuery(jpql);
-        setQueryParameters(query, params);
-        return ((Number) query.getSingleResult()).intValue();
+        try {
+            Query query = entityManager.createQuery(jpql);
+            setQueryParameters(query, params);
+            return ((Number) query.getSingleResult()).intValue();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 
     private void setQueryParameters(Query query, Object... params) {

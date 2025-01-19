@@ -7,6 +7,7 @@ import huongbien.util.JacksonUtil;
 import huongbien.util.Util;
 import jakarta.persistence.EntityManager;
 import net.datafaker.Faker;
+import net.datafaker.providers.base.Cat;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -16,10 +17,12 @@ import java.util.List;
 import java.util.Set;
 
 public class DataGenerator {
-    private static final EntityManager entityManager = JPAUtil.getEntityManager(PersistenceUnit.MARIADB_JPA_CREATE);
+    private static EntityManager entityManager = JPAUtil.getEntityManager(PersistenceUnit.MARIADB_JPA);
     private static final Faker faker = new Faker();
 
+    private static List<Category> categories = new ArrayList<>();
     private static final List<Cuisine> cuisines = new ArrayList<>();
+    private static List<TableType> tableTypes = new ArrayList<>();
     private static final List<RestaurantTable> tables = new ArrayList<>();
     private static final List<Employee> employees = new ArrayList<>();
     private static final List<Employee> receptionist = new ArrayList<>();
@@ -27,6 +30,11 @@ public class DataGenerator {
     private static final List<Promotion> promotions = new ArrayList<>();
 
     public static void main(String[] args) {
+        generateData(2023, 2025, PersistenceUnit.MARIADB_JPA_CREATE);
+    }
+
+    public static void generateData(int fromYear, int toYear, PersistenceUnit persistenceUnit) {
+        entityManager = JPAUtil.getEntityManager(persistenceUnit);
         boolean inserted = true;
         loadTableSampleData(inserted);
         loadCuisineSampleData(inserted);
@@ -35,19 +43,7 @@ public class DataGenerator {
         loadAccountSampleData(inserted);
         loadCustomerSampleData(inserted);
 
-//        for (int i = 0; i < 10; i++) {
-//            Order order = DataGenerator.fakeOrder(LocalDate.of(2023, 12, i + 1));
-//            System.out.println(order);
-//            System.out.println("Order Detail: " + order.getOrderDetails().size());
-//        }
-
-//        for (int i = 0; i < 10; i++) {
-//            Reservation reservation = DataGenerator.fakeReservation(LocalDate.of(2023, 12, i + 1));
-//            System.out.println(reservation);
-//            System.out.println("Food Order: " + (reservation.getFoodOrders() == null ? 0 : reservation.getFoodOrders().size()));
-//        }
-
-        for (int year = 2024; year <= 2025; year++) {
+        for (int year = fromYear; year <= toYear; year++) {
             for (int month = 1; month <= 12; month++) {
                 int maxDay = LocalDate.of(year, month, 1).lengthOfMonth();
                 for (int day = 1; day <= maxDay; day++) {
@@ -72,7 +68,7 @@ public class DataGenerator {
                         }
                     }
 
-                    int customerQuantity = faker.number().numberBetween(0, 3);
+                    int customerQuantity = faker.number().numberBetween(0, 1);
                     for (int i = 0; i < customerQuantity; i++) {
                         Customer customer = fakeCustomer(date);
                         customers.add(customer);
@@ -88,7 +84,7 @@ public class DataGenerator {
                         }
                     }
 
-                    int reservationQuantity = faker.number().numberBetween(0, 3);
+                    int reservationQuantity = faker.number().numberBetween(0, 1);
                     for (int i = 0; i < reservationQuantity; i++) {
                         Reservation reservation = fakeReservation(date);
                         if (inserted) {
@@ -105,7 +101,7 @@ public class DataGenerator {
                         }
                     }
 
-                    int orderQuantity = faker.number().numberBetween(1, 5);
+                    int orderQuantity = faker.number().numberBetween(1, 2);
                     for (int i = 0; i < orderQuantity; i++) {
                         Order order = fakeOrder(date);
                         if (inserted) {
@@ -139,18 +135,50 @@ public class DataGenerator {
     }
 
     public static Employee getRandomEmployee() {
+        if (employees.isEmpty()) {
+            loadEmployeeSampleData(false);
+        }
+
         return receptionist.get(faker.number().numberBetween(0, receptionist.size()));
     }
 
     public static Customer getRandomCustomer() {
+        if (customers.isEmpty()) {
+            loadCustomerSampleData(false);
+        }
+
         return customers.get(faker.number().numberBetween(0, customers.size()));
     }
 
     public static Cuisine getRandomCuisine() {
+        if (cuisines.isEmpty()) {
+            loadCuisineSampleData(false);
+        }
+
         return cuisines.get(faker.number().numberBetween(0, cuisines.size()));
     }
 
+    public static Category getRandomCategory() {
+        if (categories.isEmpty()) {
+            loadCuisineSampleData(false);
+        }
+
+        return categories.get(faker.number().numberBetween(0, categories.size()));
+    }
+
+    public static TableType getRandomTableType() {
+        if (tableTypes.isEmpty()) {
+            loadTableSampleData(false);
+        }
+
+        return tableTypes.get(faker.number().numberBetween(0, tableTypes.size()));
+    }
+
     public static Promotion getPromotion(MembershipLevel membershipLevel) {
+        if (promotions.isEmpty()) {
+            loadPromotionSampleData(false);
+        }
+
         for (Promotion promotion : promotions) {
             if (membershipLevel == promotion.getMembershipLevel())
                 return promotion;
@@ -159,6 +187,10 @@ public class DataGenerator {
     }
 
     public static List<RestaurantTable> getRandomTables(int quantity) {
+        if (tables.isEmpty()) {
+            loadTableSampleData(false);
+        }
+
         Set<RestaurantTable> tables = new HashSet<>();
         for (int i = 0; i < quantity; i++) {
             tables.add(DataGenerator.tables.get(faker.number().numberBetween(0, DataGenerator.tables.size())));
@@ -173,7 +205,7 @@ public class DataGenerator {
         Cuisine[] cuisineJson = JacksonUtil.readObjectFromFile(cuisinePath, Cuisine[].class);
 
         assert cuisineJson != null;
-        Set<Category> categories = new HashSet<>();
+        Set<Category> categoriesSet = new HashSet<>();
         for (Cuisine cuisine : cuisineJson) {
             String imagePath = String.format("%s/src/main/resources/huongbien/img/foods/%s.jpg", rootPath, cuisine.getId());
             byte[] image = Util.readImage(imagePath);
@@ -182,15 +214,14 @@ public class DataGenerator {
                 continue;
             }
             cuisine.setImage(image);
-            System.out.println(cuisine);
             cuisines.add(cuisine);
-            categories.add(cuisine.getCategory());
+            categoriesSet.add(cuisine.getCategory());
         }
 
-        System.out.println(categories);
+        categories = new ArrayList<>(categoriesSet);
 
         if (inserted) {
-            for (Category category : categories) {
+            for (Category category : categoriesSet) {
                 entityManager.getTransaction().begin();
                 entityManager.persist(category);
                 entityManager.getTransaction().commit();
@@ -210,17 +241,16 @@ public class DataGenerator {
         RestaurantTable[] tableJson = JacksonUtil.readObjectFromFile(cuisinePath, RestaurantTable[].class);
 
         assert tableJson != null;
-        Set<TableType> tableTypes = new HashSet<>();
+        Set<TableType> tableTypeSet = new HashSet<>();
         for (RestaurantTable table : tableJson) {
-            System.out.println(table);
             tables.add(table);
-            tableTypes.add(table.getTableType());
+            tableTypeSet.add(table.getTableType());
         }
 
-        System.out.println(tableTypes);
+        tableTypes = new ArrayList<>(tableTypeSet);
 
         if (inserted) {
-            for (TableType tableType : tableTypes) {
+            for (TableType tableType : tableTypeSet) {
                 entityManager.getTransaction().begin();
                 entityManager.persist(tableType);
                 entityManager.getTransaction().commit();
@@ -241,7 +271,6 @@ public class DataGenerator {
 
         assert promotionJson != null;
         for (Promotion promotion : promotionJson) {
-            System.out.println(promotion);
             promotions.add(promotion);
 
             if (inserted) {
@@ -353,8 +382,41 @@ public class DataGenerator {
         }
     }
 
+    public static Category fakeCategory() {
+        return new Category(Integer.toString(faker.number().numberBetween(100, 999)), faker.food().ingredient(), faker.lorem().sentence(10));
+    }
+
+    public static Cuisine fakeCuisine() {
+        return new Cuisine(
+                Integer.toString(faker.number().numberBetween(1000, 9999)),
+                faker.food().dish(),
+                faker.lorem().sentence(10),
+                faker.number().randomDouble(2, 10000, 20000),
+                CuisineStatus.values()[faker.number().numberBetween(0, 2)],
+                getRandomCategory()
+        );
+    }
+
+    public static TableType fakeTableType() {
+        return new TableType(Integer.toString(faker.number().numberBetween(100, 999)), faker.food().spice(), faker.lorem().sentence(10));
+    }
+
+    public static RestaurantTable fakeTable() {
+        return new RestaurantTable(
+                Integer.toString(faker.number().numberBetween(1000, 9999)),
+                faker.food().ingredient(),
+                faker.number().numberBetween(1, 10),
+                faker.number().numberBetween(0, 3),
+                TableStatus.values()[faker.number().numberBetween(0, 2)],
+                getRandomTableType()
+        );
+    }
+
     public static Employee fakeEmployee(LocalDate hireDate) {
-        Employee manager = employees.getFirst();
+        if (employees.isEmpty()) {
+            loadEmployeeSampleData(false);
+        }
+
         String[] positions = {"Nhân viên", "Phục vụ", "Bếp", "Tiếp tân", "Bảo vệ"};
 
         Employee employee = new Employee();
@@ -373,7 +435,7 @@ public class DataGenerator {
         employee.setHourlyPay(faker.number().randomDouble(2, 10000, 20000));
         employee.setSalary(employee.getWorkHours() * employee.getHourlyPay());
         employee.setProfileImage(null);
-        employee.setManager(manager);
+        employee.setManager(null);
 
         return employee;
     }
@@ -414,6 +476,22 @@ public class DataGenerator {
     }
 
     public static Reservation fakeReservation(LocalDate reservationDate) {
+        if (tables.isEmpty()) {
+            loadTableSampleData(false);
+        }
+
+        if (cuisines.isEmpty()) {
+            loadCuisineSampleData(false);
+        }
+
+        if (employees.isEmpty()) {
+            loadEmployeeSampleData(false);
+        }
+
+        if (customers.isEmpty()) {
+            loadCustomerSampleData(false);
+        }
+
         String[] partyTypes = {"Tiệc sinh nhật", "Tiệc gia đình", "Gặp mặt bạn bè", "Tiệc công ty", "Tiệc tất niên", "Ăn bình thường"};
         Reservation reservation = new Reservation();
         reservation.setReservationDate(reservationDate);
@@ -470,6 +548,22 @@ public class DataGenerator {
     }
 
     public static Order fakeOrder(LocalDate orderDate) {
+        if (tables.isEmpty()) {
+            loadTableSampleData(false);
+        }
+
+        if (cuisines.isEmpty()) {
+            loadCuisineSampleData(false);
+        }
+
+        if (employees.isEmpty()) {
+            loadEmployeeSampleData(false);
+        }
+
+        if (customers.isEmpty()) {
+            loadCustomerSampleData(false);
+        }
+
         Order order = new Order();
 
         order.setNotes("");

@@ -2,15 +2,15 @@ package huongbien.entity;
 
 import huongbien.jpa.converter.TableStatusConverter;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Objects;
 
 @Setter
 @Getter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "tables")
 public class RestaurantTable {

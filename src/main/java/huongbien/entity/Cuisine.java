@@ -34,6 +34,15 @@ public class Cuisine {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    public Cuisine(String id, String name, String description, double price, CuisineStatus status, Category category) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.status = status;
+        this.category = category;
+    }
+
     @Override
     public String toString() {
         return "Cuisine{" +
