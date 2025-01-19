@@ -39,6 +39,7 @@ public class CuisineDAO extends GenericDAO<Cuisine> {
         return findMany("SELECT c FROM Cuisine c WHERE c.name LIKE ?1 AND c.category.id LIKE ?2 ORDER BY c.category.id",
                 Cuisine.class, "%" + name + "%", "%" + category + "%");
     }
+
     public int getCountLookUpCuisine(String name, String category) {
         return count("SELECT COUNT(c) FROM Cuisine c WHERE c.name LIKE ?1 AND c.category.id = ?2",
                 "%" + name + "%", category);

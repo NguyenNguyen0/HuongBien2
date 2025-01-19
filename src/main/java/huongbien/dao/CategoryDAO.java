@@ -1,9 +1,7 @@
 package huongbien.dao;
 
 import huongbien.entity.Category;
-import huongbien.jpa.JPAUtil;
 import huongbien.jpa.PersistenceUnit;
-import jakarta.persistence.TypedQuery;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
@@ -11,7 +9,7 @@ import java.util.List;
 @NoArgsConstructor
 public class CategoryDAO extends GenericDAO<Category> {
 
-//    tạo constructor để truyền vào persistenceUnit
+    //    tạo constructor để truyền vào persistenceUnit
     public CategoryDAO(PersistenceUnit persistenceUnit) {
         super(persistenceUnit);
     }

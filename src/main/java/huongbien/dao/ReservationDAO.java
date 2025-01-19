@@ -1,12 +1,10 @@
 package huongbien.dao;
 
 import huongbien.entity.Reservation;
-import huongbien.entity.RestaurantTable;
 import huongbien.jpa.PersistenceUnit;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor

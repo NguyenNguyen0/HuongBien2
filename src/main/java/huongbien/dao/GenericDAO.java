@@ -8,7 +8,7 @@ import jakarta.persistence.TypedQuery;
 
 import java.util.List;
 
-public abstract class GenericDAO <T> {
+public abstract class GenericDAO<T> {
     private final EntityManager entityManager;
 
     public GenericDAO() {
@@ -45,13 +45,13 @@ public abstract class GenericDAO <T> {
         }
     }
 
-    public T findOne(String jpql, Class<T> clazz, Object ...params) {
+    public T findOne(String jpql, Class<T> clazz, Object... params) {
         TypedQuery<T> query = entityManager.createQuery(jpql, clazz);
         setQueryParameters(query, params);
         return query.getSingleResult();
     }
 
-    public List<T> findMany(String jpql, Class<T> clazz, Object ...params) {
+    public List<T> findMany(String jpql, Class<T> clazz, Object... params) {
         TypedQuery<T> query = entityManager.createQuery(jpql, clazz);
         setQueryParameters(query, params);
         return query.getResultList();
@@ -63,7 +63,7 @@ public abstract class GenericDAO <T> {
         return executeQuery.getResultList();
     }
 
-    public int count(String jpql, Object ...params) {
+    public int count(String jpql, Object... params) {
         Query query = entityManager.createQuery(jpql);
         setQueryParameters(query, params);
         return ((Number) query.getSingleResult()).intValue();

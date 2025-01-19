@@ -21,6 +21,6 @@ public class OrderDetailDAO extends GenericDAO<OrderDetail> {
     }
 
     public int getCountOfUnitsSold(String cuisineId) {
-        return count( "SELECT COALESCE(SUM(o.quantity), 0) FROM OrderDetail o WHERE o.cuisine.id = ?1", cuisineId);
+        return count("SELECT COALESCE(SUM(o.quantity), 0) FROM OrderDetail o WHERE o.cuisine.id = ?1", cuisineId);
     }
 }

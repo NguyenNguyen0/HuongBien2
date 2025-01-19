@@ -2,14 +2,10 @@ package huongbien.dao;
 
 import huongbien.entity.Customer;
 import huongbien.jpa.PersistenceUnit;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
-
-import static huongbien.jpa.JPAUtil.getEntityManager;
 
 @NoArgsConstructor
 public class CustomerDAO extends GenericDAO<Customer> {
