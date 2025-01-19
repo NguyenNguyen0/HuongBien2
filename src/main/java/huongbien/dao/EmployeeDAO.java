@@ -41,7 +41,7 @@ public class EmployeeDAO extends GenericDAO<Employee> {
     }
 
     public List<Employee> getByCitizenIDNumber(String citizenIDNumber) {
-        return findMany("SELECT e FROM Employee e WHERE e.citizenIDNumber LIKE ?1", Employee.class, citizenIDNumber + "%");
+        return findMany("SELECT e FROM Employee e WHERE e.citizen_id LIKE ?1", Employee.class, citizenIDNumber + "%");
     }
 
     public List<Employee> getByCriteria(String phoneNumber, String name, String employeeId) {
