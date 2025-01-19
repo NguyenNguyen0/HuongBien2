@@ -30,10 +30,10 @@ public class DataGenerator {
     private static final List<Promotion> promotions = new ArrayList<>();
 
     public static void main(String[] args) {
-        generateData(2023, 2025, PersistenceUnit.MARIADB_JPA_CREATE);
+        generateData(2024, 2025, 12, PersistenceUnit.MARIADB_JPA_CREATE);
     }
 
-    public static void generateData(int fromYear, int toYear, PersistenceUnit persistenceUnit) {
+    public static void generateData(int fromYear, int toYear, int maxMonth, PersistenceUnit persistenceUnit) {
         entityManager = JPAUtil.getEntityManager(persistenceUnit);
         boolean inserted = true;
         loadTableSampleData(inserted);
@@ -44,12 +44,12 @@ public class DataGenerator {
         loadCustomerSampleData(inserted);
 
         for (int year = fromYear; year <= toYear; year++) {
-            for (int month = 1; month <= 12; month++) {
+            for (int month = 1; month <= maxMonth; month++) {
                 int maxDay = LocalDate.of(year, month, 1).lengthOfMonth();
                 for (int day = 1; day <= maxDay; day++) {
                     LocalDate date = LocalDate.of(year, month, day);
 
-                    int employeeQuantity = faker.number().numberBetween(0, 1);
+                    int employeeQuantity = faker.number().numberBetween(0, 2);
                     for (int i = 0; i < employeeQuantity; i++) {
                         Employee employee = fakeEmployee(date);
                         employees.add(employee);
@@ -68,7 +68,7 @@ public class DataGenerator {
                         }
                     }
 
-                    int customerQuantity = faker.number().numberBetween(0, 1);
+                    int customerQuantity = faker.number().numberBetween(1, 2);
                     for (int i = 0; i < customerQuantity; i++) {
                         Customer customer = fakeCustomer(date);
                         customers.add(customer);
@@ -84,7 +84,7 @@ public class DataGenerator {
                         }
                     }
 
-                    int reservationQuantity = faker.number().numberBetween(0, 1);
+                    int reservationQuantity = faker.number().numberBetween(1, 2);
                     for (int i = 0; i < reservationQuantity; i++) {
                         Reservation reservation = fakeReservation(date);
                         if (inserted) {
@@ -101,7 +101,7 @@ public class DataGenerator {
                         }
                     }
 
-                    int orderQuantity = faker.number().numberBetween(1, 2);
+                    int orderQuantity = faker.number().numberBetween(1, 3);
                     for (int i = 0; i < orderQuantity; i++) {
                         Order order = fakeOrder(date);
                         if (inserted) {
@@ -460,7 +460,7 @@ public class DataGenerator {
     }
 
     public static List<FoodOrder> fakeFoodOrders(Reservation reservation) {
-        int quantity = faker.number().numberBetween(0, 5);
+        int quantity = faker.number().numberBetween(1, 5);
         Set<FoodOrder> foodOrders = new HashSet<>();
         for (int i = 0; i < quantity; i++) {
             FoodOrder foodOrder = new FoodOrder();

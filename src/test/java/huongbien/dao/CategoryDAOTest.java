@@ -1,33 +1,23 @@
-package huongbien;
+package huongbien.dao;
 
-import huongbien.dao.CategoryDAO;
 import huongbien.data.DataGenerator;
 import huongbien.entity.Category;
 import huongbien.jpa.PersistenceUnit;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestCategoryDAO {
-    private static CategoryDAO categoryDAO;
-
-    @BeforeAll
-    public static void setUp() {
-        System.out.println("Setting up...");
-        DataGenerator.generateData(2025, 2025, PersistenceUnit.MARIADB_JPA_CREATE);
-        categoryDAO = new CategoryDAO(PersistenceUnit.MARIADB_JPA);
-        System.out.println("Done setting up...");
-    }
+public class CategoryDAOTest {
+    private static final CategoryDAO categoryDAO = new CategoryDAO(PersistenceUnit.MARIADB_JPA);
 
     @Test
-    public void testAdd() {
+    public void add() {
         assertTrue(categoryDAO.add(DataGenerator.fakeCategory()));
         assertFalse(categoryDAO.add(DataGenerator.getRandomCategory()));
     }
 
     @Test
-    public void testUpdate() {
+    public void update() {
         Category category = DataGenerator.fakeCategory();
         category.setId("CG001");
         category.setName("Khai vị");
@@ -36,24 +26,24 @@ public class TestCategoryDAO {
     }
 
     @Test
-    public void testGetById() {
+    public void getById() {
         assertNull(categoryDAO.getById("1"));
 
         assertNotNull(categoryDAO.getById("CG001"));
     }
 
     @Test
-    public void testGetAll() {
+    public void getAll() {
         assertNotNull(categoryDAO.getAll());
     }
 
     @Test
-    public void testGetByName() {
+    public void getByName() {
         assertNotNull(categoryDAO.getByName("Khai vị"));
     }
 
     @Test
-    public void testCountAll() {
+    public void countAll() {
         assertTrue(categoryDAO.countAll() > 0);
     }
 }
