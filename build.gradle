@@ -13,10 +13,6 @@ repositories {
   mavenCentral()
 }
 
-ext {
-  junitVersion = '5.10.2'
-}
-
 tasks.withType(JavaCompile) {
   options.encoding = 'UTF-8'
 }
@@ -47,11 +43,14 @@ dependencies {
     exclude(group: 'org.jetbrains.kotlin')
   }
 
+//  DataFaker
   implementation 'net.datafaker:datafaker:2.4.2'
 
   //  Lombok
   compileOnly 'org.projectlombok:lombok:1.18.36'
   annotationProcessor 'org.projectlombok:lombok:1.18.36'
+  testCompileOnly 'org.projectlombok:lombok:1.18.36'
+  testAnnotationProcessor 'org.projectlombok:lombok:1.18.36'
 
   //  Jackson JSON
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.4'
@@ -69,12 +68,14 @@ dependencies {
   implementation 'org.hibernate.orm:hibernate-jpamodelgen:6.2.7.Final'
   implementation 'com.h2database:h2:2.1.214'
 
-  testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
-  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+  //  JUnit 5
+  testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
+  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
 }
 
 test {
-useJUnitPlatform()}
+  useJUnitPlatform()
+}
 
 jlink {
   imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")
