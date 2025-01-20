@@ -18,11 +18,25 @@ public class AccountDAO extends GenericDAO<Account> {
     }
 
     public Account getByUsername(String username) {
-        return findOne("SELECT a FROM Account a WHERE a.username LIKE ?1", Account.class, "%" + username + "%");
+        return findOne("SELECT a FROM Account a WHERE a.username = ?1", Account.class, username);
     }
 
     public Account getByEmail(String email) {
         return findOne("SELECT a FROM Account a WHERE a.email = ?1", Account.class, email);
     }
-}
 
+    public boolean addAccount(Account account) {
+        return add(account);
+    }
+
+    public boolean updateAccount(Account account) {
+        return update(account);
+    }
+
+    public boolean softDelete(Account account) {
+        account.setActive(false);
+        return update(account);
+    }
+
+
+}
