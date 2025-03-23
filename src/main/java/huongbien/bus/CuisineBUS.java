@@ -1,8 +1,10 @@
-package com.huongbien.bus;
+package huongbien.bus;
 
 
-import com.huongbien.dao.CuisineDAO;
-import com.huongbien.entity.Cuisine;
+import huongbien.dao.CuisineDAO;
+import huongbien.entity.Cuisine;
+import huongbien.entity.CuisineStatus;
+import huongbien.jpa.PersistenceUnit;
 
 import java.util.List;
 
@@ -10,7 +12,7 @@ public class CuisineBUS {
     private final CuisineDAO cuisineDao;
 
     public CuisineBUS() {
-        cuisineDao = CuisineDAO.getInstance();
+        cuisineDao = new CuisineDAO(PersistenceUnit.MARIADB_JPA);
     }
 
     public List<String> getAllCuisineNames() {
@@ -65,14 +67,14 @@ public class CuisineBUS {
         if (cuisineId == null) {
             return false;
         }
-        return cuisineDao.updateCuisineStatus(cuisineId, "Ngừng bán");
+        return cuisineDao.updateCuisineStatus(cuisineId, CuisineStatus.DISCONTINUED);
     }
 
     public boolean updateCuisineInfo(Cuisine cuisine) {
         if (cuisine == null) {
             return false;
         }
-        return cuisineDao.updateCuisineInfo(cuisine);
+        return cuisineDao.update(cuisine);
     }
 
     public boolean addCuisine(Cuisine cuisine) {

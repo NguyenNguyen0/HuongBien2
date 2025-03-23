@@ -1,13 +1,13 @@
-package com.huongbien.ui.controller;
+package huongbien.ui.controller;
 
-import com.huongbien.bus.CuisineBUS;
-import com.huongbien.dao.CategoryDAO;
-import com.huongbien.dao.CuisineDAO;
-import com.huongbien.entity.Category;
-import com.huongbien.entity.Cuisine;
-import com.huongbien.utils.Converter;
-import com.huongbien.utils.Pagination;
-import com.huongbien.utils.ToastsMessage;
+import huongbien.bus.CuisineBUS;
+import huongbien.dao.CategoryDAO;
+import huongbien.entity.Category;
+import huongbien.entity.Cuisine;
+import huongbien.jpa.PersistenceUnit;
+import huongbien.util.Converter;
+import huongbien.util.Pagination;
+import huongbien.util.ToastsMessage;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,7 +26,6 @@ import javafx.util.StringConverter;
 
 import java.io.File;
 import java.net.URL;
-import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.List;
@@ -83,7 +82,7 @@ public class CuisineManagementController implements Initializable {
 
     private final CuisineBUS cuisineBUS = new CuisineBUS();
 
-    private final Image DEFAULT_IMAGE = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/huongbien/icon/all/gallery-512px.png")));
+    private final Image DEFAULT_IMAGE = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/huongbien/icon/all/gallery-512px.png")));
 
     private Pagination<Cuisine> cuisinePagination;
 
@@ -101,7 +100,7 @@ public class CuisineManagementController implements Initializable {
 
     public void setCuisineTableColumns() {
         cuisineTable.setPlaceholder(new Label("Không có món ăn nào"));
-        cuisineIdColumn.setCellValueFactory(new PropertyValueFactory<>("cuisineId"));
+        cuisineIdColumn.setCellValueFactory(new PropertyValueFactory<>("Id"));
         cuisineNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         cuisinePriceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
         cuisineStatusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
@@ -139,7 +138,7 @@ public class CuisineManagementController implements Initializable {
     }
 
     private void setCategoryComboBoxValue() {
-        CategoryDAO categoryDAO = CategoryDAO.getInstance();
+        CategoryDAO categoryDAO = new CategoryDAO(PersistenceUnit.MARIADB_JPA);
         List<Category> categoryList = categoryDAO.getAll();
         ObservableList<Category> categories = FXCollections.observableArrayList(categoryList);
         cuisineCategoryComboBox.setItems(categories);
@@ -273,7 +272,7 @@ public class CuisineManagementController implements Initializable {
         cuisinePriceField.setText(new DecimalFormat("#,###").format(cuisine.getPrice()));
         cuisineCategoryComboBox.getSelectionModel().select(cuisine.getCategory());
         cuisineDescriptionTextArea.setText(cuisine.getDescription());
-        cuisineStatusComboBox.getSelectionModel().select(cuisine.getStatus());
+        cuisineStatusComboBox.getSelectionModel().select(cuisine.getStatus().getStatus());
         deleteCuisineButton.setVisible(true);
         clearCuisineButton.setVisible(true);
         swapModeCuisineButton.setVisible(true);
@@ -327,7 +326,7 @@ public class CuisineManagementController implements Initializable {
     private void updateCuisine() {
         Cuisine selectedItem = cuisineTable.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
-            Cuisine cuisine = createCuisineFromForm(selectedItem.getCuisineId());
+            Cuisine cuisine = createCuisineFromForm(selectedItem.getId());
             if (cuisineBUS.updateCuisineInfo(cuisine)) {
                 ToastsMessage.showMessage("Sửa món thành công", "success");
             } else {
@@ -365,7 +364,7 @@ public class CuisineManagementController implements Initializable {
     private void onDeleteCuisineButtonClicked(ActionEvent event) {
         Cuisine selectedItem = cuisineTable.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
-            if (cuisineBUS.stopSellCuisine(selectedItem.getCuisineId())) {
+            if (cuisineBUS.stopSellCuisine(selectedItem.getId())) {
                 ToastsMessage.showMessage("Ngừng bán món thành công", "success");
             } else {
                 ToastsMessage.showMessage("Ngừng bán món thất bại", "error");

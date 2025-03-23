@@ -1,7 +1,7 @@
-package com.huongbien.bus;
+package huongbien.bus;
 
-import com.huongbien.dao.StatisticsDAO;
-import com.huongbien.entity.Customer;
+import huongbien.dao.StatisticsDAO;
+import huongbien.entity.Customer;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

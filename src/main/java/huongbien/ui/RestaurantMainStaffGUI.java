@@ -1,4 +1,4 @@
-package com.huongbien.ui;
+package huongbien.ui;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -19,9 +19,9 @@ public class RestaurantMainStaffGUI extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/com/huongbien/fxml/RestaurantMainStaff.fxml")));
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/huongbien/fxml/RestaurantMainStaff.fxml")));
         primaryStage.initStyle(StageStyle.UNDECORATED);
-        primaryStage.getIcons().add(new Image("/com/huongbien/icon/favicon/favicon-logo-restaurant-128px.png"));
+        primaryStage.getIcons().add(new Image("/huongbien/icon/favicon/favicon-logo-restaurant-128px.png"));
         primaryStage.setScene(new Scene(root, 1200, 700));
         primaryStage.setTitle("Dashboard - Huong Bien Restaurant");
         primaryStage.setMaximized(true);

@@ -1,7 +1,7 @@
-package com.huongbien.bus;
+package huongbien.bus;
 
-import com.huongbien.dao.FoodOrderDAO;
-import com.huongbien.entity.FoodOrder;
+import huongbien.dao.FoodOrderDAO;
+import huongbien.entity.FoodOrder;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ public class FoodOrderBUS {
     private final FoodOrderDAO foodOrderDao;
 
     public FoodOrderBUS() {
-        foodOrderDao = FoodOrderDAO.getInstance();
+        foodOrderDao = new FoodOrderDAO();
     }
 
     public List<FoodOrder> getFoodOrdersByReservationId(String reservationId) {

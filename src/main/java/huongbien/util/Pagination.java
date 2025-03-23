@@ -1,4 +1,4 @@
-package com.huongbien.utils;
+package huongbien.util;
 
 import java.util.List;
 import java.util.function.BiFunction;

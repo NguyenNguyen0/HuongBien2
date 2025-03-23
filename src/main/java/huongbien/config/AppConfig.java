@@ -1,4 +1,4 @@
-package com.huongbien.config;
+package huongbien.config;
 
 import io.github.cdimascio.dotenv.Dotenv;
 

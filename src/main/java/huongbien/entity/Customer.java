@@ -43,6 +43,19 @@ public class Customer {
     @Column(name = "membership_level")
     private MembershipLevel membershipLevel;
 
+    public Customer(String name, String address, Gender gender, String phone, String email, LocalDate birthday) {
+        setId(generateId(LocalDate.now()));
+        setName(name);
+        setAddress(address);
+        setGender(gender);
+        setPhoneNumber(phoneNumber);
+        setEmail(email);
+        setBirthday(birthday);
+        setRegistrationDate(LocalDate.now());
+        setAccumulatedPoints(0);
+        setMembershipLevel(MembershipLevel.BRONZE);
+    }
+
     public static String generateId(LocalDate registrationDate) {
         if (registrationDate == null) {
             registrationDate = LocalDate.now();

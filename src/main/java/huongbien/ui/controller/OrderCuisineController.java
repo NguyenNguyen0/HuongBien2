@@ -1,19 +1,20 @@
-package com.huongbien.ui.controller;
+package huongbien.ui.controller;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.huongbien.config.Constants;
-import com.huongbien.config.Variable;
-import com.huongbien.dao.CategoryDAO;
-import com.huongbien.dao.CuisineDAO;
-import com.huongbien.dao.TableDAO;
-import com.huongbien.entity.Category;
-import com.huongbien.entity.Cuisine;
-import com.huongbien.entity.OrderDetail;
-import com.huongbien.entity.Table;
-import com.huongbien.utils.ToastsMessage;
-import com.huongbien.utils.Utils;
+import huongbien.config.Constants;
+import huongbien.config.Variable;
+import huongbien.dao.CategoryDAO;
+import huongbien.dao.CuisineDAO;
+import huongbien.dao.TableDAO;
+import huongbien.entity.Category;
+import huongbien.entity.Cuisine;
+import huongbien.entity.OrderDetail;
+import huongbien.entity.Table;
+import huongbien.jpa.PersistenceUnit;
+import huongbien.util.ToastsMessage;
+import huongbien.util.Utils;
 import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -79,11 +80,12 @@ public class OrderCuisineController implements Initializable {
     }
 
     public void loadCategoryComboBox() {
-        List<Category> categories = CategoryDAO.getInstance().getAll();
+        CategoryDAO categoryDAO = new CategoryDAO();
+        List<Category> categories = categoryDAO.getAll();
         ObservableList<Pair<String, String>> categoryItems = FXCollections.observableArrayList();
         categoryItems.add(new Pair<>("-1", "Loại món"));
         for (Category category : categories) {
-            categoryItems.add(new Pair<>(String.valueOf(category.getCategoryId()), category.getName()));
+            categoryItems.add(new Pair<>(String.valueOf(category.getId()), category.getName()));
         }
         categoryComboBox.setItems(categoryItems);
         categoryComboBox.setConverter(new StringConverter<Pair<String, String>>() {
@@ -106,7 +108,7 @@ public class OrderCuisineController implements Initializable {
         try {
             for (Cuisine cuisine : cuisines) {
                 FXMLLoader fxmlLoader = new FXMLLoader();
-                fxmlLoader.setLocation(getClass().getResource("/com/huongbien/fxml/OrderCuisineItem.fxml"));
+                fxmlLoader.setLocation(getClass().getResource("/huongbien/fxml/OrderCuisineItem.fxml"));
                 VBox cuisineBox = fxmlLoader.load();
                 OrderCuisineItemController orderCuisineItemController = fxmlLoader.getController();
                 orderCuisineItemController.setCuisineData(cuisine);
@@ -132,7 +134,7 @@ public class OrderCuisineController implements Initializable {
         try {
             for (OrderDetail orderDetail : orderDetails) {
                 FXMLLoader fxmlLoader = new FXMLLoader();
-                fxmlLoader.setLocation(getClass().getResource("/com/huongbien/fxml/OrderCuisineBillItem.fxml"));
+                fxmlLoader.setLocation(getClass().getResource("/huongbien/fxml/OrderCuisineBillItem.fxml"));
                 HBox billBox = fxmlLoader.load();
                 OrderCuisineBillItemController orderCuisineBillItemController = fxmlLoader.getController();
                 orderCuisineBillItemController.setDataBill(orderDetail);
@@ -165,7 +167,7 @@ public class OrderCuisineController implements Initializable {
             double money = jsonObject.get("Cuisine Money").getAsDouble();
             //set item cuisine bill
             Cuisine cuisine = new Cuisine();
-            cuisine.setCuisineId(id);
+            cuisine.setId(id);
             cuisine.setName(name);
             cuisine.setPrice(price);
             OrderDetail orderDetail = new OrderDetail(null, quantity, note, money, cuisine);
@@ -175,7 +177,7 @@ public class OrderCuisineController implements Initializable {
     }
 
     private List<Cuisine> getCuisineData(String cuisineName, String category) {
-        CuisineDAO cuisineDAO = CuisineDAO.getInstance();
+        CuisineDAO cuisineDAO = new CuisineDAO();
         return cuisineDAO.getLookUpCuisine(cuisineName, category);
     }
 
@@ -202,14 +204,14 @@ public class OrderCuisineController implements Initializable {
         for (JsonElement element : jsonArrayTable) {
             JsonObject jsonObject = element.getAsJsonObject();
             String id = jsonObject.get("Table ID").getAsString();
-            TableDAO dao_table = TableDAO.getInstance();
+            TableDAO dao_table = new TableDAO(PersistenceUnit.MARIADB_JPA);
             Table table = dao_table.getById(id);
             if (table != null) {
                 //set table text
                 String floorStr = (table.getFloor() == 0) ? "Tầng trệt" : "Tầng " + table.getFloor();
                 tableInfoBuilder.append(table.getName()).append(" (").append(floorStr).append("), ");
                 //calculator table amount
-                tableAmount += table.getTableType().getTableId().equals(Variable.tableVipID) ? Variable.tableVipPrice : 0;
+                tableAmount += table.getTableType().getId().equals(Variable.tableVipID) ? Variable.tableVipPrice : 0;
             } else {
                 tableInfoBuilder.append("Thông tin bàn không xác định, ");
             }

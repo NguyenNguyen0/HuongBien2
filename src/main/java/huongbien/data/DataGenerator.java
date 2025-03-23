@@ -7,7 +7,6 @@ import huongbien.util.JacksonUtil;
 import huongbien.util.Util;
 import jakarta.persistence.EntityManager;
 import net.datafaker.Faker;
-import net.datafaker.providers.base.Cat;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -23,14 +22,14 @@ public class DataGenerator {
     private static List<Category> categories = new ArrayList<>();
     private static final List<Cuisine> cuisines = new ArrayList<>();
     private static List<TableType> tableTypes = new ArrayList<>();
-    private static final List<RestaurantTable> tables = new ArrayList<>();
+    private static final List<Table> tables = new ArrayList<>();
     private static final List<Employee> employees = new ArrayList<>();
     private static final List<Employee> receptionist = new ArrayList<>();
     private static final List<Customer> customers = new ArrayList<>();
     private static final List<Promotion> promotions = new ArrayList<>();
 
     public static void main(String[] args) {
-        generateData(2024, 2025, 12, PersistenceUnit.MARIADB_JPA_CREATE);
+        generateData(2025, 2026, 12, PersistenceUnit.MARIADB_JPA_CREATE);
     }
 
     public static void generateData(int fromYear, int toYear, int maxMonth, PersistenceUnit persistenceUnit) {
@@ -186,12 +185,12 @@ public class DataGenerator {
         return null;
     }
 
-    public static List<RestaurantTable> getRandomTables(int quantity) {
+    public static List<Table> getRandomTables(int quantity) {
         if (tables.isEmpty()) {
             loadTableSampleData(false);
         }
 
-        Set<RestaurantTable> tables = new HashSet<>();
+        Set<Table> tables = new HashSet<>();
         for (int i = 0; i < quantity; i++) {
             tables.add(DataGenerator.tables.get(faker.number().numberBetween(0, DataGenerator.tables.size())));
         }
@@ -238,11 +237,11 @@ public class DataGenerator {
     public static void loadTableSampleData(boolean inserted) {
         String rootPath = System.getProperty("user.dir");
         String cuisinePath = rootPath + "/src/main/resources/huongbien/data/tables.json";
-        RestaurantTable[] tableJson = JacksonUtil.readObjectFromFile(cuisinePath, RestaurantTable[].class);
+        Table[] tableJson = JacksonUtil.readObjectFromFile(cuisinePath, Table[].class);
 
         assert tableJson != null;
         Set<TableType> tableTypeSet = new HashSet<>();
-        for (RestaurantTable table : tableJson) {
+        for (Table table : tableJson) {
             tables.add(table);
             tableTypeSet.add(table.getTableType());
         }
@@ -256,7 +255,7 @@ public class DataGenerator {
                 entityManager.getTransaction().commit();
             }
 
-            for (RestaurantTable table : tables) {
+            for (Table table : tables) {
                 entityManager.getTransaction().begin();
                 entityManager.persist(table);
                 entityManager.getTransaction().commit();
@@ -401,8 +400,8 @@ public class DataGenerator {
         return new TableType(Integer.toString(faker.number().numberBetween(100, 999)), faker.food().spice(), faker.lorem().sentence(10));
     }
 
-    public static RestaurantTable fakeTable() {
-        return new RestaurantTable(
+    public static Table fakeTable() {
+        return new Table(
                 Integer.toString(faker.number().numberBetween(1000, 9999)),
                 faker.food().ingredient(),
                 faker.number().numberBetween(1, 10),

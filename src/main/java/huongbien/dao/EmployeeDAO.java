@@ -5,6 +5,7 @@ import huongbien.jpa.PersistenceUnit;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 @NoArgsConstructor
 public class EmployeeDAO extends GenericDAO<Employee> {
@@ -83,7 +84,8 @@ public class EmployeeDAO extends GenericDAO<Employee> {
     }
 
     public List<Employee> getAllStillWorkingWithPagination(int offset, int limit) {
-        return findMany("SELECT e FROM Employee e WHERE e.status = ?1 ORDER BY e.position", Employee.class, offset, limit, "Đang làm");
+        Map<String, Object> params = Map.of("status", "Đang làm");
+        return findManyWithPagination("SELECT e FROM Employee e WHERE e.status = :status ORDER BY e.position", Employee.class, params, offset, limit);
     }
 
     public List<Employee> getByPositionWithPagination(String position, int offset, int limit) {
@@ -116,5 +118,37 @@ public class EmployeeDAO extends GenericDAO<Employee> {
 
     public int countAll() {
         return count("SELECT COUNT(e) FROM Employee e");
+    }
+
+    public boolean updateStatus(String employeeId, String status) {
+        Employee employee = getOneById(employeeId);
+        if (employee == null) return false;
+        employee.setStatus(status);
+        return update(employee);
+    }
+
+    public boolean updateEmployeeInfo(Employee employee) {
+        return update(employee);
+    }
+
+    public boolean updateEmployeeInfoProfile(Employee employee) {
+        Employee employeeInDB = getOneById(employee.getId());
+        if (employeeInDB == null) return false;
+        employeeInDB.setName(employee.getName());
+        employeeInDB.setGender(employee.getGender());
+        employeeInDB.setBirthday(employee.getBirthday());
+        employeeInDB.setCitizenId(employee.getCitizenId());
+        employeeInDB.setPhoneNumber(employee.getPhoneNumber());
+        employeeInDB.setEmail(employee.getEmail());
+        employeeInDB.setAddress(employee.getAddress());
+        employeeInDB.setProfileImage(employee.getProfileImage());
+        return update(employeeInDB);
+    }
+
+    public void updateWorkHour(String id, double v) {
+        Employee employee = getOneById(id);
+        if (employee == null) return;
+        employee.setWorkHours(v);
+        update(employee);
     }
 }

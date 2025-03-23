@@ -1,23 +1,24 @@
-package com.huongbien.ui.controller;
+package huongbien.ui.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.huongbien.bus.CustomerBUS;
-import com.huongbien.bus.TableBUS;
-import com.huongbien.config.Constants;
-import com.huongbien.config.Variable;
-import com.huongbien.dao.CustomerDAO;
-import com.huongbien.dao.PromotionDAO;
-import com.huongbien.dao.ReservationDAO;
-import com.huongbien.dao.TableDAO;
-import com.huongbien.entity.*;
-import com.huongbien.utils.ClearJSON;
-import com.huongbien.utils.Converter;
-import com.huongbien.utils.ToastsMessage;
-import com.huongbien.utils.Utils;
+import huongbien.bus.CustomerBUS;
+import huongbien.bus.TableBUS;
+import huongbien.config.Constants;
+import huongbien.config.Variable;
+import huongbien.dao.CustomerDAO;
+import huongbien.dao.PromotionDAO;
+import huongbien.dao.ReservationDAO;
+import huongbien.dao.TableDAO;
+import huongbien.entity.*;
+import huongbien.jpa.PersistenceUnit;
+import huongbien.util.ClearJSON;
+import huongbien.util.Converter;
+import huongbien.util.ToastsMessage;
+import huongbien.util.Utils;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -173,7 +174,7 @@ public class ReservationManagementController implements Initializable {
         countPaymentQueueLabel.setText("( " + Utils.readJsonFromFile(Constants.PAYMENT_QUEUE_PATH).size() + " )");
         disablePayQueueButton();
         //Pre-Order
-        statusPreOrderComboBox.getItems().addAll(Variable.statusReservation[0], Variable.statusReservation[1], Variable.statusReservation[2]);
+        statusPreOrderComboBox.getItems().addAll(ReservationStatus.PENDING.getStatus(), ReservationStatus.COMPLETED.getStatus(), ReservationStatus.CANCELLED.getStatus());
         statusPreOrderComboBox.getSelectionModel().selectFirst();
         receivePreOrderDatePicker.setValue(LocalDate.now());
         customerPreOrderLabel.setText("");
@@ -188,7 +189,7 @@ public class ReservationManagementController implements Initializable {
     //TODO: Payment Queue
     //function area
     private void loadPaymentQueueDataFromJSON() {
-        CustomerDAO customerDAO = CustomerDAO.getInstance();
+        CustomerDAO customerDAO = new CustomerDAO(PersistenceUnit.MARIADB_JPA);
         paymentQueueTableView.setPlaceholder(new Label("Không có dữ liệu"));
         numericalPaymentQueueOrderColumn.setCellValueFactory(cellData ->
                 new SimpleObjectProperty<>((Integer) cellData.getValue().get("Numerical Order"))
@@ -204,7 +205,7 @@ public class ReservationManagementController implements Initializable {
             return new SimpleObjectProperty<>(customerName);
         });
 
-        PromotionDAO promotionDAO = PromotionDAO.getInstance();
+        PromotionDAO promotionDAO = new PromotionDAO(PersistenceUnit.MARIADB_JPA);
         promotionPaymentQueueColumn.setCellValueFactory(cellData -> {
             String promotionId = (String) cellData.getValue().get("Promotion ID");
             if (promotionId == null || promotionId.isEmpty()) {
@@ -326,10 +327,10 @@ public class ReservationManagementController implements Initializable {
                 if (order.get("Numerical Order").getAsInt() == numericalOrder) {
                     // Lấy thông tin khách hàng
                     String customerID = order.has("Customer ID") ? order.get("Customer ID").getAsString() : "";
-                    Customer customer = customerID.isEmpty() ? null : CustomerDAO.getInstance().getById(customerID);
+                    Customer customer = customerID.isEmpty() ? null : new CustomerDAO(PersistenceUnit.MARIADB_JPA).getById(customerID);
                     String customerName = (customer != null) ? customer.getName() : "Khách vãng lai";
                     // Lấy thông tin khu vực bàn
-                    TableDAO tableDAO = TableDAO.getInstance();
+                    TableDAO tableDAO = new TableDAO(PersistenceUnit.MARIADB_JPA);
                     JsonArray tableIDArray = order.getAsJsonArray("Table ID");
                     StringBuilder tableArea = new StringBuilder();
                     for (int j = 0; j < tableIDArray.size(); j++) {
@@ -349,7 +350,7 @@ public class ReservationManagementController implements Initializable {
                     }
                     // Lấy thông tin khuyến mãi
                     String promotionID = order.has("Promotion ID") ? order.get("Promotion ID").getAsString() : "";
-                    Promotion promotion = promotionID.isEmpty() ? null : PromotionDAO.getInstance().getById(promotionID);
+                    Promotion promotion = promotionID.isEmpty() ? null : new PromotionDAO(PersistenceUnit.MARIADB_JPA).getById(promotionID);
                     String promotionName = (promotion != null) ? promotion.getName() : "Không áp dụng";
 
                     JsonArray cuisineOrderArray = order.getAsJsonArray("Cuisine Order");
@@ -390,13 +391,13 @@ public class ReservationManagementController implements Initializable {
 
     //Pre-Order here
     private void setPreOrderTableViewColumn() {
-        ReservationDAO reservationDAO = ReservationDAO.getInstance();
+        ReservationDAO reservationDAO = new ReservationDAO();
         CustomerBUS customerBUS = new CustomerBUS();
         String id = "";
         if(!searchReservation.getText().isEmpty()) {
             String search = searchReservation.getText();
             if(customerBUS.getCustomerSearchReservation(search) != null){
-                id = customerBUS.getCustomerSearchReservation(search).getCustomerId();
+                id = customerBUS.getCustomerSearchReservation(search).getId();
             }
         }
         //set Quantity Pre Order
@@ -406,7 +407,7 @@ public class ReservationManagementController implements Initializable {
         preOrderTableView.getItems().clear();
         preOrderTableView.setPlaceholder(new Label("Không có dữ liệu"));
         List<Reservation> reservationList = reservationDAO.getStatusReservationByDate(receivePreOrderDatePicker.getValue(), statusPreOrderComboBox.getValue(), id);
-        idPreOrderColumn.setCellValueFactory(new PropertyValueFactory<>("reservationId"));
+        idPreOrderColumn.setCellValueFactory(new PropertyValueFactory<>("Id"));
         customerPreOrderColumn.setCellValueFactory(cellData -> {
             Customer customer = cellData.getValue().getCustomer();
             return new SimpleStringProperty(customer.getName());
@@ -477,7 +478,7 @@ public class ReservationManagementController implements Initializable {
         int selectedIndex = preOrderTableView.getSelectionModel().getSelectedIndex();
         if (selectedIndex != -1) {
             Reservation reservation = preOrderTableView.getSelectionModel().getSelectedItem();
-            String id = reservation.getReservationId();
+            String id = reservation.getId();
             ToastsMessage.showMessage("Đang cập nhật bàn cho đơn hàng đặt trước: " + id, "success");
             //reservation
             JsonArray jsonArrayReservation = new JsonArray();
@@ -492,7 +493,7 @@ public class ReservationManagementController implements Initializable {
             JsonArray jsonArrayCuisine = new JsonArray();
             for (FoodOrder foodOrder : foodOrders) {
                 JsonObject jsonObjectCuisine = new JsonObject();
-                jsonObjectCuisine.addProperty("Cuisine ID", foodOrder.getCuisine().getCuisineId());
+                jsonObjectCuisine.addProperty("Cuisine ID", foodOrder.getCuisine().getId());
                 jsonObjectCuisine.addProperty("Cuisine Name", foodOrder.getCuisine().getName());
                 jsonObjectCuisine.addProperty("Cuisine Price", foodOrder.getCuisine().getPrice());
                 jsonObjectCuisine.addProperty("Cuisine Note", foodOrder.getNote());
@@ -515,7 +516,7 @@ public class ReservationManagementController implements Initializable {
             //customer
             JsonArray jsonArrayCustomer = new JsonArray();
             JsonObject jsonObjectCustomer = new JsonObject();
-            jsonObjectCustomer.addProperty("Customer ID", reservation.getCustomer().getCustomerId());
+            jsonObjectCustomer.addProperty("Customer ID", reservation.getCustomer().getId());
             jsonArrayCustomer.add(jsonObjectCustomer);
             Utils.writeJsonToFile(jsonArrayCustomer, Constants.CUSTOMER_PATH);
         }
@@ -528,7 +529,7 @@ public class ReservationManagementController implements Initializable {
 
     @FXML
     void onConfirmTablePreOrderButtonAction(ActionEvent event) throws IOException {
-        ReservationDAO reservationDAO = ReservationDAO.getInstance();
+        ReservationDAO reservationDAO = new ReservationDAO();
         int selectedIndex = preOrderTableView.getSelectionModel().getSelectedIndex();
         if (selectedIndex != -1) {
             Reservation reservation = preOrderTableView.getSelectionModel().getSelectedItem();
@@ -553,13 +554,13 @@ public class ReservationManagementController implements Initializable {
             ////----Customer
             JsonArray jsonArrayCustomer = new JsonArray();
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("Customer ID", reservation.getCustomer().getCustomerId());
+            jsonObject.addProperty("Customer ID", reservation.getCustomer().getId());
             jsonArrayCustomer.add(jsonObject);
             ////----Cuisine
             JsonArray jsonArrayCuisine = new JsonArray();
             for (FoodOrder foodOrder : reservation.getFoodOrders()) {
                 JsonObject foodOrderObject = new JsonObject();
-                foodOrderObject.addProperty("Cuisine ID", foodOrder.getCuisine().getCuisineId());
+                foodOrderObject.addProperty("Cuisine ID", foodOrder.getCuisine().getId());
                 foodOrderObject.addProperty("Cuisine Name", foodOrder.getCuisine().getName());
                 foodOrderObject.addProperty("Cuisine Price", foodOrder.getCuisine().getPrice());
                 foodOrderObject.addProperty("Cuisine Note", foodOrder.getNote());
@@ -570,7 +571,7 @@ public class ReservationManagementController implements Initializable {
             Utils.writeJsonToFile(jsonArrayTable, Constants.TABLE_PATH);
             Utils.writeJsonToFile(jsonArrayCustomer, Constants.CUSTOMER_PATH);
             Utils.writeJsonToFile(jsonArrayCuisine, Constants.CUISINE_PATH);
-            reservationDAO.updateStatus(reservation.getReservationId(), Variable.statusReservation[1]);
+            reservationDAO.updateStatus(reservation.getId(), ReservationStatus.COMPLETED);
             if(restaurantMainManagerController != null) {
                 restaurantMainManagerController.openOrderPayment();
             } else {
@@ -583,13 +584,13 @@ public class ReservationManagementController implements Initializable {
 
     @FXML
     void onCancelPreOrderButtonAction(ActionEvent event) {
-        ReservationDAO reservationDAO = ReservationDAO.getInstance();
+        ReservationDAO reservationDAO = new ReservationDAO();
         TableBUS tableBUS = new TableBUS();
         int selectedIndex = preOrderTableView.getSelectionModel().getSelectedIndex();
         if (selectedIndex != -1) {
             Reservation reservation = preOrderTableView.getSelectionModel().getSelectedItem();
-            String id = reservation.getReservationId();
-            String status = reservation.getStatus();
+            String id = reservation.getId();
+            String status = reservation.getStatus().getStatus();
             double deposit = reservation.getDeposit();
             double refundDeposit = 0;
             if (status.equals(Variable.statusReservation[0])) {
@@ -623,13 +624,13 @@ public class ReservationManagementController implements Initializable {
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.isPresent() && result.get() == btn_ok) {
                     reservationDAO.updateRefundDeposit(id, refundDeposit);
-                    reservationDAO.updateStatus(id, Variable.statusReservation[2]);
+                    reservationDAO.updateStatus(id, ReservationStatus.CANCELLED);
                     setPreOrderTableViewColumn();
                     ToastsMessage.showMessage("Đã huỷ đơn đặt ID: " + id + ", thành công", "success");
                     ToastsMessage.showMessage("Đã hoàn số tiền: " + Converter.formatMoney(refundDeposit) + " VNĐ", "success");
                 }
                 for (Table table : reservation.getTables()) {
-                    tableBUS.updateStatusTable(table.getId(), "Bàn trống");
+                    tableBUS.updateStatusTable(table.getId(), TableStatus.AVAILABLE);
                 }
             } else {
                 ToastsMessage.showMessage("Đơn hàng đang trạng thái " + status + ", nên không thể huỷ", "warning");

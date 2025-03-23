@@ -1,6 +1,7 @@
-package com.huongbien.config;
+package huongbien.config;
 
-import com.huongbien.dao.TableDAO;
+import huongbien.dao.TableDAO;
+import huongbien.jpa.PersistenceUnit;
 
 public class Variable {
     //OrderCuisineController.java
@@ -9,7 +10,8 @@ public class Variable {
 
     //OrderTableController
     //--
-    public static int floor = TableDAO.getInstance().getTopFloor().getFloor();
+//    public static int floor = (new TableDAO(PersistenceUnit.MARIADB_JPA)).getTopFloor().getFloor();
+    public static int floor = 3;
     public static String status = "Trạng thái";
     public static String tableTypeName = "Loại bàn";
     public static String seats = "Số chỗ";

@@ -1,8 +1,11 @@
-package com.huongbien.bus;
+package huongbien.bus;
 
 
-import com.huongbien.dao.TableDAO;
-import com.huongbien.entity.Table;
+import huongbien.dao.TableDAO;
+import huongbien.entity.Reservation;
+import huongbien.entity.Table;
+import huongbien.entity.TableStatus;
+import huongbien.jpa.PersistenceUnit;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -11,7 +14,7 @@ public class TableBUS {
     private final TableDAO tableDao;
 
     public TableBUS() {
-        tableDao = TableDAO.getInstance();
+        tableDao = new TableDAO(PersistenceUnit.MARIADB_JPA);
     }
 
     public int countTotalTables() {
@@ -83,14 +86,9 @@ public class TableBUS {
         return tableDao.getCountLookUpTable(floor, name, seat, type, status);
     }
 
-    public boolean updateTableStatus(String tableId, String status) {
-        if (tableId.isBlank() || tableId.isEmpty() || status.isBlank() || status.isEmpty()) return false;
-        return tableDao.updateStatus(tableId, status);
-    }
-
     public boolean updateTableInfo(Table table) {
         if (table == null) return false;
-        return tableDao.updateTableInfo(table);
+        return tableDao.update(table);
     }
 
     public boolean addTable(Table table) {
@@ -98,17 +96,21 @@ public class TableBUS {
         return tableDao.add(table);
     }
 
-    public boolean addTablesToOrder(String orderId, List<Table> tables) {
-        if (tables.isEmpty() || orderId.isBlank() || orderId.isEmpty()) return false;
-        return tableDao.addTablesToOrder(orderId, tables);
-    }
+//    public boolean addTablesToOrder(String orderId, List<Table> tables) {
+//        if (tables.isEmpty() || orderId.isBlank() || orderId.isEmpty()) return false;
+//        return tableDao.addTablesToOrder(orderId, tables);
+//    }
 
-    public boolean addTablesToReservation(String reservationId, List<Table> tables) {
-        if (tables.isEmpty() || reservationId.isBlank() || reservationId.isEmpty()) return false;
-        return tableDao.addTablesToReservation(reservationId, tables);
-    }
+//    public boolean addTablesToReservation(String reservationId, List<Table> tables) {
+//        if (tables.isEmpty() || reservationId.isBlank() || reservationId.isEmpty()) return false;
+//        return tableDao.addTablesToReservation(reservationId, tables);
+//    }
 
-    public void updateStatusTable(String id, String status){
+    public void updateStatusTable(String id, TableStatus status){
         tableDao.updateStatusTable(id, status);
+    }
+
+    public List<Table> getListTableStatusToday(List<Reservation> reservationList) {
+        return tableDao.getListTableStatusToday(reservationList);
     }
 }

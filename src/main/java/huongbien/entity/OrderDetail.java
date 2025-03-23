@@ -2,7 +2,9 @@ package huongbien.entity;
 
 import huongbien.util.Util;
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -12,6 +14,7 @@ import java.util.Objects;
 @Getter
 @ToString
 @Entity
+@NoArgsConstructor
 @Table(name = "order_details")
 public class OrderDetail {
     @Id
@@ -30,6 +33,16 @@ public class OrderDetail {
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
+
+    public OrderDetail(String id, int quantity, String note, double money, Cuisine cuisine) {
+        if (id != null) {
+            this.id = id;
+        }
+        this.quantity = quantity;
+        this.note = note;
+        this.salePrice = money;
+        this.cuisine = cuisine;
+    }
 
     public double calculateSubTotal() {
         return salePrice * quantity;

@@ -1,12 +1,14 @@
-package com.huongbien.ui.controller;
+package huongbien.ui.controller;
 
-import com.huongbien.bus.TableBUS;
-import com.huongbien.bus.TableTypeBUS;
-import com.huongbien.dao.TableDAO;
-import com.huongbien.entity.Table;
-import com.huongbien.entity.TableType;
-import com.huongbien.utils.Pagination;
-import com.huongbien.utils.ToastsMessage;
+import huongbien.bus.TableBUS;
+import huongbien.bus.TableTypeBUS;
+import huongbien.dao.TableDAO;
+import huongbien.entity.Table;
+import huongbien.entity.TableType;
+import huongbien.entity.TableStatus;
+import huongbien.jpa.PersistenceUnit;
+import huongbien.util.Pagination;
+import huongbien.util.ToastsMessage;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -91,7 +93,7 @@ public class TableManagementController implements Initializable {
     @FXML
     private TextField tableSeatsField;
 
-    private final Image DEFAULT_IMAGE = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/huongbien/icon/all/gallery-512px.png")));
+    private final Image DEFAULT_IMAGE = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/huongbien/icon/all/gallery-512px.png")));
 
     private final TableBUS tableBUS = new TableBUS();
 
@@ -116,12 +118,12 @@ public class TableManagementController implements Initializable {
         });
     }
 
-    private void setTableImage(String tableStatus) {
+    private void setTableImage(TableStatus tableStatus) {
         switch (tableStatus) {
-            case "Bàn trống" -> tableImageView.setImage(new Image("/com/huongbien/icon/order/tableEmpty-512px.png"));
-            case "Đặt trước" -> tableImageView.setImage(new Image("/com/huongbien/icon/order/tableReserved-512px.png"));
-            case "Phục vụ" -> tableImageView.setImage(new Image("/com/huongbien/icon/order/tableOpen-512px.png"));
-            case "Bàn đóng" -> tableImageView.setImage(new Image("/com/huongbien/icon/order/tableClosed-512px.png"));
+            case TableStatus.AVAILABLE -> tableImageView.setImage(new Image("/huongbien/icon/order/tableEmpty-512px.png"));
+            case TableStatus.OCCUPIED -> tableImageView.setImage(new Image("/huongbien/icon/order/tableReserved-512px.png"));
+            case TableStatus.RESERVED -> tableImageView.setImage(new Image("/huongbien/icon/order/tableOpen-512px.png"));
+            case TableStatus.UNAVAILABLE -> tableImageView.setImage(new Image("/huongbien/icon/order/tableClosed-512px.png"));
             default -> tableImageView.setImage(DEFAULT_IMAGE);
         }
     }
@@ -376,14 +378,14 @@ public class TableManagementController implements Initializable {
         if (selectedItem == null) return;
 
         String id = selectedItem.getId();
-        TableDAO tableDao = TableDAO.getInstance();
+        TableDAO tableDao = new TableDAO(PersistenceUnit.MARIADB_JPA);
         Table table = tableDao.getById(id);
 
         tableNameField.setText(table.getName());
         tableSeatsField.setText(String.valueOf(table.getSeats()));
 
         tableTypeComboBox.getItems().stream()
-                .filter(type -> type.getName().equals(table.getTableTypeName()))
+                .filter(type -> type.getName().equals(table.getTableType().getName()))
                 .findFirst()
                 .ifPresent(tableTypeComboBox.getSelectionModel()::select);
 

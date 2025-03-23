@@ -1,7 +1,7 @@
-package com.huongbien.ui.controller;
+package huongbien.ui.controller;
 
-import com.huongbien.bus.*;
-import com.huongbien.entity.*;
+import huongbien.bus.*;
+import huongbien.entity.*;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -22,7 +22,8 @@ import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.List;
+import java.util.ResourceBundle;
 
 public class RestaurantLookupController implements Initializable {
     //Vbox1
@@ -360,7 +361,7 @@ public class RestaurantLookupController implements Initializable {
                     tableNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
                     tableSeatColumn.setCellValueFactory(new PropertyValueFactory<>("seats"));
                     tableTypeColumn.setCellValueFactory(cellData -> {
-                        String type = tableTypeBUS.getTableTypeName(cellData.getValue().getTableType().getTableId()).getName();
+                        String type = tableTypeBUS.getTableTypeName(cellData.getValue().getTableType().getId()).getName();
                         return new SimpleStringProperty(type);
                     });
                     tableStatusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
@@ -387,13 +388,13 @@ public class RestaurantLookupController implements Initializable {
                 } else {
                     cuisineNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
                     cuisineCategoryColumn.setCellValueFactory(cellData -> {
-                        String category = categoryBUS.getCategoryById(cellData.getValue().getCategory().getCategoryId()).getName();
+                        String category = categoryBUS.getCategoryById(cellData.getValue().getCategory().getId()).getName();
                         return new SimpleStringProperty(category);
                     });
                     cuisinePriceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
                     applyCurrencyFormat(cuisinePriceColumn);
                     cuisineCountSaleColumn.setCellValueFactory(cellData -> {
-                        int countOfUnitsSold = orderDetailBUS.getCountOfUnitsSold(cellData.getValue().getCuisineId());
+                        int countOfUnitsSold = orderDetailBUS.getCountOfUnitsSold(cellData.getValue().getId());
                         return new ReadOnlyObjectWrapper<>(countOfUnitsSold);
                     });
                     cuisinesTableView.setItems(listCuisine);
@@ -479,7 +480,7 @@ public class RestaurantLookupController implements Initializable {
                 } else {
                     reservationIdColumn.setCellValueFactory(new PropertyValueFactory<>("reservationId"));
                     reservationCustomerPhoneColumn.setCellValueFactory(cellData -> {
-                        String phone = customerBUS.getCustomer(cellData.getValue().getCustomer().getCustomerId()).getCustomerId();
+                        String phone = customerBUS.getCustomer(cellData.getValue().getCustomer().getId()).getId();
                         return new SimpleStringProperty(phone);
                     });
                     reservationDateColumn.setCellValueFactory(new PropertyValueFactory<>("reservationDate"));

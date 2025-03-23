@@ -80,7 +80,7 @@ class CuisineDAOTest {
 
     @Test
     void getCuisineCategory() {
-        List<Long> categories = cuisineDAO.getCuisineCategory();
+        List<String> categories = cuisineDAO.getCuisineCategory();
         assertNotNull(categories);
         assertFalse(categories.isEmpty());
     }

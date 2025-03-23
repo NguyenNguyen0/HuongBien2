@@ -1,14 +1,15 @@
-package com.huongbien.ui.controller;
+package huongbien.ui.controller;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.huongbien.config.Constants;
-import com.huongbien.config.Variable;
-import com.huongbien.dao.TableDAO;
-import com.huongbien.entity.Table;
-import com.huongbien.utils.ToastsMessage;
-import com.huongbien.utils.Utils;
+import huongbien.config.Constants;
+import huongbien.config.Variable;
+import huongbien.dao.TableDAO;
+import huongbien.entity.Table;
+import huongbien.jpa.PersistenceUnit;
+import huongbien.util.ToastsMessage;
+import huongbien.util.Utils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -38,21 +39,21 @@ public class OrderTableItemController {
         tableIdLabel.setText(table.getId());
         tableNameLabel.setText(table.getName());
         tableSeatLabel.setText("Số chỗ: " + table.getSeats());
-        setTableImage(table.getStatus(), table.getTableType().getTableId());
+        setTableImage(table.getStatus().getValue(), table.getTableType().getId());
         setCheckedTableFromJSON();
     }
 
     private void setTableImage(String tableStatus, String tableType) {
         String imagePath = switch (tableStatus) {
-            case Constants.tableReserved -> "/com/huongbien/icon/order/tableReserved-512px.png";
-            case Constants.tableOpen -> "/com/huongbien/icon/order/tableOpen-512px.png";
-            case Constants.tableClosed -> "/com/huongbien/icon/order/tableClosed-512px.png";
-            case Constants.tableEmpty -> "/com/huongbien/icon/order/tableEmpty-512px.png";
+            case Constants.tableReserved -> "/huongbien/icon/order/tableReserved-512px.png";
+            case Constants.tableOpen -> "/huongbien/icon/order/tableOpen-512px.png";
+            case Constants.tableClosed -> "/huongbien/icon/order/tableClosed-512px.png";
+            case Constants.tableEmpty -> "/huongbien/icon/order/tableEmpty-512px.png";
             default -> null;
         };
         assert imagePath != null;
         tableImageView.setImage(new Image(imagePath));
-        tableTypeImageView.setImage(tableType.equals(Variable.tableVipID) ? new Image("/com/huongbien/icon/order/vip-128px.png") : null);
+        tableTypeImageView.setImage(tableType.equals(Variable.tableVipID) ? new Image("/huongbien/icon/order/vip-128px.png") : null);
     }
 
     private void setCheckedTableFromJSON() {
@@ -71,7 +72,7 @@ public class OrderTableItemController {
             }
         }
         if (tableExists) {
-            checkedImageView.setImage(new Image("/com/huongbien/icon/order/check-128px.png"));
+            checkedImageView.setImage(new Image("/huongbien/icon/order/check-128px.png"));
             isCheck = true;
         } else {
             checkedImageView.setImage(null);
@@ -95,7 +96,7 @@ public class OrderTableItemController {
             }
         }
         if (tableExists) {
-            checkedImageView.setImage(new Image("/com/huongbien/icon/order/check-128px.png"));
+            checkedImageView.setImage(new Image("/huongbien/icon/order/check-128px.png"));
             isCheck = true;
         } else {
             checkedImageView.setImage(null);
@@ -104,7 +105,7 @@ public class OrderTableItemController {
     }
 
     private void writeDataToJSONFile(String tableId) {
-        Table table = TableDAO.getInstance().getById(tableId);
+        Table table = new TableDAO(PersistenceUnit.MARIADB_JPA).getById(tableId);
         if (table != null) {
             JsonArray jsonArray;
             try {
@@ -137,8 +138,8 @@ public class OrderTableItemController {
     void onOrderTableItemVBoxClicked(MouseEvent event) throws FileNotFoundException, SQLException {
         //check status of table
         String tableId = tableIdLabel.getText();
-        Table table = TableDAO.getInstance().getById(tableId);
-        switch (table.getStatus()) {
+        Table table = new TableDAO(PersistenceUnit.MARIADB_JPA).getById(tableId);
+        switch (table.getStatus().getValue()) {
             case Constants.tableReserved -> ToastsMessage.showMessage("Bàn đang được đặt trước, không thể chọn bàn này.", "warning");
             case Constants.tableOpen -> ToastsMessage.showMessage("Bàn đang được phục vụ, không thể chọn bàn này.", "warning");
             case Constants.tableClosed -> ToastsMessage.showMessage("Bàn đã đóng, không thể chọn bàn này.", "warning");

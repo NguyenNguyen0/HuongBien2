@@ -1,25 +1,25 @@
-package com.huongbien.ui.controller;
+package huongbien.ui.controller;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.huongbien.bus.ReservationBUS;
-import com.huongbien.bus.TableBUS;
-import com.huongbien.config.AppConfig;
-import com.huongbien.config.Constants;
-import com.huongbien.config.Variable;
-import com.huongbien.dao.CustomerDAO;
-import com.huongbien.dao.EmployeeDAO;
-import com.huongbien.dao.ReservationDAO;
-import com.huongbien.dao.TableDAO;
-import com.huongbien.entity.*;
-import com.huongbien.service.EmailService;
-import com.huongbien.service.QRCodeHandler;
-import com.huongbien.utils.ClearJSON;
-import com.huongbien.utils.Converter;
-import com.huongbien.utils.ToastsMessage;
-import com.huongbien.utils.Utils;
-import javafx.animation.PauseTransition;
+import huongbien.bus.ReservationBUS;
+import huongbien.bus.TableBUS;
+import huongbien.config.AppConfig;
+import huongbien.config.Constants;
+import huongbien.config.Variable;
+import huongbien.dao.CustomerDAO;
+import huongbien.dao.EmployeeDAO;
+import huongbien.dao.ReservationDAO;
+import huongbien.dao.TableDAO;
+import huongbien.entity.*;
+import huongbien.jpa.PersistenceUnit;
+import huongbien.service.EmailService;
+import huongbien.service.QRCodeHandler;
+import huongbien.util.ClearJSON;
+import huongbien.util.Converter;
+import huongbien.util.ToastsMessage;
+import huongbien.util.Utils;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -31,7 +31,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.StageStyle;
-import javafx.util.Duration;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.videoio.VideoCapture;
@@ -148,7 +147,7 @@ public class PreOrderController implements Initializable {
         for (JsonElement element : jsonArrayTable) {
             JsonObject jsonObject = element.getAsJsonObject();
             String id = jsonObject.get("Table ID").getAsString();
-            TableDAO dao_table = TableDAO.getInstance();
+            TableDAO dao_table = new TableDAO(PersistenceUnit.MARIADB_JPA);
             Table table = dao_table.getById(id);
             if (table != null) {
                 //set table text
@@ -159,7 +158,7 @@ public class PreOrderController implements Initializable {
             }
             //calculate table fee
             assert table != null;
-            tableAmount += (table.getTableType().getTableId().equals(Variable.tableVipID)) ? Variable.tableVipPrice : 0;
+            tableAmount += (table.getTableType().getId().equals(Variable.tableVipID)) ? Variable.tableVipPrice : 0;
         }
         if (!tableInfoBuilder.isEmpty()) {
             tableInfoBuilder.setLength(tableInfoBuilder.length() - 2);
@@ -178,9 +177,9 @@ public class PreOrderController implements Initializable {
         for (JsonElement element : jsonArrayCustomer) {
             JsonObject jsonObject = element.getAsJsonObject();
             String id = jsonObject.get("Customer ID").getAsString();
-            Customer customer = CustomerDAO.getInstance().getById(id);
+            Customer customer = new CustomerDAO(PersistenceUnit.MARIADB_JPA).getById(id);
             if (customer != null) {
-                customerIDField.setText(customer.getCustomerId());
+                customerIDField.setText(customer.getId());
                 nameField.setText(customer.getName());
                 phoneNumField.setText(customer.getPhoneNumber());
                 emailField.setText(customer.getEmail() == null ? "" : customer.getEmail());
@@ -194,9 +193,9 @@ public class PreOrderController implements Initializable {
         for (JsonElement element : jsonArrayReservation) {
             JsonObject jsonObject = element.getAsJsonObject();
             String id = jsonObject.has("Reservation ID") ? jsonObject.get("Reservation ID").getAsString() : "";
-            Reservation reservation = ReservationDAO.getInstance().getById(id);
+            Reservation reservation = (new ReservationDAO()).getById(id);
             if (reservation != null) {
-                reservationIDLabel.setText("Mã đặt bàn: " + reservation.getReservationId());
+                reservationIDLabel.setText("Mã đặt bàn: " + reservation.getId());
                 hourComboBox.setValue((reservation.getReceiveTime() != null) ? String.format("%02d", reservation.getReceiveTime().getHour()) : "23");
                 minuteComboBox.setValue((reservation.getReceiveTime() != null) ? String.format("%02d", reservation.getReceiveTime().getMinute()) : "55");
                 numOfAttendeesField.setText((reservation.getPartySize() != 0) ? String.valueOf(reservation.getPartySize()) : "1");
@@ -286,8 +285,8 @@ public class PreOrderController implements Initializable {
         String[] parts = qrCodeContent.split(",");
         if (parts.length >= 4) {
             Platform.runLater(() -> {
-                Customer customer = CustomerDAO.getInstance().getById(parts[0]);
-                customerIDField.setText(customer.getCustomerId() == null ? "" : customer.getCustomerId());
+                Customer customer = new CustomerDAO(PersistenceUnit.MARIADB_JPA).getById(parts[0]);
+                customerIDField.setText(customer.getId() == null ? "" : customer.getId());
                 nameField.setText(customer.getName() == null ? "" : customer.getName());
                 phoneNumField.setText(customer.getPhoneNumber() == null ? "" : customer.getPhoneNumber());
                 emailField.setText(customer.getEmail() == null ? "" : customer.getEmail());
@@ -378,15 +377,15 @@ public class PreOrderController implements Initializable {
             nameField.setText("");
             emailField.setText("");
         } else {
-            Customer customer = CustomerDAO.getInstance().getByOnePhoneNumber(phone);
+            Customer customer = new CustomerDAO(PersistenceUnit.MARIADB_JPA).getByPhoneNumber(phone);
             if (customer != null) {
-                customerIDField.setText(customer.getCustomerId());
+                customerIDField.setText(customer.getId());
                 nameField.setText(customer.getName());
                 emailField.setText(customer.getEmail() == null ? "" : customer.getEmail());
                 //Write JSON
                 JsonArray jsonArray = new JsonArray();
                 JsonObject jsonObject = new JsonObject();
-                jsonObject.addProperty("Customer ID", customer.getCustomerId());
+                jsonObject.addProperty("Customer ID", customer.getId());
                 jsonArray.add(jsonObject);
                 Utils.writeJsonToFile(jsonArray, Constants.CUSTOMER_PATH);
             } else {
@@ -431,10 +430,10 @@ public class PreOrderController implements Initializable {
                 String phone = phoneNumField.getText();
                 String name = nameField.getText();
                 String email = emailField.getText().isEmpty() ? null : emailField.getText();
-                CustomerDAO customerDAO = CustomerDAO.getInstance();
-                customerDAO.add(new Customer(name, null, 0, phone, email, null));
-                Customer customer = customerDAO.getByOnePhoneNumber(phone);
-                customerIDField.setText(customer.getCustomerId());
+                CustomerDAO customerDAO = new CustomerDAO(PersistenceUnit.MARIADB_JPA);
+                customerDAO.add(new Customer(name, null, Gender.OTHER, phone, email, null));
+                Customer customer = customerDAO.getByPhoneNumber(phone);
+                customerIDField.setText(customer.getId());
                 ToastsMessage.showMessage("Đăng ký khách hàng mới thành công, nhấn LƯU để tạo đơn đặt mới", "success");
                 return;
             }
@@ -467,15 +466,15 @@ public class PreOrderController implements Initializable {
         int partySize = Integer.parseInt(numOfAttendeesField.getText());
         String note = noteField.getText();
         String partyType = partyTypeComboBox.getValue();
-        Customer customer = CustomerDAO.getInstance().getById(customerID);
-        Employee employee = EmployeeDAO.getInstance().getOneById(employeeID);
+        Customer customer = new CustomerDAO(PersistenceUnit.MARIADB_JPA).getById(customerID);
+        Employee employee = (new EmployeeDAO()).getOneById(employeeID);
         double deposit = Double.parseDouble(
                 totalAmoutLabel.getText()
                         .replaceAll(",", "")
                         .replaceAll(" VNĐ", "")
         );
 
-        reservation.setReservationId(reservationID);
+        reservation.setId(reservationID);
         reservation.setPartyType(partyType);
         reservation.setPartySize(partySize);
         reservation.setReservationDate(LocalDate.now());
@@ -506,13 +505,13 @@ public class PreOrderController implements Initializable {
             int cuisineQuantity = jsonObject.get("Cuisine Quantity").getAsInt();
 
             FoodOrder foodOrder = new FoodOrder();
-            foodOrder.setFoodOrderId(reservation.getReservationId());
+            foodOrder.setId(reservation.getId());
             foodOrder.setQuantity(cuisineQuantity);
             foodOrder.setNote(cuisineNote);
             foodOrder.setSalePrice(cuisinePrice);
 
             Cuisine cuisine = new Cuisine();
-            cuisine.setCuisineId(cuisineID);
+            cuisine.setId(cuisineID);
 
             foodOrder.setCuisine(cuisine);
             foodOrders.add(foodOrder);
@@ -531,7 +530,7 @@ public class PreOrderController implements Initializable {
                 return;
             }
 
-            reservation.setStatus(Variable.statusReservation[0]);
+            reservation.setStatus(ReservationStatus.PENDING);
             Payment payment = new Payment(deposit, Variable.paymentMethods[0]); //Default payment method is cash
             reservation.setPayment(payment);
 
@@ -539,7 +538,7 @@ public class PreOrderController implements Initializable {
                 TableBUS tableBUS = new TableBUS();
                 //Update status table
                 for (Table table : tables) {
-                    tableBUS.updateStatusTable(table.getId(), Constants.tableReserved);
+                    tableBUS.updateStatusTable(table.getId(), TableStatus.RESERVED);
                 }
                 String tableInfo = "Không xác định";
 
@@ -585,7 +584,7 @@ public class PreOrderController implements Initializable {
             }
         } else {
             //Temporary solution for updating reservation
-            Reservation reservationUpdate = ReservationDAO.getInstance().getById(reservationID);
+            Reservation reservationUpdate = (new ReservationDAO()).getById(reservationID);
             reservation.setStatus(reservationUpdate.getStatus());
             reservation.setPayment(reservationUpdate.getPayment());
 

@@ -1,4 +1,4 @@
-package com.huongbien.utils;
+package huongbien.util;
 
 import javafx.scene.image.Image;
 

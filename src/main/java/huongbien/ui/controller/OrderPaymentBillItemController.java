@@ -1,6 +1,6 @@
-package com.huongbien.ui.controller;
+package huongbien.ui.controller;
 
-import com.huongbien.entity.OrderDetail;
+import huongbien.entity.OrderDetail;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
@@ -23,7 +23,7 @@ public class OrderPaymentBillItemController {
     }
 
     public void setDataBill(OrderDetail orderDetail) {
-        cuisineIdLabel.setText(orderDetail.getCuisine().getCuisineId());
+        cuisineIdLabel.setText(orderDetail.getCuisine().getId());
         cuisineNameLabel.setText(orderDetail.getCuisine().getName());
         cuisineSalePriceLabel.setText(String.format("%,.0f VNĐ", orderDetail.getCuisine().getPrice()));
         cuisineNoteLabel.setText(orderDetail.getNote());

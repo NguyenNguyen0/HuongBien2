@@ -6,7 +6,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="BOTTOM_CENTER" prefHeight="368.0" prefWidth="330.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.huongbien.ui.controller.PreOrderCuisineItemController">
+<VBox alignment="BOTTOM_CENTER" prefHeight="368.0" prefWidth="330.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="huongbien.ui.controller.PreOrderCuisineItemController">
    <children>
       <VBox fx:id="cuisineItemComponent" alignment="BOTTOM_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#onCuisineItemClicked" prefHeight="218.0" prefWidth="330.0" style="-fx-background-color: white;">
          <children>

@@ -1,16 +1,15 @@
-package com.huongbien.ui.controller;
+package huongbien.ui.controller;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.huongbien.config.Constants;
-import com.huongbien.dao.CuisineDAO;
-import com.huongbien.entity.OrderDetail;
-import com.huongbien.utils.ToastsMessage;
-import com.huongbien.utils.Utils;
+import huongbien.config.Constants;
+import huongbien.dao.CuisineDAO;
+import huongbien.entity.OrderDetail;
+import huongbien.util.ToastsMessage;
+import huongbien.util.Utils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
 import javafx.stage.StageStyle;
@@ -41,7 +40,7 @@ public class PreOrderCuisineBillItemController {
 
 
     public void setDataBill(OrderDetail orderDetail) {
-        cuisineIdLabel.setText(orderDetail.getCuisine().getCuisineId());
+        cuisineIdLabel.setText(orderDetail.getCuisine().getId());
         cuisineNameLabel.setText(orderDetail.getCuisine().getName());
         cuisineSalePriceLabel.setText(String.format("%,.0f VNĐ", orderDetail.getCuisine().getPrice()));
         cuisineNoteLabel.setText(orderDetail.getNote());
@@ -62,7 +61,7 @@ public class PreOrderCuisineBillItemController {
             String existingCuisineID = jsonObject.get("Cuisine ID").getAsString();
             if (existingCuisineID.equals(cuisineID)) {
                 jsonArray.remove(i);
-                ToastsMessage.showMessage("Đã xoá món"+ CuisineDAO.getInstance().getById(cuisineID).getName() +" ra khỏi danh sách", "success");
+                ToastsMessage.showMessage("Đã xoá món"+ (new CuisineDAO()).getById(cuisineID).getName() +" ra khỏi danh sách", "success");
                 break;
             }
         }
@@ -123,7 +122,7 @@ public class PreOrderCuisineBillItemController {
                     jsonObject.addProperty("Cuisine Money", newMoney);
                 } else {
                     jsonArray.remove(i);
-                    ToastsMessage.showMessage("Đã xoá món: "+ CuisineDAO.getInstance().getById(cuisineID).getName() +" ra khỏi danh sách", "success");
+                    ToastsMessage.showMessage("Đã xoá món: "+ (new CuisineDAO()).getById(cuisineID).getName() +" ra khỏi danh sách", "success");
                 }
                 break;
             }
@@ -146,7 +145,7 @@ public class PreOrderCuisineBillItemController {
 
             if (existingCuisineID.equals(cuisineID)) {
                 jsonObject.addProperty("Cuisine Note", newNote);
-                ToastsMessage.showMessage("Đã cập nhật ghi chú cho món: "+ CuisineDAO.getInstance().getById(cuisineID).getName()+" với nội dung là: "+newNote, "success");
+                ToastsMessage.showMessage("Đã cập nhật ghi chú cho món: "+ (new CuisineDAO()).getById(cuisineID).getName()+" với nội dung là: "+newNote, "success");
                 break;
             }
         }

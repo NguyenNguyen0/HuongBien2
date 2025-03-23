@@ -1,7 +1,7 @@
-package com.huongbien.utils;
+package huongbien.util;
 
 import com.google.gson.JsonArray;
-import com.huongbien.config.Constants;
+import huongbien.config.Constants;
 
 public class ClearJSON {
     //NOTE: Don't delete this method, despite it's not used

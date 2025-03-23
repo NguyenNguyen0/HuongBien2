@@ -1,4 +1,4 @@
-package com.huongbien.ui.controller;
+package huongbien.ui.controller;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -6,7 +6,6 @@ import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Duration;
 

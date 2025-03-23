@@ -1,15 +1,18 @@
-package com.huongbien.ui.controller;
+package huongbien.ui.controller;
 
 
-import com.huongbien.bus.CustomerBUS;
-import com.huongbien.config.AppConfig;
-import com.huongbien.dao.CustomerDAO;
-import com.huongbien.entity.Customer;
-import com.huongbien.service.EmailService;
-import com.huongbien.service.QRCodeHandler;
-import com.huongbien.utils.ToastsMessage;
-import com.huongbien.utils.Utils;
-import com.huongbien.utils.Pagination;
+import huongbien.bus.CustomerBUS;
+import huongbien.config.AppConfig;
+import huongbien.dao.CustomerDAO;
+import huongbien.entity.Customer;
+import huongbien.entity.Gender;
+import huongbien.entity.MembershipLevel;
+import huongbien.jpa.PersistenceUnit;
+import huongbien.service.EmailService;
+import huongbien.service.QRCodeHandler;
+import huongbien.util.Pagination;
+import huongbien.util.ToastsMessage;
+import huongbien.util.Utils;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -113,15 +116,15 @@ public class CustomerManagementController implements Initializable {
 
     private void setCustomerTableColumns() {
         customerTable.setPlaceholder(new Label("Không có dữ liệu"));
-        customerIdColumn.setCellValueFactory(new PropertyValueFactory<>("customerId"));
+        customerIdColumn.setCellValueFactory(new PropertyValueFactory<>("Id"));
         customerNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         customerGenderColumn.setCellValueFactory(cellData -> {
-            int gender = cellData.getValue().getGender();
+            int gender = cellData.getValue().getGender().ordinal();
             String genderText = Utils.toStringGender(gender);
             return new SimpleStringProperty(genderText);
         });
         customerMembershipLevelColumn.setCellValueFactory(cellData -> {
-            int memberShip = cellData.getValue().getMembershipLevel();
+            int memberShip = cellData.getValue().getMembershipLevel().getLevel();
             String memberShipLevel = Utils.toStringMembershipLevel(memberShip);
             return new SimpleStringProperty(memberShipLevel);
         });
@@ -198,7 +201,7 @@ public class CustomerManagementController implements Initializable {
 
     public Customer getCustomerInfoFromForm() {
         Customer customer = customerTable.getSelectionModel().getSelectedItem();
-        String id = customer == null ? null : customer.getCustomerId();
+        String id = customer == null ? null : customer.getId();
         int accumulatedPoints = Integer.parseInt(customerAccumulatedPointsField.getText());
         int membershipLevel = customerMembershipLevelField.getText().isEmpty() ? 0 : Utils.toIntMembershipLevel(customerMembershipLevelField.getText().trim());
         LocalDate registrationDate = customerRegistrationDateDatePicker.getValue();
@@ -213,7 +216,7 @@ public class CustomerManagementController implements Initializable {
         } else if (femaleRadioButton.isSelected()) {
             gender = 2;
         }
-        return new Customer(id, name, address, gender, phone, email, birthday, registrationDate, accumulatedPoints, membershipLevel);
+        return new Customer(id, name, address, Gender.fromOrdinal(gender), phone, email, birthday, registrationDate, accumulatedPoints, MembershipLevel.fromLevel(membershipLevel));
     }
 
     public void addNewCustomer() {
@@ -232,8 +235,8 @@ public class CustomerManagementController implements Initializable {
 
     public void updateCustomerInfo() {
         Customer customer = getCustomerInfoFromForm();
-        String customerId = customerTable.getSelectionModel().getSelectedItem().getCustomerId();
-        customer.setCustomerId(customerId);
+        String customerId = customerTable.getSelectionModel().getSelectedItem().getId();
+        customer.setId(customerId);
 
         if (!validateCustomerData()) {
             return;
@@ -309,7 +312,7 @@ public class CustomerManagementController implements Initializable {
         }
         if(!swapModeCustomerButton.getText().equals("Thêm")) {
             if (!customerPhoneField.getText().trim().isEmpty()) {
-                CustomerDAO customerDAO = CustomerDAO.getInstance();
+                CustomerDAO customerDAO = new CustomerDAO(PersistenceUnit.MARIADB_JPA);
                 List<String> customerList = customerDAO.getPhoneNumber();
                 for (String phone : customerList) {
                     if (customerPhoneField.getText().equals(phone)) {
@@ -396,11 +399,11 @@ public class CustomerManagementController implements Initializable {
             customerBirthdayDatePicker.setValue(selectedItem.getBirthday());
             customerRegistrationDateDatePicker.setValue(selectedItem.getRegistrationDate());
             customerAccumulatedPointsField.setText(selectedItem.getAccumulatedPoints() + "");
-            customerMembershipLevelField.setText(Utils.toStringMembershipLevel(selectedItem.getMembershipLevel()));
+            customerMembershipLevelField.setText(Utils.toStringMembershipLevel(selectedItem.getMembershipLevel().getLevel()));
 
-            if (selectedItem.getGender() == 1) {
+            if (selectedItem.getGender().ordinal() == 1) {
                 genderGroup.selectToggle(maleRadioButton);
-            } else if (selectedItem.getGender() == 2) {
+            } else if (selectedItem.getGender().ordinal() == 2) {
                 genderGroup.selectToggle(femaleRadioButton);
             }
         }
@@ -456,7 +459,7 @@ public class CustomerManagementController implements Initializable {
         Customer selectedCustomer = customerTable.getSelectionModel().getSelectedItem();
 
         if (selectedCustomer != null) {
-            String qrContent = selectedCustomer.getCustomerId() + ","
+            String qrContent = selectedCustomer.getId() + ","
                     + selectedCustomer.getName() + ","
                     + selectedCustomer.getMembershipLevel() + ","
                     + selectedCustomer.getPhoneNumber() + ","
@@ -465,7 +468,7 @@ public class CustomerManagementController implements Initializable {
             QRCodeHandler qrCodeHandler = new QRCodeHandler();
             qrCodeHandler.createQRCode(selectedCustomer, qrContent);
 
-            String qrImagePath = "src/main/resources/com/huongbien/qrCode/QrCode_Ma" + selectedCustomer.getCustomerId() + ".png";
+            String qrImagePath = "src/main/resources/huongbien/qrCode/QrCode_Ma" + selectedCustomer.getId() + ".png";
             File qrFile = new File(qrImagePath);
 
             if (qrFile.exists()) {
@@ -480,7 +483,7 @@ public class CustomerManagementController implements Initializable {
                     alert.showAndWait();
                 }
             } else {
-                Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to create QR code for customer ID: " + selectedCustomer.getCustomerId());
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to create QR code for customer ID: " + selectedCustomer.getId());
                 alert.showAndWait();
             }
 

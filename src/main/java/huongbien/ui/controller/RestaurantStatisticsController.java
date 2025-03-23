@@ -1,21 +1,20 @@
-package com.huongbien.ui.controller;
+package huongbien.ui.controller;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.huongbien.bus.CategoryBUS;
-import com.huongbien.bus.CuisineBUS;
-import com.huongbien.bus.EmployeeBUS;
-import com.huongbien.bus.StatisticsBUS;
-import com.huongbien.config.Constants;
-import com.huongbien.dao.StatisticsDAO;
-import com.huongbien.entity.Customer;
-import com.huongbien.entity.Employee;
-import com.huongbien.utils.ToastsMessage;
-import com.huongbien.utils.Utils;
+import huongbien.bus.CategoryBUS;
+import huongbien.bus.CuisineBUS;
+import huongbien.bus.EmployeeBUS;
+import huongbien.bus.StatisticsBUS;
+import huongbien.config.Constants;
+import huongbien.dao.StatisticsDAO;
+import huongbien.entity.Customer;
+import huongbien.entity.Employee;
+import huongbien.util.ToastsMessage;
+import huongbien.util.Utils;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
@@ -648,7 +647,7 @@ public class RestaurantStatisticsController {
 //    START: CUSTOMER STATISTICAL
     public void setNewCustomerTableColumn() {
         setTablePlaceholder(newCustomerTable, "Không có dữ liệu nào để hiển thị");
-        newCustomerIdColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getCustomerId()));
+        newCustomerIdColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getId()));
         newCustomerNameColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getName()));
         newCustomerPhoneNumberColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getPhoneNumber()));
         newCustomerAccumulatedPointColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getAccumulatedPoints()).asString());
@@ -670,7 +669,7 @@ public class RestaurantStatisticsController {
 
     public void setTopMembershipCustomerTableColumn() {
         setTablePlaceholder(topMembershipCustomerTable, "Không có dữ liệu nào để hiển thị");
-        topCustomerIdColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getCustomerId()));
+        topCustomerIdColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getId()));
         topCustomerNameColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getName()));
         topCustomerPhoneNumberColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getPhoneNumber()));
         topCustomerAccumulatedPointColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getAccumulatedPoints()).asString());

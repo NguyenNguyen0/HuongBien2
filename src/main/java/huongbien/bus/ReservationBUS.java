@@ -1,8 +1,10 @@
-package com.huongbien.bus;
+package huongbien.bus;
 
-import com.huongbien.dao.ReservationDAO;
-import com.huongbien.entity.Reservation;
-import com.huongbien.entity.Table;
+import huongbien.dao.ReservationDAO;
+import huongbien.entity.Reservation;
+import huongbien.entity.ReservationStatus;
+import huongbien.entity.Table;
+import huongbien.jpa.PersistenceUnit;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -12,7 +14,7 @@ public class ReservationBUS {
     private final ReservationDAO reservationDao;
 
     public ReservationBUS() {
-        reservationDao = ReservationDAO.getInstance();
+        reservationDao = new ReservationDAO(PersistenceUnit.MARIADB_JPA);
     }
 
     public int countTotalReservations() {
@@ -54,7 +56,7 @@ public class ReservationBUS {
         return reservationDao.getListTableStatusToday(reservationList);
     }
 
-    public void updateStatus (String reservationId, String status){
+    public void updateStatus (String reservationId, ReservationStatus status){
         reservationDao.updateStatus(reservationId, status);
     }
 }

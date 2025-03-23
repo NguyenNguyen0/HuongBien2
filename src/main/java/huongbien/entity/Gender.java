@@ -21,4 +21,12 @@ public enum Gender {
 
         return null;
     }
+
+    public static Gender fromOrdinal(int gender) {
+        try {
+            return values()[gender - 1]; // Adjust for 1-based indexing in database
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return null; // Return null for invalid ordinals
+        }
+    }
 }

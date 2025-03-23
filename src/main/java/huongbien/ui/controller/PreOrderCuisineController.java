@@ -1,16 +1,16 @@
-package com.huongbien.ui.controller;
+package huongbien.ui.controller;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.huongbien.config.Constants;
-import com.huongbien.dao.CategoryDAO;
-import com.huongbien.dao.CuisineDAO;
-import com.huongbien.entity.Category;
-import com.huongbien.entity.Cuisine;
-import com.huongbien.entity.OrderDetail;
-import com.huongbien.utils.ToastsMessage;
-import com.huongbien.utils.Utils;
+import huongbien.config.Constants;
+import huongbien.dao.CategoryDAO;
+import huongbien.dao.CuisineDAO;
+import huongbien.entity.Category;
+import huongbien.entity.Cuisine;
+import huongbien.entity.OrderDetail;
+import huongbien.util.ToastsMessage;
+import huongbien.util.Utils;
 import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -75,11 +75,11 @@ public class PreOrderCuisineController implements Initializable {
     }
 
     public void loadCategoryComboBox() {
-        List<Category> categories = CategoryDAO.getInstance().getAll();
+        List<Category> categories = (new CategoryDAO()).getAll();
         ObservableList<Pair<String, String>> categoryItems = FXCollections.observableArrayList();
         categoryItems.add(new Pair<>("-1", "Loại món"));
         for (Category category : categories) {
-            categoryItems.add(new Pair<>(String.valueOf(category.getCategoryId()), category.getName()));
+            categoryItems.add(new Pair<>(String.valueOf(category.getId()), category.getName()));
         }
         categoryComboBox.setItems(categoryItems);
         categoryComboBox.setConverter(new StringConverter<Pair<String, String>>() {
@@ -102,7 +102,7 @@ public class PreOrderCuisineController implements Initializable {
         try {
             for (Cuisine cuisine : cuisines) {
                 FXMLLoader fxmlLoader = new FXMLLoader();
-                fxmlLoader.setLocation(getClass().getResource("/com/huongbien/fxml/PreOrderCuisineItem.fxml"));
+                fxmlLoader.setLocation(getClass().getResource("/huongbien/fxml/PreOrderCuisineItem.fxml"));
                 VBox cuisineBox = fxmlLoader.load();
                 PreOrderCuisineItemController preOrderCuisineItemController = fxmlLoader.getController();
                 preOrderCuisineItemController.setCuisineData(cuisine);
@@ -128,7 +128,7 @@ public class PreOrderCuisineController implements Initializable {
         try {
             for (OrderDetail orderDetail : orderDetails) {
                 FXMLLoader fxmlLoader = new FXMLLoader();
-                fxmlLoader.setLocation(getClass().getResource("/com/huongbien/fxml/PreOrderCuisineBillItem.fxml"));
+                fxmlLoader.setLocation(getClass().getResource("/huongbien/fxml/PreOrderCuisineBillItem.fxml"));
                 HBox billBox = fxmlLoader.load();
                 PreOrderCuisineBillItemController preOrderCuisineBillItemController = fxmlLoader.getController();
                 preOrderCuisineBillItemController.setDataBill(orderDetail);
@@ -161,7 +161,7 @@ public class PreOrderCuisineController implements Initializable {
             double money = jsonObject.get("Cuisine Money").getAsDouble();
             //set item cuisine bill
             Cuisine cuisine = new Cuisine();
-            cuisine.setCuisineId(id);
+            cuisine.setId(id);
             cuisine.setName(name);
             cuisine.setPrice(price);
             OrderDetail orderDetail = new OrderDetail(null, quantity, note, money, cuisine);
@@ -171,7 +171,7 @@ public class PreOrderCuisineController implements Initializable {
     }
 
     private List<Cuisine> getCuisineData(String cuisineName, String category) {
-        CuisineDAO cuisineDAO = CuisineDAO.getInstance();
+        CuisineDAO cuisineDAO = (new CuisineDAO());
         return cuisineDAO.getLookUpCuisine(cuisineName, category);
     }
 

@@ -130,10 +130,10 @@ class EmployeeDAOTest {
 //        int limit = 5;
 //        String name = "Nguyễn Trung Nguyên";
 //        List<Employee> employees = employeeDAO.getByNameWithPagination(name, offset, limit);
-////        assertNotNull(employees);
+
+    /// /        assertNotNull(employees);
 //        assertFalse(employees.isEmpty());
 //    }
-
     @Test
     void countByPhoneNumber() {
         String phoneNumber = "0901234570";

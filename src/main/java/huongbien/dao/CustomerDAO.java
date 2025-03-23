@@ -115,4 +115,11 @@ public class CustomerDAO extends GenericDAO<Customer> {
     public Customer getCustomerSearchReservation(String search) {
         return findOne("SELECT c FROM Customer c WHERE c.phoneNumber LIKE ?1", Customer.class, "%" + search + "%");
     }
+
+    public boolean increasePoint(String id, int point) {
+        Customer customer = getById(id);
+        if (customer == null) return false;
+        customer.setAccumulatedPoints(customer.getAccumulatedPoints() + point);
+        return update(customer);
+    }
 }

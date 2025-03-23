@@ -1,7 +1,7 @@
 package huongbien.dao;
 
 import huongbien.data.DataGenerator;
-import huongbien.entity.RestaurantTable;
+import huongbien.entity.Table;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RestaurantTableDAOTest {
-    private static final RestaurantTableDAO restaurantTableDAO = new RestaurantTableDAO();
+    private static final TableDAO restaurantTableDAO = new TableDAO();
 
     @Test
     void add() {
@@ -19,7 +19,7 @@ public class RestaurantTableDAOTest {
 
     @Test
     void update() {
-        RestaurantTable table = DataGenerator.fakeTable();
+        Table table = DataGenerator.fakeTable();
         table.setId("T001");
         table.setName("Updated Table");
         assertTrue(restaurantTableDAO.update(table));
@@ -27,7 +27,7 @@ public class RestaurantTableDAOTest {
 
     @Test
     void getAll() {
-        List<RestaurantTable> tables = restaurantTableDAO.getAll();
+        List<Table> tables = restaurantTableDAO.getAll();
         assertFalse(tables.isEmpty());
     }
 
@@ -38,19 +38,19 @@ public class RestaurantTableDAOTest {
 
     @Test
     void getByName() {
-        List<RestaurantTable> tables = restaurantTableDAO.getByName("Bàn 07");
+        List<Table> tables = restaurantTableDAO.getByName("Bàn 07");
         assertFalse(tables.isEmpty());
     }
 
     @Test
     void getAllByReservationId() {
-        List<RestaurantTable> tables = restaurantTableDAO.getAllByReservationId("DB240114033512660");
+        List<Table> tables = restaurantTableDAO.getAllByReservationId("DB240114033512660");
         assertFalse(tables.isEmpty());
     }
 
     @Test
     void getAllByOrderId() {
-        List<RestaurantTable> tables = restaurantTableDAO.getAllByOrderId("HD240108150452214");
+        List<Table> tables = restaurantTableDAO.getAllByOrderId("HD240108150452214");
         assertFalse(tables.isEmpty());
     }
 
@@ -92,7 +92,7 @@ public class RestaurantTableDAOTest {
 
     @Test
     void getByCriteria() {
-        List<RestaurantTable> tables = restaurantTableDAO.getByCriteria("1", "Available", "Type1", "4");
+        List<Table> tables = restaurantTableDAO.getByCriteria("1", "Available", "Type1", "4");
         assertFalse(tables.isEmpty());
     }
 
@@ -142,7 +142,7 @@ public class RestaurantTableDAOTest {
 
     @Test
     void getLookUpTable() {
-        List<RestaurantTable> tables = restaurantTableDAO.getLookUpTable(1, "Table 1", 4, "Type1", "Available", 0);
+        List<Table> tables = restaurantTableDAO.getLookUpTable(1, "Table 1", 4, "Type1", "Available", 0);
         assertFalse(tables.isEmpty());
     }
 
@@ -154,19 +154,19 @@ public class RestaurantTableDAOTest {
 
     @Test
     void getAllWithPagination() {
-        List<RestaurantTable> tables = restaurantTableDAO.getAllWithPagination(0, 1);
+        List<Table> tables = restaurantTableDAO.getAllWithPagination(0, 1);
         assertFalse(tables.isEmpty());
     }
 
     @Test
     void getByNameWithPagination() {
-        List<RestaurantTable> tables = restaurantTableDAO.getByNameWithPagination("Bàn 10", 1, 10);
+        List<Table> tables = restaurantTableDAO.getByNameWithPagination("Bàn 10", 1, 10);
         assertFalse(tables.isEmpty());
     }
 
     @Test
     void getByFloorWithPagination() {
-        List<RestaurantTable> tables = restaurantTableDAO.getByFloorWithPagination(0, 1, 10);
+        List<Table> tables = restaurantTableDAO.getByFloorWithPagination(0, 1, 10);
         assertFalse(tables.isEmpty());
     }
 

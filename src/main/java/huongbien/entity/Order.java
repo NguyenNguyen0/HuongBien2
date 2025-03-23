@@ -4,6 +4,7 @@ import huongbien.config.Constant;
 import huongbien.util.Util;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -17,7 +18,8 @@ import java.util.Objects;
 @Getter
 @ToString
 @Entity
-@Table(name = "orders")
+@NoArgsConstructor
+@jakarta.persistence.Table(name = "orders")
 public class Order {
     @Id
     @Column(name = "order_id")
@@ -70,7 +72,20 @@ public class Order {
             joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "table_id")
     )
-    private List<RestaurantTable> tables;
+    private List<Table> tables;
+
+    public Order(String notes, Employee employee, Customer customer, Payment payment, Promotion promotion, ArrayList<OrderDetail> orderDetails, ArrayList<Table> tables) {
+        this.id = generateId(null, null);
+        this.orderDate = LocalDate.now();
+        this.orderTime = LocalTime.now();
+        this.notes = notes;
+        this.employee = employee;
+        this.customer = customer;
+        this.payment = payment;
+        this.promotion = promotion;
+        this.orderDetails = orderDetails;
+        this.tables = tables;
+    }
 
     public double calculateTotalAmount() {
         return Math.round(orderDetails

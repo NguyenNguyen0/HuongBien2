@@ -1,7 +1,7 @@
-package com.huongbien.bus;
+package huongbien.bus;
 
-import com.huongbien.dao.TableTypeDAO;
-import com.huongbien.entity.TableType;
+import huongbien.dao.TableTypeDAO;
+import huongbien.entity.TableType;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ public class TableTypeBUS {
     private final TableTypeDAO tableTypeDao;
 
     public TableTypeBUS() {
-        tableTypeDao = TableTypeDAO.getInstance();
+        tableTypeDao = new TableTypeDAO();
     }
 
     public List<TableType> getAllTableType() {

@@ -1,14 +1,14 @@
-package com.huongbien.service;
+package huongbien.service;
 
 import com.google.zxing.*;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
-import com.huongbien.config.AppConfig;
 import com.google.zxing.qrcode.QRCodeWriter;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.client.j2se.MatrixToImageWriter;
-import com.huongbien.entity.Customer;
+import huongbien.config.AppConfig;
+import huongbien.entity.Customer;
 import javafx.scene.control.Alert;
 import org.opencv.core.Mat;
 
@@ -38,8 +38,8 @@ public class QRCodeHandler {
 
             BitMatrix matrix = qrCodeWriter.encode(qrContent, BarcodeFormat.QR_CODE, 400, 400, hints);
 
-            String customerId = selectedCustomer.getCustomerId();
-            String outputFile = "src/main/resources/com/huongbien/qrCode/QrCode_Ma" + customerId + ".png";
+            String customerId = selectedCustomer.getId();
+            String outputFile = "src/main/resources/huongbien/qrCode/QrCode_Ma" + customerId + ".png";
             Path path = Paths.get(outputFile);
 
             Files.createDirectories(path.getParent());

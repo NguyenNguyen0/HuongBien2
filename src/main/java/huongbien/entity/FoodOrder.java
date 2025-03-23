@@ -2,6 +2,7 @@ package huongbien.entity;
 
 import huongbien.util.Util;
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.*;
 
 import java.util.Objects;

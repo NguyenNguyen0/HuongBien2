@@ -1,10 +1,10 @@
-package com.huongbien.ui.controller;
+package huongbien.ui.controller;
 
-import com.huongbien.bus.OrderBUS;
-import com.huongbien.entity.Order;
-import com.huongbien.entity.OrderDetail;
-import com.huongbien.utils.Pagination;
-import com.huongbien.utils.Utils;
+import huongbien.bus.OrderBUS;
+import huongbien.entity.Order;
+import huongbien.entity.OrderDetail;
+import huongbien.util.Pagination;
+import huongbien.util.Utils;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -104,7 +104,7 @@ public class OrderManagementController implements Initializable {
     }
 
     public void setOrderTableColumn() {
-        orderIdColumn.setCellValueFactory(new PropertyValueFactory<>("orderId"));
+        orderIdColumn.setCellValueFactory(new PropertyValueFactory<>("Id"));
         orderCreatedDateColumn.setCellValueFactory(new PropertyValueFactory<>("orderDate"));
 
         DecimalFormat priceFormat = new DecimalFormat("#,###");
@@ -134,7 +134,7 @@ public class OrderManagementController implements Initializable {
         orderEmployeeIdColumn.setCellValueFactory(cellData ->
                 new SimpleStringProperty(
                         cellData.getValue().getEmployee() != null
-                                ? cellData.getValue().getEmployee().getEmployeeId()
+                                ? cellData.getValue().getEmployee().getId()
                                 : ""
                 )
         );
@@ -272,17 +272,17 @@ public class OrderManagementController implements Initializable {
         Order selectedItem = orderTable.getSelectionModel().getSelectedItem();
         if (selectedItem == null) return;
 
-        orderIdField.setText(selectedItem.getOrderId());
+        orderIdField.setText(selectedItem.getId());
         orderTablesField.setText(Utils.toStringTables(selectedItem.getTables()));
 
         if (selectedItem.getCustomer() == null) {
             orderCustomerField.setText("Vãng lai");
         } else {
-            orderCustomerField.setText(selectedItem.getCustomer().getCustomerId());
+            orderCustomerField.setText(selectedItem.getCustomer().getId());
         }
 
         orderDateDatePicker.setValue(selectedItem.getOrderDate());
-        orderEmployeeIdField.setText(selectedItem.getEmployee().getEmployeeId());
+        orderEmployeeIdField.setText(selectedItem.getEmployee().getId());
 
         setOrderDetailTableValue(selectedItem.getOrderDetails());
 
@@ -304,7 +304,7 @@ public class OrderManagementController implements Initializable {
         if (selectedItem.getPromotion() == null) {
             orderPromotionIdField.setText("Không");
         } else {
-            orderPromotionIdField.setText(selectedItem.getPromotion().getPromotionId());
+            orderPromotionIdField.setText(selectedItem.getPromotion().getId());
         }
 
         orderPaymentIdField.setText(selectedItem.getPayment().getPaymentId());

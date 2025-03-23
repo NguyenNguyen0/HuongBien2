@@ -1,8 +1,9 @@
-package com.huongbien.bus;
+package huongbien.bus;
 
 
-import com.huongbien.dao.PromotionDAO;
-import com.huongbien.entity.Promotion;
+import huongbien.dao.PromotionDAO;
+import huongbien.entity.Promotion;
+import huongbien.jpa.PersistenceUnit;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -11,7 +12,7 @@ public class PromotionBUS {
     private final PromotionDAO promotionDao;
 
     public PromotionBUS() {
-        promotionDao = PromotionDAO.getInstance();
+        promotionDao = new PromotionDAO(PersistenceUnit.MARIADB_JPA);
     }
 
     public int countTotalPromotion() {
@@ -87,7 +88,7 @@ public class PromotionBUS {
 
     public boolean updatePromotion(Promotion promotion) {
         if (promotion == null) return false;
-        return promotionDao.updateInfo(promotion);
+        return promotionDao.update(promotion);
     }
 
     public List<Promotion> getPaymentPromotion(int memberShipLevel, double totalMoney){ return promotionDao.getPaymentPromotion(memberShipLevel, totalMoney); }

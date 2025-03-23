@@ -1,6 +1,7 @@
 package huongbien.entity;
 
 import huongbien.jpa.converter.TableStatusConverter;
+import huongbien.util.Utils;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,8 +13,8 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "tables")
-public class RestaurantTable {
+@jakarta.persistence.Table(name = "tables")
+public class Table {
     @Id
     @Column(name = "table_id")
     private String id;
@@ -27,10 +28,23 @@ public class RestaurantTable {
     @ManyToOne
     private TableType tableType;
 
+    public Table(String name, int seats, int floor, String status, TableType selectedTableType) {
+        this.id = generateId(floor);
+        this.name = name;
+        this.seats = seats;
+        this.floor = floor;
+        this.status = TableStatus.valueOf(status);
+        this.tableType = selectedTableType;
+    }
+
+    public static String generateId(int floor) {
+        return String.format("T%01dB%03d", floor, Utils.randomNumber(1, 999));
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        RestaurantTable that = (RestaurantTable) o;
+        Table that = (Table) o;
         return Objects.equals(id, that.id);
     }
 

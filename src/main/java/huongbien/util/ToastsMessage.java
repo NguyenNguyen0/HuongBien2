@@ -1,4 +1,4 @@
-package com.huongbien.utils;
+package huongbien.util;
 
 import javafx.geometry.Pos;
 import javafx.util.Duration;

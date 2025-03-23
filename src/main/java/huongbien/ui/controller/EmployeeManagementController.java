@@ -1,13 +1,14 @@
-package com.huongbien.ui.controller;
+package huongbien.ui.controller;
 
-import com.huongbien.bus.EmployeeBUS;
-import com.huongbien.config.Variable;
-import com.huongbien.dao.EmployeeDAO;
-import com.huongbien.entity.Employee;
-import com.huongbien.utils.Converter;
-import com.huongbien.utils.Pagination;
-import com.huongbien.utils.ToastsMessage;
-import com.huongbien.utils.Utils;
+import huongbien.bus.EmployeeBUS;
+import huongbien.config.Variable;
+import huongbien.dao.EmployeeDAO;
+import huongbien.entity.Employee;
+import huongbien.jpa.PersistenceUnit;
+import huongbien.util.Converter;
+import huongbien.util.Pagination;
+import huongbien.util.ToastsMessage;
+import huongbien.util.Utils;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -118,7 +119,7 @@ public class EmployeeManagementController implements Initializable {
     private Pagination<Employee> employeePagination;
     private final EmployeeBUS employeeBUS = new EmployeeBUS();
 
-    private final Image DEFAULT_AVATAR = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/huongbien/icon/mg_employee/user-256px.png")));
+    private final Image DEFAULT_AVATAR = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/huongbien/icon/mg_employee/user-256px.png")));
 
     public RestaurantMainManagerController restaurantMainManagerController;
     public void setRestaurantMainManagerController(RestaurantMainManagerController restaurantMainManagerController) {
@@ -205,9 +206,9 @@ public class EmployeeManagementController implements Initializable {
     public void setEmployeeTable() {
         employeeTable.setPlaceholder(new Label("Không có dữ liệu"));
 
-        employeeIdColumn.setCellValueFactory(new PropertyValueFactory<>("employeeId"));
+        employeeIdColumn.setCellValueFactory(new PropertyValueFactory<>("Id"));
         employeeNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        employeeGenderColumn.setCellValueFactory(cellData -> new SimpleStringProperty(Utils.toStringGender(cellData.getValue().getGender())));
+        employeeGenderColumn.setCellValueFactory(cellData -> new SimpleStringProperty(Utils.toStringGender(cellData.getValue().getGender().ordinal())));
         employeePhoneColumn.setCellValueFactory(new PropertyValueFactory<>("phoneNumber"));
         employeePositionColumn.setCellValueFactory(new PropertyValueFactory<>("position"));
         employeeStatusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
@@ -240,13 +241,13 @@ public class EmployeeManagementController implements Initializable {
         employeeManagerIdComboBox.setConverter(new StringConverter<>() {
             @Override
             public String toString(Employee employee) {
-                return employee != null ? employee.getEmployeeId() : "Không có";
+                return employee != null ? employee.getId() : "Không có";
             }
 
             @Override
             public Employee fromString(String string) {
                 return employeeManagerIdComboBox.getItems().stream()
-                        .filter(item -> item.getEmployeeId().equals(string))
+                        .filter(item -> item.getId().equals(string))
                         .findFirst()
                         .orElse(null);
             }
@@ -284,7 +285,7 @@ public class EmployeeManagementController implements Initializable {
     }
 
     public void setPositionComboBox() {
-        EmployeeDAO employeeDao = EmployeeDAO.getInstance();
+        EmployeeDAO employeeDao = new EmployeeDAO(PersistenceUnit.MARIADB_JPA);
         List<Employee> employeeList = employeeDao.getAll();
         List<Employee> distinctEmployees = new ArrayList<>(employeeList.stream()
                 .filter(e -> e.getPosition() != null && !"Quản lý".equals(e.getPosition()))
@@ -403,13 +404,13 @@ public class EmployeeManagementController implements Initializable {
 
     public void populateEmployeeForm(Employee employee) {
         if (employee.getProfileImage() == null || employee.getProfileImage().length == 0) {
-            employeeAvatarCircle.setFill(new ImagePattern(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/huongbien/icon/mg_employee/user-256px.png")))));
+            employeeAvatarCircle.setFill(new ImagePattern(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/huongbien/icon/mg_employee/user-256px.png")))));
         } else {
             employeeAvatarCircle.setFill(new ImagePattern(new Image(Converter.bytesToInputStream(employee.getProfileImage()))));
         }
-        employeeIdField.setText(employee.getEmployeeId());
+        employeeIdField.setText(employee.getId());
         employeeNameField.setText(employee.getName());
-        employeeCitizenIdField.setText(employee.getCitizenIDNumber());
+        employeeCitizenIdField.setText(employee.getCitizenId());
         employeePhoneField.setText(employee.getPhoneNumber());
         employeeEmailField.setText(employee.getEmail());
         employeeManagerIdComboBox.setValue(employee.getManager());
@@ -421,7 +422,7 @@ public class EmployeeManagementController implements Initializable {
         employeeStatusComboBox.getSelectionModel().select(employee.getStatus());
         employeePositionComboBox.getSelectionModel().select(employee);
         employeeBirthdayDatePicker.setValue(employee.getBirthday());
-        switch (employee.getGender()) {
+        switch (employee.getGender().ordinal()) {
             case 1 -> genderGroup.selectToggle(maleRadioButton);
             case 2 -> genderGroup.selectToggle(femaleRadioButton);
         }
@@ -468,7 +469,7 @@ public class EmployeeManagementController implements Initializable {
         if (employeeImageBytes == null) {
             employeeImageBytes = selectedEmployee.getProfileImage();
         }
-        Employee updatedEmployee = createEmployeeFromForm(selectedEmployee.getEmployeeId(), selectedEmployee.getWorkHours(), selectedEmployee.getHireDate(), employeeImageBytes);
+        Employee updatedEmployee = createEmployeeFromForm(selectedEmployee.getId(), selectedEmployee.getWorkHours(), selectedEmployee.getHireDate(), employeeImageBytes);
         if (employeeBUS.updateEmployeeInfo(updatedEmployee)) {
             setEmployeeTableValue();
             ToastsMessage.showMessage("Cập nhật nhân viên thành công", "success");
@@ -591,7 +592,7 @@ public class EmployeeManagementController implements Initializable {
         Employee selectedItem = employeeTable.getSelectionModel().getSelectedItem();
         if (selectedItem == null) return;
 
-        if (employeeBUS.updateEmployeeStatus(selectedItem.getEmployeeId(), "Nghỉ việc")) {
+        if (employeeBUS.updateEmployeeStatus(selectedItem.getId(), "Nghỉ việc")) {
             ToastsMessage.showMessage("Sa thải nhân viên thành công", "success");
         } else {
             ToastsMessage.showMessage("Sa thải nhân viên thất bại", "error");
@@ -607,7 +608,7 @@ public class EmployeeManagementController implements Initializable {
 
     @FXML
     public void onOpenAddressEditingDialogButtonClicked(MouseEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/huongbien/fxml/EmployeeAddressDialog.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/huongbien/fxml/EmployeeAddressDialog.fxml"));
         Parent root = loader.load();
         Stage primaryStage = new Stage();
         primaryStage.initStyle(StageStyle.TRANSPARENT);

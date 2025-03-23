@@ -2,6 +2,7 @@ package huongbien.entity;
 
 import huongbien.jpa.converter.CuisineStatusConverter;
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,6 +41,16 @@ public class Cuisine {
         this.description = description;
         this.price = price;
         this.status = status;
+        this.category = category;
+    }
+
+    public Cuisine(String cuisineId, String name, double price, String description, byte[] imageCuisineByte, String status, Category category) {
+        this.id = cuisineId;
+        this.name = name;
+        this.price = price;
+        this.description = description;
+        this.image = imageCuisineByte;
+        this.status = CuisineStatus.valueOf(status);
         this.category = category;
     }
 

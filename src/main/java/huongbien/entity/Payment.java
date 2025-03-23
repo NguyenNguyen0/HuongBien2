@@ -3,6 +3,7 @@ package huongbien.entity;
 import huongbien.jpa.converter.PaymentMethodConverter;
 import huongbien.util.Util;
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -45,6 +46,14 @@ public class Payment {
         this.paymentDate = paymentDate;
         this.paymentTime = paymentTime;
         this.paymentMethod = paymentMethod;
+    }
+
+    public Payment(double moneyFromCustomer, String paymentMethod) {
+        this.amount = moneyFromCustomer;
+        this.paymentMethod = PaymentMethod.valueOf(paymentMethod);
+        this.paymentDate = LocalDate.now();
+        this.paymentTime = LocalTime.now();
+        this.paymentId = generateId(paymentDate, paymentTime);
     }
 
     public static String generateId(LocalDate paymentDate, LocalTime paymentTime) {

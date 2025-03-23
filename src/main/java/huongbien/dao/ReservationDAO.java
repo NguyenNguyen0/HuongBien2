@@ -1,7 +1,13 @@
 package huongbien.dao;
 
+import huongbien.bus.TableBUS;
 import huongbien.entity.Reservation;
+import huongbien.entity.ReservationStatus;
+import huongbien.entity.Table;
+import huongbien.jpa.JPAUtil;
 import huongbien.jpa.PersistenceUnit;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
@@ -26,17 +32,52 @@ public class ReservationDAO extends GenericDAO<Reservation> {
     }
 
     public List<Reservation> getStatusReservationByDate(LocalDate date, String status, String cusId) {
-        return findMany("SELECT r FROM Reservation r WHERE r.status = ?1 AND r.receiveDate = ?2 AND r.customerId LIKE CONCAT('%', ?3, '%')",
-                Reservation.class, status, date, cusId);
+        try {
+            // Convert string to enum
+            ReservationStatus enumStatus = ReservationStatus.fromStatus(status);
+
+            String jpql = "SELECT r FROM Reservation r WHERE r.status = :status " +
+                         "AND r.receiveDate = :date AND r.id LIKE :customerId";
+
+            EntityManager em = JPAUtil.getEntityManager();
+            Query query = em.createQuery(jpql, Reservation.class);
+            query.setParameter("status", enumStatus);
+            query.setParameter("date", date);
+            query.setParameter("customerId", "%" + cusId + "%");
+
+            return query.getResultList();
+        } catch (IllegalArgumentException e) {
+            // Handle case where status string doesn't match enum value
+            e.printStackTrace();
+            return List.of(); // Return empty list if status is invalid
+        }
     }
 
     public int getCountStatusReservationByDate(LocalDate date, String status, String cusId) {
-        return count("SELECT COUNT(r) FROM Reservation r WHERE r.status = ?1 AND r.receiveDate = ?2 AND r.customerId LIKE CONCAT('%', ?3, '%')",
-                status, date, cusId);
+        String jpql = "SELECT COUNT(r) FROM Reservation r WHERE r.status = :status " +
+                     "AND r.receiveDate = :date AND r.id LIKE :customerId";
+
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            ReservationStatus enumStatus = ReservationStatus.valueOf(status);
+
+            Query query = em.createQuery(jpql);
+            query.setParameter("status", enumStatus);
+            query.setParameter("date", date);
+            query.setParameter("customerId", "%" + cusId + "%");
+
+            Object result = query.getSingleResult();
+            return result instanceof Number ? ((Number) result).intValue() : 0;
+        } catch (IllegalArgumentException e) {
+            // Handle case where status string doesn't match enum
+            // You could log an error or use a different approach
+            e.getStackTrace();
+            return 0;
+        }
     }
 
     public List<Reservation> getListWaitedToday() {
-        return findMany("SELECT r FROM Reservation r WHERE r.status = 'Chưa nhận' AND r.receiveDate = CURRENT_DATE", Reservation.class);
+        return findMany("SELECT r FROM Reservation r WHERE r.status = 'Chưa xác nhận' AND r.receiveDate = CURRENT_DATE", Reservation.class);
     }
 
 //    public List<RestaurantTable> getListTableStatusToday(List<Reservation> reservationList) {
@@ -76,5 +117,28 @@ public class ReservationDAO extends GenericDAO<Reservation> {
 
     public int countTotal() {
         return count("SELECT COUNT(r) FROM Reservation r");
+    }
+
+    public List<Table> getListTableStatusToday(List<Reservation> reservationList) {
+        TableBUS tableBUS = new TableBUS();
+        return tableBUS.getListTableStatusToday(reservationList);
+    }
+
+    public void updateStatus(String reservationId, ReservationStatus status) {
+        Reservation reservation = getById(reservationId);
+        if (reservation == null) {
+            return;
+        }
+        reservation.setStatus(status);
+        update(reservation);
+    }
+
+    public void updateRefundDeposit(String id, double refundDeposit) {
+        Reservation reservation = getById(id);
+        if (reservation == null) {
+            return;
+        }
+        reservation.setRefundDeposit(refundDeposit);
+        update(reservation);
     }
 }

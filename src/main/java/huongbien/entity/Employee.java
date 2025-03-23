@@ -3,6 +3,7 @@ package huongbien.entity;
 import huongbien.jpa.converter.GenderConverter;
 import huongbien.util.Util;
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -75,6 +76,25 @@ public class Employee {
         this.salary = salary;
         this.profileImage = profileImage;
         this.manager = manager;
+    }
+
+    public Employee(String employeeId, String name, String phone, String citizenId, int gender, String address, LocalDate birthDate, String email, String status, LocalDate hireDate, String position, double workHours, double hourPay, double salary, Employee managerId, byte[] profileImage) {
+        this.id = employeeId;
+        this.name = name;
+        this.phoneNumber = phone;
+        this.citizenId = citizenId;
+        this.gender = gender == 1 ? Gender.MALE : gender == 2 ? Gender.FEMALE : Gender.OTHER;
+        this.address = address;
+        this.birthday = birthDate;
+        this.email = email;
+        this.status = status;
+        this.hireDate = hireDate;
+        this.position = position;
+        this.workHours = workHours;
+        this.hourlyPay = hourPay;
+        this.salary = salary;
+        this.manager = managerId;
+        this.profileImage = profileImage;
     }
 
     public static String generateId(LocalDate hireDate) {

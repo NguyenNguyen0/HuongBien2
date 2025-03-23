@@ -1,7 +1,8 @@
-package com.huongbien.bus;
+package huongbien.bus;
 
-import com.huongbien.dao.PaymentDAO;
-import com.huongbien.entity.Payment;
+import huongbien.dao.PaymentDAO;
+import huongbien.entity.Payment;
+import huongbien.jpa.PersistenceUnit;
 
 import java.util.List;
 
@@ -9,7 +10,7 @@ public class PaymentBUS {
     private final PaymentDAO paymentDao;
 
     public PaymentBUS() {
-        paymentDao = PaymentDAO.getInstance();
+        paymentDao = new PaymentDAO(PersistenceUnit.MARIADB_JPA);
     }
 
     public List<Payment> getAllPayment() {

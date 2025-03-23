@@ -1,10 +1,11 @@
-package com.huongbien.ui.controller;
+package huongbien.ui.controller;
 
-import com.huongbien.bus.PromotionBUS;
-import com.huongbien.entity.Promotion;
-import com.huongbien.utils.Pagination;
-import com.huongbien.utils.ToastsMessage;
-import com.huongbien.utils.Utils;
+import huongbien.bus.PromotionBUS;
+import huongbien.entity.MembershipLevel;
+import huongbien.entity.Promotion;
+import huongbien.util.Pagination;
+import huongbien.util.ToastsMessage;
+import huongbien.util.Utils;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -153,11 +154,11 @@ public class PromotionManagementController implements Initializable {
     }
 
     public void setPromotionTableColumn() {
-        promotionIdColumn.setCellValueFactory(new PropertyValueFactory<>("promotionId"));
+        promotionIdColumn.setCellValueFactory(new PropertyValueFactory<>("Id"));
         promotionEndedDateColumn.setCellValueFactory(new PropertyValueFactory<>("endDate"));
         promotionStartedDateColumn.setCellValueFactory(new PropertyValueFactory<>("startDate"));
         promotionMembershipLevelColumn.setCellValueFactory(cellData -> {
-            int memberShip = cellData.getValue().getMembershipLevel();
+            int memberShip = cellData.getValue().getMembershipLevel().ordinal();
             String memberShipLevel = Utils.toStringMembershipLevel(memberShip);
             return new SimpleStringProperty(memberShipLevel);
         });
@@ -223,7 +224,7 @@ public class PromotionManagementController implements Initializable {
 
     public void setPromotionDataToForm(Promotion promotion) {
         promotionNameField.setText(promotion.getName());
-        promotionStatusComboBox.getSelectionModel().select(promotion.getStatus());
+//        promotionStatusComboBox.getSelectionModel().select(promotion.getStatus());
         double dis = promotion.getDiscount();
         int discount = (int) (dis * 100);
 
@@ -235,7 +236,7 @@ public class PromotionManagementController implements Initializable {
         discountField.setText(Double.toString(discount));
         endedDateDatePicker.setValue(promotion.getEndDate());
         startedDateDatePicker.setValue(promotion.getStartDate());
-        int memberShip = promotion.getMembershipLevel();
+        int memberShip = promotion.getMembershipLevel().ordinal();
         String memberShipLevel = Utils.toStringMembershipLevel(memberShip);
         memberShipLevelComboBox.getSelectionModel().select(memberShipLevel);
     }
@@ -305,14 +306,16 @@ public class PromotionManagementController implements Initializable {
         String name = promotionNameField.getText();
         LocalDate startDate = startedDateDatePicker.getValue();
         LocalDate endDate = endedDateDatePicker.getValue();
-        String status = promotionStatusComboBox.getSelectionModel().getSelectedItem();
+//        String status = promotionStatusComboBox.getSelectionModel().getSelectedItem();
         String description = promotionDescriptionTextArea.getText();
         double minimumOrder = Double.parseDouble(minimumOrderField.getText().replace(",", ""));
         double discount = Double.parseDouble(discountField.getText().replace("%", "")) / 100;
-        int membershipLevel = Utils.toIntMembershipLevel(memberShipLevelComboBox.getValue());
+//        int membershipLevel = Utils.toIntMembershipLevel(memberShipLevelComboBox.getValue());
+        MembershipLevel membershipLevel = MembershipLevel.valueOf(memberShipLevelComboBox.getValue());
 
 
-        return new Promotion(name, startDate, endDate, discount, description, minimumOrder, membershipLevel, status);
+//        return new Promotion(name, startDate, endDate, discount, description, minimumOrder, membershipLevel, status);
+        return new Promotion(name, startDate, endDate, discount, description, minimumOrder, membershipLevel, true);
     }
 
     public void handleEditPromotion() {
@@ -321,7 +324,7 @@ public class PromotionManagementController implements Initializable {
 
         Promotion editedPromotion = getPromotionFromForm();
         Promotion selectedPromotion = promotionTable.getSelectionModel().getSelectedItem();
-        editedPromotion.setPromotionId(selectedPromotion.getPromotionId());
+        editedPromotion.setId(selectedPromotion.getId());
         if (promotionBUS.updatePromotion(editedPromotion)) {
             setPromotionTableValue();
             setPageIndexLabel();

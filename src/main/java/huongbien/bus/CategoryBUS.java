@@ -1,8 +1,9 @@
-package com.huongbien.bus;
+package huongbien.bus;
 
 
-import com.huongbien.dao.CategoryDAO;
-import com.huongbien.entity.Category;
+import huongbien.dao.CategoryDAO;
+import huongbien.entity.Category;
+import huongbien.jpa.PersistenceUnit;
 
 import java.util.List;
 
@@ -10,7 +11,7 @@ public class CategoryBUS {
     private final CategoryDAO categoryDao;
 
     public CategoryBUS() {
-        categoryDao = CategoryDAO.getInstance();
+        categoryDao = new CategoryDAO(PersistenceUnit.MARIADB_JPA);
     }
 
     public List<String> getAllCategoryNames() {
@@ -34,6 +35,6 @@ public class CategoryBUS {
         if(name.equals("Tất cả")){
             return "";
         }
-        return categoryDao.getCategoryName(name).getCategoryId();
+        return categoryDao.getCategoryName(name).getId();
     }
 }

@@ -1,13 +1,13 @@
-package com.huongbien.ui.controller;
+package huongbien.ui.controller;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.huongbien.config.Constants;
-import com.huongbien.dao.CuisineDAO;
-import com.huongbien.entity.Cuisine;
-import com.huongbien.utils.Converter;
-import com.huongbien.utils.ToastsMessage;
-import com.huongbien.utils.Utils;
+import huongbien.config.Constants;
+import huongbien.dao.CuisineDAO;
+import huongbien.entity.Cuisine;
+import huongbien.util.Converter;
+import huongbien.util.ToastsMessage;
+import huongbien.util.Utils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
@@ -33,7 +33,7 @@ public class OrderCuisineItemController {
     }
 
     public void setCuisineData(Cuisine cuisine) {
-        cuisineIdLabel.setText(cuisine.getCuisineId());
+        cuisineIdLabel.setText(cuisine.getId());
         cuisineNameLabel.setText(cuisine.getName());
         cuisineSalePriceLabel.setText(String.format("%,.0f VNĐ", cuisine.getPrice()));
         byte[] imageBytes = cuisine.getImage();
@@ -42,7 +42,7 @@ public class OrderCuisineItemController {
         if (imageBytes != null) {
             image = Converter.bytesToImage(imageBytes);
         } else {
-            image = new Image("/com/huongbien/icon/mg_cuisine/empty-256px.png");
+            image = new Image("/huongbien/icon/mg_cuisine/empty-256px.png");
         }
         //design circle cuisine image
         cuisineImageCircle.setFill(new ImagePattern(image));
@@ -90,9 +90,9 @@ public class OrderCuisineItemController {
     @FXML
     void onCuisineItemClicked(MouseEvent event) throws FileNotFoundException, SQLException {
         String id = cuisineIdLabel.getText();
-        CuisineDAO cuisineDAO = CuisineDAO.getInstance();
+        CuisineDAO cuisineDAO = new CuisineDAO();
         Cuisine cuisine = cuisineDAO.getById(id);
-        writeDataToJSONFile(cuisine.getCuisineId(), cuisine.getName(), cuisine.getPrice(), "", 1);
+        writeDataToJSONFile(cuisine.getId(), cuisine.getName(), cuisine.getPrice(), "", 1);
         orderCuisineController.billGridPane.getChildren().clear();
         orderCuisineController.loadBill();
         //update lbl

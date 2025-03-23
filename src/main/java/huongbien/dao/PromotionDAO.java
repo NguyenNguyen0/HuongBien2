@@ -1,11 +1,15 @@
 package huongbien.dao;
 
 import huongbien.entity.Promotion;
+import huongbien.jpa.JPAUtil;
 import huongbien.jpa.PersistenceUnit;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @NoArgsConstructor
 public class PromotionDAO extends GenericDAO<Promotion> {
@@ -31,13 +35,14 @@ public class PromotionDAO extends GenericDAO<Promotion> {
     }
 
     public List<Promotion> getByStatusWithPagination(int offset, int limit, String status) {
-        return findMany("SELECT p FROM Promotion p WHERE p.status = ?1 ORDER BY p.endDate DESC, p.membershipLevel DESC",
-                Promotion.class, status, offset, limit);
+        Map<String, Object> params = Map.of("isAvailable", "Còn hiệu lực".equals(status));
+        return findManyWithPagination("SELECT p FROM Promotion p WHERE p.isAvailable = :isAvailable ORDER BY p.endDate DESC, p.membershipLevel DESC",
+                Promotion.class, params, offset, limit);
     }
 
     public List<Promotion> getAllWithPagination(int offset, int limit) {
-        return findMany("SELECT p FROM Promotion p ORDER BY p.endDate DESC, p.membershipLevel DESC",
-                Promotion.class, offset, limit);
+        return findManyWithPagination("SELECT p FROM Promotion p ORDER BY p.endDate DESC, p.membershipLevel DESC",
+                Promotion.class, null, offset, limit);
     }
 
     public List<Promotion> getAllByIdWithPagination(int offset, int limit, String id) {
@@ -53,12 +58,25 @@ public class PromotionDAO extends GenericDAO<Promotion> {
         return count("SELECT COUNT(p) FROM Promotion p");
     }
 
-    public int countTotalByStatus(String status) {
-        return count("SELECT COUNT(p) FROM Promotion p WHERE p.status = ?1", status);
-    }
+//    public int countTotalByStatus(String status) {
+//        return count("SELECT COUNT(p) FROM Promotion p WHERE p.status = ?1", status);
+//    }
 
-    public int countTotalById(String id) {
-        return count("SELECT COUNT(p) FROM Promotion p WHERE p.id LIKE ?1", id + "%");
+    public int countTotalByStatus(String status) {
+        try {
+            String jpql = "SELECT COUNT(p) FROM Promotion p WHERE p.isAvailable = :isAvailable";
+
+            EntityManager em = JPAUtil.getEntityManager();
+            Query query = em.createQuery(jpql);
+
+            query.setParameter("isAvailable", "Còn hiệu lực".equals(status) ? true : false);
+
+            Object result = query.getSingleResult();
+            return result instanceof Number ? ((Number) result).intValue() : 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 
     public List<String> getDistinctPromotionDiscount() {
@@ -118,4 +136,7 @@ public class PromotionDAO extends GenericDAO<Promotion> {
                 Promotion.class, memberShipLevel, totalMoney);
     }
 
+    public int countTotalById(String id) {
+        return count("SELECT COUNT(p) FROM Promotion p WHERE p.id LIKE ?1", id + "%");
+    }
 }

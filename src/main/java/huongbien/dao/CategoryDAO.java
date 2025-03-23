@@ -5,6 +5,7 @@ import huongbien.jpa.PersistenceUnit;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 public class CategoryDAO extends GenericDAO<Category> {
@@ -16,6 +17,14 @@ public class CategoryDAO extends GenericDAO<Category> {
 
     public Category getById(String id) {
         return findOne("SELECT c FROM Category c WHERE c.id = ?1", Category.class, id);
+    }
+
+    public List<String> getAllCategoryNames() {
+        return findMany("SELECT distinct c FROM Category c", Category.class).stream().map(Category::getName).collect(Collectors.toList());
+    }
+
+    public Category getCategoryName(String name) {
+        return findOne("SELECT c FROM Category c WHERE c.name = ?1", Category.class, name);
     }
 
     public List<Category> getAll() {

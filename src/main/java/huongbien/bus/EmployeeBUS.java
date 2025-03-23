@@ -1,8 +1,8 @@
-package com.huongbien.bus;
+package huongbien.bus;
 
-import com.huongbien.dao.EmployeeDAO;
-import com.huongbien.entity.Employee;
-import org.opencv.ml.EM;
+import huongbien.dao.EmployeeDAO;
+import huongbien.entity.Employee;
+import huongbien.jpa.PersistenceUnit;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ public class EmployeeBUS {
     private final EmployeeDAO employeeDao;
 
     public EmployeeBUS() {
-        employeeDao = EmployeeDAO.getInstance();
+        employeeDao = new EmployeeDAO(PersistenceUnit.MARIADB_JPA);
     }
 
     public int countAllEmployees() {

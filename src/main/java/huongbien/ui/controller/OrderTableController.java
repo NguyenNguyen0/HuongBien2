@@ -1,20 +1,22 @@
-package com.huongbien.ui.controller;
+package huongbien.ui.controller;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.huongbien.bus.ReservationBUS;
-import com.huongbien.bus.TableBUS;
-import com.huongbien.config.Constants;
-import com.huongbien.config.Variable;
-import com.huongbien.dao.TableDAO;
-import com.huongbien.dao.TableTypeDAO;
-import com.huongbien.entity.Reservation;
-import com.huongbien.entity.Table;
-import com.huongbien.entity.TableType;
-import com.huongbien.utils.Converter;
-import com.huongbien.utils.ToastsMessage;
-import com.huongbien.utils.Utils;
+import huongbien.bus.ReservationBUS;
+import huongbien.bus.TableBUS;
+import huongbien.config.Constants;
+import huongbien.config.Variable;
+import huongbien.dao.TableDAO;
+import huongbien.dao.TableTypeDAO;
+import huongbien.entity.Reservation;
+import huongbien.entity.Table;
+import huongbien.entity.TableStatus;
+import huongbien.entity.TableType;
+import huongbien.jpa.PersistenceUnit;
+import huongbien.util.Converter;
+import huongbien.util.ToastsMessage;
+import huongbien.util.Utils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -113,12 +115,12 @@ public class OrderTableController implements Initializable {
     }
 
     private void statisticalRestaurant(int floor) {
-        int statisticalOverviewTableEmpty = TableDAO.getInstance().getCountStatisticalOverviewTableEmpty();
-        int statisticalOverview = TableDAO.getInstance().getCountStatisticalOverviewTable();
-        int statisticalFloorTableEmpty = TableDAO.getInstance().getCountStatisticalFloorTableEmpty(floor);
-        int statisticalFloorTablePreOrder = TableDAO.getInstance().getCountStatisticalFloorTablePreOrder(floor);
-        int statisticalFloorTableOpen = TableDAO.getInstance().getCountStatisticalFloorTableOpen(floor);
-        int statisticalFloor = TableDAO.getInstance().getCountStatisticalFloorTable(floor);
+        int statisticalOverviewTableEmpty = new TableDAO(PersistenceUnit.MARIADB_JPA).getCountStatisticalOverviewTableEmpty();
+        int statisticalOverview = new TableDAO(PersistenceUnit.MARIADB_JPA).getCountStatisticalOverviewTable();
+        int statisticalFloorTableEmpty = new TableDAO(PersistenceUnit.MARIADB_JPA).getCountStatisticalFloorTableEmpty(floor);
+        int statisticalFloorTablePreOrder = new TableDAO(PersistenceUnit.MARIADB_JPA).getCountStatisticalFloorTablePreOrder(floor);
+        int statisticalFloorTableOpen = new TableDAO(PersistenceUnit.MARIADB_JPA).getCountStatisticalFloorTableOpen(floor);
+        int statisticalFloor = new TableDAO(PersistenceUnit.MARIADB_JPA).getCountStatisticalFloorTable(floor);
         tableEmptyCountLabel.setText("( " + statisticalFloorTableEmpty + " )");
         tablePreOrderCountLabel.setText("( " + statisticalFloorTablePreOrder + ")");
         tableOpenCountLabel.setText("( " + statisticalFloorTableOpen + " )");
@@ -135,7 +137,7 @@ public class OrderTableController implements Initializable {
         try {
             for (int i = 0; i < tables.size(); i++) {
                 FXMLLoader fxmlLoader = new FXMLLoader();
-                fxmlLoader.setLocation(getClass().getResource("/com/huongbien/fxml/OrderTableItem.fxml"));
+                fxmlLoader.setLocation(getClass().getResource("/huongbien/fxml/OrderTableItem.fxml"));
                 VBox tableBox = fxmlLoader.load();
                 OrderTableItemController orderTableItemController = fxmlLoader.getController();
                 orderTableItemController.setTableItemData(tables.get(i));
@@ -155,7 +157,7 @@ public class OrderTableController implements Initializable {
     }
 
     private List<Table> getTableDataByCriteria(int floor, String status, String type, String seat) {
-        TableDAO tableDAO = TableDAO.getInstance();
+        TableDAO tableDAO = new TableDAO(PersistenceUnit.MARIADB_JPA);
         return tableDAO.getByCriteria(String.valueOf(floor), status, type, seat);
     }
 
@@ -167,7 +169,7 @@ public class OrderTableController implements Initializable {
             List<Table> tableList = reservationBUS.getListTableStatusToday(reservationList);
             if(tableList != null) {
                 for (Table table : tableList) {
-                    tableBUS.updateStatusTable(table.getId(), "Đặt trước");
+                    tableBUS.updateStatusTable(table.getId(), TableStatus.OCCUPIED);
                 }
             }
         }
@@ -177,7 +179,7 @@ public class OrderTableController implements Initializable {
         TableBUS tableBUS = new TableBUS();
         List<Table> tableList = tableBUS.getAllTable();
         for (Table table : tableList) {
-            tableBUS.updateStatusTable(table.getId(), "Bàn trống");
+            tableBUS.updateStatusTable(table.getId(), TableStatus.AVAILABLE);
         }
     }
 
@@ -189,15 +191,15 @@ public class OrderTableController implements Initializable {
             JsonArray tableIdArray = table.getAsJsonArray("Table ID");
             for (JsonElement tableIdElement : tableIdArray) {
                 String tableId = tableIdElement.getAsString();
-                tableBUS.updateStatusTable(tableId, "Phục vụ");
+                tableBUS.updateStatusTable(tableId, TableStatus.RESERVED);
             }
 
         }
     }
 
     private void setComboBoxValue() {
-        TableDAO tableDAO = TableDAO.getInstance();
-        TableTypeDAO tableTypeDAO = TableTypeDAO.getInstance();
+        TableDAO tableDAO = new TableDAO(PersistenceUnit.MARIADB_JPA);
+        TableTypeDAO tableTypeDAO = new TableTypeDAO();
         //floor
         List<String> floors = tableDAO.getDistinctFloor();
         ObservableList<String> floorOptions = FXCollections.observableArrayList(floors);
@@ -325,13 +327,13 @@ public class OrderTableController implements Initializable {
         for (JsonElement element : jsonArray) {
             JsonObject jsonObject = element.getAsJsonObject();
             String id = jsonObject.get("Table ID").getAsString();
-            TableDAO tableDAO = TableDAO.getInstance();
+            TableDAO tableDAO = new TableDAO(PersistenceUnit.MARIADB_JPA);
             Table table = tableDAO.getById(id);
             setTableTabPane(table.getName(), table.getFloor(), table.getSeats(), table.getTableType().getName());
             //calculate seat total
             seatTotal += table.getSeats();
             //calculate table amount
-            tableAmount += table.getTableType().getTableId().equals(Variable.tableVipID) ? Variable.tableVipPrice : 0;
+            tableAmount += table.getTableType().getId().equals(Variable.tableVipID) ? Variable.tableVipPrice : 0;
         }
         tableQuantityLabel.setText(String.valueOf(jsonArray.size()));
         seatTotalLabel.setText(seatTotal + " chỗ");
@@ -343,9 +345,9 @@ public class OrderTableController implements Initializable {
         String status = tableStatusComboBox.getValue();
         String tableTypeName = tableTypeComboBox.getValue();
         String seat = tableSeatsComboBox.getValue(); //Để kiểu string hiên thị trên comboBox
-        TableTypeDAO tableTypeDAO = TableTypeDAO.getInstance();
+        TableTypeDAO tableTypeDAO = new TableTypeDAO();
         TableType tableType = tableTypeDAO.getByName(tableTypeName);
-        String tableTypeId = (tableType != null) ? tableType.getTableId() : "";
+        String tableTypeId = (tableType != null) ? tableType.getId() : "";
         orderTableGridPane.getChildren().clear();
         loadTablesToGridPane(floor, status, tableTypeId, seat);
     }

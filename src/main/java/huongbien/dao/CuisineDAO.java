@@ -1,10 +1,12 @@
 package huongbien.dao;
 
 import huongbien.entity.Cuisine;
+import huongbien.entity.CuisineStatus;
 import huongbien.jpa.PersistenceUnit;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 @NoArgsConstructor
 public class CuisineDAO extends GenericDAO<Cuisine> {
@@ -49,8 +51,8 @@ public class CuisineDAO extends GenericDAO<Cuisine> {
         return findOne("SELECT c FROM Cuisine c WHERE c.id = ?1", Cuisine.class, id);
     }
 
-    public List<Long> getCuisineCategory() {
-        return executeQuery("SELECT DISTINCT c.category.id FROM Cuisine c", Long.class);
+    public List<String> getCuisineCategory() {
+        return executeQuery("SELECT DISTINCT c.category.id FROM Cuisine c", String.class);
     }
 
     public List<Cuisine> getByCategoryWithPagination(int offset, int limit, String category) {
@@ -59,16 +61,26 @@ public class CuisineDAO extends GenericDAO<Cuisine> {
     }
 
     public List<Cuisine> getByNameWithPagination(int offset, int limit, String name) {
-        return findMany("SELECT c FROM Cuisine c WHERE c.name LIKE ?1 ORDER BY c.id",
-                Cuisine.class, "%" + name + "%", offset, limit);
+        Map<String, Object> params = Map.of("name", "%" + name + "%");
+        return findManyWithPagination("SELECT c FROM Cuisine c WHERE c.name LIKE :name ORDER BY c.id",
+                Cuisine.class, params, offset, limit);
     }
 
     public List<Cuisine> getAllWithPagination(int offset, int limit) {
-        return findMany("SELECT c FROM Cuisine c ORDER BY c.id", Cuisine.class, offset, limit);
+        return findManyWithPagination("SELECT c FROM Cuisine c ORDER BY c.id", Cuisine.class, null, offset, limit);
     }
 
     public int countCuisinesByName(String name) {
         return count("SELECT COUNT(c) FROM Cuisine c WHERE c.name LIKE ?1", "%" + name + "%");
+    }
+
+    public boolean updateCuisineStatus(String cuisineId, CuisineStatus status) {
+        Cuisine cuisine = getById(cuisineId);
+        if (cuisine == null) {
+            return false;
+        }
+        cuisine.setStatus(status);
+        return update(cuisine);
     }
 
     public int countCuisinesByCategory(String category) {

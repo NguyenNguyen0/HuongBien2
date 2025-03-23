@@ -1,7 +1,8 @@
-package com.huongbien.bus;
+package huongbien.bus;
 
-import com.huongbien.dao.OrderDetailDAO;
-import com.huongbien.entity.OrderDetail;
+import huongbien.dao.OrderDetailDAO;
+import huongbien.entity.OrderDetail;
+import huongbien.jpa.PersistenceUnit;
 
 import java.util.List;
 
@@ -9,7 +10,7 @@ public class OrderDetailBUS {
     private final OrderDetailDAO orderDetailDao;
 
     public OrderDetailBUS() {
-        orderDetailDao = OrderDetailDAO.getInstance();
+        orderDetailDao = new OrderDetailDAO(PersistenceUnit.MARIADB_JPA);
     }
 
     public List<OrderDetail> getAllOrderByOrderId(String orderId) {

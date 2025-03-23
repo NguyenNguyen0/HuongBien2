@@ -1,23 +1,20 @@
-package com.huongbien.ui.controller;
+package huongbien.ui.controller;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.huongbien.bus.CustomerBUS;
-import com.huongbien.bus.ReservationBUS;
-import com.huongbien.config.AppConfig;
-import com.huongbien.config.Constants;
-import com.huongbien.dao.AccountDAO;
-import com.huongbien.dao.EmployeeDAO;
-import com.huongbien.entity.Account;
-import com.huongbien.entity.Customer;
-import com.huongbien.entity.Employee;
-import com.huongbien.entity.Reservation;
-import com.huongbien.service.EmailService;
-import com.huongbien.utils.ClearJSON;
-import com.huongbien.utils.Converter;
-import com.huongbien.utils.ToastsMessage;
-import com.huongbien.utils.Utils;
+import huongbien.bus.CustomerBUS;
+import huongbien.bus.ReservationBUS;
+import huongbien.config.AppConfig;
+import huongbien.config.Constants;
+import huongbien.dao.AccountDAO;
+import huongbien.dao.EmployeeDAO;
+import huongbien.entity.*;
+import huongbien.service.EmailService;
+import huongbien.util.ClearJSON;
+import huongbien.util.Converter;
+import huongbien.util.ToastsMessage;
+import huongbien.util.Utils;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -171,14 +168,14 @@ public class RestaurantMainStaffController implements Initializable {
                     System.out.println(totalMinutesDifference);
                     //Thời gian đơn sau thời gian hiện tại 20p
                     if(totalMinutesDifference>=20){
-                        reservationBUS.updateStatus(reservation.getReservationId(), "Đã hủy");
+                        reservationBUS.updateStatus(reservation.getId(), ReservationStatus.CANCELLED);
                     }
                     //Gửi email khi đơn đặt còn cách 1 tiếng
                     if(totalMinutesDifference>=-60){
                         int check = 0;
                         if(listSentEmailAlready != null){
                             for (String s: listSentEmailAlready) {
-                                if (s.equals(reservation.getReservationId())){
+                                if (s.equals(reservation.getId())){
                                     check = 1;
                                 }
                             }
@@ -187,16 +184,16 @@ public class RestaurantMainStaffController implements Initializable {
                             String htmlContent = "<html>" +
                                     "<body style=\"font-family: Arial, sans-serif; line-height: 1.6; text-align: left;\">" +
                                     "<h2 style=\"color: #2c3e50;\">Quý khách có đơn đặt bàn sắp đến giờ!</h2>" +
-                                    "<p>Mã đơn đặt: <b>" + reservation.getReservationId() + "<b> </p>" +
+                                    "<p>Mã đơn đặt: <b>" + reservation.getId() + "<b> </p>" +
                                     "<p>Thời gian đến nhận: " + receiveTime + "</p>" +
                                     "<p style=\"color: #34495e;\">Đơn đặt sẽ bị hủy sau 20 phút nếu quý khách không đến nhận bàn, vui lòng chú ý thời gian nhận bàn!.</p>" +
                                     "<p style=\"margin-top: 20px;\">Trân trọng,<br><b>Nhà Hàng Hương Biển</b></p>" +
                                     "</body>" +
                                     "</html>";
                             String emailContent = htmlContent;
-                            Customer customer = customerBUS.getCustomerById(reservation.getCustomer().getCustomerId());
+                            Customer customer = customerBUS.getCustomerById(reservation.getCustomer().getId());
                             EmailService.sendEmailWithReservation(customer.getEmail(), "Thông tin đặt trước", emailContent, AppConfig.getEmailUsername(), AppConfig.getEmailPassword());
-                            listSentEmailAlready.add(reservation.getReservationId());
+                            listSentEmailAlready.add(reservation.getId());
                         }
                     }
                 }
@@ -229,13 +226,13 @@ public class RestaurantMainStaffController implements Initializable {
         for (JsonElement element : jsonArray) {
             JsonObject jsonObject = element.getAsJsonObject();
             String id = jsonObject.get("Employee ID").getAsString();
-            EmployeeDAO employeeDAO = EmployeeDAO.getInstance();
+            EmployeeDAO employeeDAO = new EmployeeDAO();
             Employee employee = employeeDAO.getOneById(id);
             nameDetailUserLabel.setText(employee.getName());
-            userNameDetailUserLabel.setText("@" + employee.getEmployeeId());
+            userNameDetailUserLabel.setText("@" + employee.getId());
             setAvatar(employee.getProfileImage());
             //table Pane
-            idDetailUserField.setText(employee.getEmployeeId());
+            idDetailUserField.setText(employee.getId());
             nameDetailUserField.setText(employee.getName());
             birthDateDetailUserDatePicker.setValue(employee.getBirthday());
             phoneDetailUserField.setText(employee.getPhoneNumber());
@@ -256,8 +253,8 @@ public class RestaurantMainStaffController implements Initializable {
             avatarMainCircle.setFill(new ImagePattern(image));
             avatarDetailUserCircle.setFill(new ImagePattern(image));
         } catch (Exception e) {
-            avatarMainCircle.setFill(new ImagePattern(new Image("/com/huongbien/img/avatar/avatar-default-128px.png")));
-            avatarDetailUserCircle.setFill(new ImagePattern(new Image("/com/huongbien/img/avatar/avatar-default-128px.png")));
+            avatarMainCircle.setFill(new ImagePattern(new Image("/huongbien/img/avatar/avatar-default-128px.png")));
+            avatarDetailUserCircle.setFill(new ImagePattern(new Image("/huongbien/img/avatar/avatar-default-128px.png")));
         }
     }
 
@@ -297,7 +294,7 @@ public class RestaurantMainStaffController implements Initializable {
 
     public void openHome() throws IOException {
         featureTitleLabel.setText("Trang chủ");
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/huongbien/fxml/RestaurantHome.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/huongbien/fxml/RestaurantHome.fxml"));
         BorderPane home = loader.load();
         mainBorderPane.setCenter(home);
         home.prefWidthProperty().bind(mainBorderPane.widthProperty());
@@ -306,7 +303,7 @@ public class RestaurantMainStaffController implements Initializable {
 
     public void openLookup() throws IOException {
         featureTitleLabel.setText("Tra cứu bàn");
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/huongbien/fxml/RestaurantLookup.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/huongbien/fxml/RestaurantLookup.fxml"));
         BorderPane lookup = loader.load();
         mainBorderPane.setCenter(lookup);
         lookup.prefWidthProperty().bind(mainBorderPane.widthProperty());
@@ -318,7 +315,7 @@ public class RestaurantMainStaffController implements Initializable {
 
     public void openOrderTable() throws IOException {
         featureTitleLabel.setText("Chọn bàn");
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/huongbien/fxml/OrderTable.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/huongbien/fxml/OrderTable.fxml"));
         BorderPane orderTable = loader.load();
         mainBorderPane.setCenter(orderTable);
         orderTable.prefWidthProperty().bind(mainBorderPane.widthProperty());
@@ -330,7 +327,7 @@ public class RestaurantMainStaffController implements Initializable {
 
     public void openPreOrder() throws IOException {
         featureTitleLabel.setText("Chọn bàn  -  Thông tin đặt trước");
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/huongbien/fxml/PreOrder.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/huongbien/fxml/PreOrder.fxml"));
         BorderPane preOrderTable = loader.load();
         mainBorderPane.setCenter(preOrderTable);
         preOrderTable.prefWidthProperty().bind(mainBorderPane.widthProperty());
@@ -342,7 +339,7 @@ public class RestaurantMainStaffController implements Initializable {
 
     public void openOrderCuisine() throws IOException {
         featureTitleLabel.setText("Chọn bàn  -  Đặt món");
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/huongbien/fxml/OrderCuisine.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/huongbien/fxml/OrderCuisine.fxml"));
         BorderPane orderCuisine = loader.load();
         mainBorderPane.setCenter(orderCuisine);
         orderCuisine.prefWidthProperty().bind(mainBorderPane.widthProperty());
@@ -354,7 +351,7 @@ public class RestaurantMainStaffController implements Initializable {
 
     public void openPreOrderCuisine() throws IOException {
         featureTitleLabel.setText("Chọn bàn  - Thông tin đặt trước -  Đặt món");
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/huongbien/fxml/PreOrderCuisine.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/huongbien/fxml/PreOrderCuisine.fxml"));
         BorderPane orderCuisine = loader.load();
         mainBorderPane.setCenter(orderCuisine);
         orderCuisine.prefWidthProperty().bind(mainBorderPane.widthProperty());
@@ -366,7 +363,7 @@ public class RestaurantMainStaffController implements Initializable {
 
     public void openOrderPayment() throws IOException {
         featureTitleLabel.setText("Chọn bàn  -  Đặt món  -  Tính tiền");
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/huongbien/fxml/OrderPayment.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/huongbien/fxml/OrderPayment.fxml"));
         BorderPane orderPayment = loader.load();
         mainBorderPane.setCenter(orderPayment);
         orderPayment.prefWidthProperty().bind(mainBorderPane.widthProperty());
@@ -378,7 +375,7 @@ public class RestaurantMainStaffController implements Initializable {
 
     public void openOrderPaymentFinal() throws IOException {
         featureTitleLabel.setText("Chọn bàn  -  Đặt món  -  Tính tiền  -  Thanh toán");
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/huongbien/fxml/OrderPaymentFinal.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/huongbien/fxml/OrderPaymentFinal.fxml"));
         BorderPane orderPaymentFinal = loader.load();
         mainBorderPane.setCenter(orderPaymentFinal);
         orderPaymentFinal.prefWidthProperty().bind(mainBorderPane.widthProperty());
@@ -390,7 +387,7 @@ public class RestaurantMainStaffController implements Initializable {
 
     public void openStatistics() throws IOException {
         featureTitleLabel.setText("Thống kê");
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/huongbien/fxml/RestaurantStatistics.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/huongbien/fxml/RestaurantStatistics.fxml"));
         BorderPane statistics = loader.load();
         mainBorderPane.setCenter(statistics);
         statistics.prefWidthProperty().bind(mainBorderPane.widthProperty());
@@ -399,7 +396,7 @@ public class RestaurantMainStaffController implements Initializable {
 
     public void openReservationManagement() throws IOException {
         featureTitleLabel.setText("Quản lý đơn đặt");
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/huongbien/fxml/ReservationManagement.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/huongbien/fxml/ReservationManagement.fxml"));
         BorderPane listOrder = loader.load();
         mainBorderPane.setCenter(listOrder);
         listOrder.prefWidthProperty().bind(mainBorderPane.widthProperty());
@@ -411,7 +408,7 @@ public class RestaurantMainStaffController implements Initializable {
 
     public void openOrderManagement() throws IOException {
         featureTitleLabel.setText("Quản lý hoá đơn");
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/huongbien/fxml/OrderManagement.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/huongbien/fxml/OrderManagement.fxml"));
         BorderPane manageBill = loader.load();
         mainBorderPane.setCenter(manageBill);
         manageBill.prefWidthProperty().bind(mainBorderPane.widthProperty());
@@ -420,7 +417,7 @@ public class RestaurantMainStaffController implements Initializable {
 
     public void openCuisineManagement() throws IOException {
         featureTitleLabel.setText("Quản lý món ăn");
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/huongbien/fxml/CuisineManagement.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/huongbien/fxml/CuisineManagement.fxml"));
         BorderPane manageCuisine = loader.load();
         mainBorderPane.setCenter(manageCuisine);
         manageCuisine.prefWidthProperty().bind(mainBorderPane.widthProperty());
@@ -429,7 +426,7 @@ public class RestaurantMainStaffController implements Initializable {
 
     public void openTableManagement() throws IOException {
         featureTitleLabel.setText("Quản lý bàn ăn");
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/huongbien/fxml/TableManagement.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/huongbien/fxml/TableManagement.fxml"));
         BorderPane manageTable = loader.load();
         mainBorderPane.setCenter(manageTable);
         manageTable.prefWidthProperty().bind(mainBorderPane.widthProperty());
@@ -438,7 +435,7 @@ public class RestaurantMainStaffController implements Initializable {
 
     public void openCustomerManagement() throws IOException {
         featureTitleLabel.setText("Quản lý khách hàng");
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/huongbien/fxml/CustomerManagement.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/huongbien/fxml/CustomerManagement.fxml"));
         BorderPane manageCustomer = loader.load();
         mainBorderPane.setCenter(manageCustomer);
         manageCustomer.prefWidthProperty().bind(mainBorderPane.widthProperty());
@@ -447,7 +444,7 @@ public class RestaurantMainStaffController implements Initializable {
 
     public void openRestaurantHelp() throws IOException {
         featureTitleLabel.setText("Help");
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/huongbien/fxml/RestaurantHelp.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/huongbien/fxml/RestaurantHelp.fxml"));
         BorderPane help = loader.load();
         mainBorderPane.setCenter(help);
         help.prefWidthProperty().bind(mainBorderPane.widthProperty());
@@ -456,7 +453,7 @@ public class RestaurantMainStaffController implements Initializable {
 
     public void openRestaurantAbout() throws IOException {
         featureTitleLabel.setText("About");
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/huongbien/fxml/RestaurantAbout.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/huongbien/fxml/RestaurantAbout.fxml"));
         BorderPane help = loader.load();
         mainBorderPane.setCenter(help);
         help.prefWidthProperty().bind(mainBorderPane.widthProperty());
@@ -638,7 +635,7 @@ public class RestaurantMainStaffController implements Initializable {
         for (JsonElement element : jsonArray) {
             JsonObject jsonObject = element.getAsJsonObject();
             String id = jsonObject.get("Employee ID").getAsString();
-            EmployeeDAO employeeDAO = EmployeeDAO.getInstance();
+            EmployeeDAO employeeDAO = new EmployeeDAO();
             List<Employee> employees = employeeDAO.getManyById(id);
             Employee employee = (employees.isEmpty() ? null : employees.get(0));
             assert employee != null;
@@ -730,8 +727,8 @@ public class RestaurantMainStaffController implements Initializable {
     void saveInfoDetailUserButtonAction(ActionEvent event) throws FileNotFoundException {
         try {
             String employeeId = idDetailUserField.getText();
-            EmployeeDAO employeeDAO = EmployeeDAO.getInstance();
-            AccountDAO accountDAO = AccountDAO.getInstance();
+            EmployeeDAO employeeDAO = new EmployeeDAO();
+            AccountDAO accountDAO = new AccountDAO();
 
             Employee existingEmployee = employeeDAO.getOneById(employeeId);
 
@@ -745,7 +742,7 @@ public class RestaurantMainStaffController implements Initializable {
             String email = emailDetailUserField.getText();
 
             Employee employee = new Employee();
-            employee.setEmployeeId(employeeId);
+            employee.setId(employeeId);
             employee.setName(name);
             employee.setBirthday(birthDate);
             employee.setPhoneNumber(phone);
@@ -788,7 +785,7 @@ public class RestaurantMainStaffController implements Initializable {
 
         String email = emailDetailUserField.getText();
 
-        AccountDAO accountDAO = AccountDAO.getInstance();
+        AccountDAO accountDAO = new AccountDAO();
         Account account = accountDAO.getByEmail(email);
 
         if (account == null) {
@@ -829,7 +826,7 @@ public class RestaurantMainStaffController implements Initializable {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == btn_ok) {
             //update work hours
-            EmployeeDAO employeeDAO = EmployeeDAO.getInstance();
+            EmployeeDAO employeeDAO = new EmployeeDAO();
             JsonArray jsonArray = Utils.readJsonFromFile(Constants.LOGIN_SESSION_PATH);
             for (JsonElement element : jsonArray) {
                 JsonObject jsonObject = element.getAsJsonObject();
@@ -840,7 +837,7 @@ public class RestaurantMainStaffController implements Initializable {
             }
 
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/huongbien/fxml/RestaurantLogin.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/huongbien/fxml/RestaurantLogin.fxml"));
                 Parent root = loader.load();
                 Scene mainScene = new Scene(root);
                 Stage loginStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -848,7 +845,7 @@ public class RestaurantMainStaffController implements Initializable {
                 Stage mainStage = new Stage();
                 mainStage.setScene(mainScene);
                 mainStage.setMaximized(true);
-                mainStage.getIcons().add(new Image("/com/huongbien/icon/favicon/favicon-logo-restaurant-128px.png"));
+                mainStage.getIcons().add(new Image("/huongbien/icon/favicon/favicon-logo-restaurant-128px.png"));
                 mainStage.initStyle(StageStyle.UNDECORATED);
                 mainStage.show();
             } catch (Exception e) {

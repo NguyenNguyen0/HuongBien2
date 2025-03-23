@@ -1,8 +1,8 @@
-package com.huongbien.utils;
+package huongbien.util;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
-import com.huongbien.entity.Table;
+import huongbien.entity.Table;
 import javafx.scene.control.Alert;
 
 import java.io.*;

@@ -1,20 +1,21 @@
-package com.huongbien.ui.controller;
+package huongbien.ui.controller;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.huongbien.bus.PromotionBUS;
-import com.huongbien.bus.TableBUS;
-import com.huongbien.config.Constants;
-import com.huongbien.config.Variable;
-import com.huongbien.dao.CustomerDAO;
-import com.huongbien.dao.EmployeeDAO;
-import com.huongbien.dao.PromotionDAO;
-import com.huongbien.dao.TableDAO;
-import com.huongbien.entity.*;
-import com.huongbien.service.QRCodeHandler;
-import com.huongbien.utils.ToastsMessage;
-import com.huongbien.utils.Utils;
+import huongbien.bus.PromotionBUS;
+import huongbien.bus.TableBUS;
+import huongbien.config.Constants;
+import huongbien.config.Variable;
+import huongbien.dao.CustomerDAO;
+import huongbien.dao.EmployeeDAO;
+import huongbien.dao.PromotionDAO;
+import huongbien.dao.TableDAO;
+import huongbien.entity.*;
+import huongbien.jpa.PersistenceUnit;
+import huongbien.service.QRCodeHandler;
+import huongbien.util.ToastsMessage;
+import huongbien.util.Utils;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -22,11 +23,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -111,7 +112,7 @@ public class OrderPaymentController implements Initializable {
         try {
             for (int i = 0; i < orderDetails.size(); i++) {
                 FXMLLoader fxmlLoader = new FXMLLoader();
-                fxmlLoader.setLocation(getClass().getResource("/com/huongbien/fxml/OrderPaymentBillItem.fxml"));
+                fxmlLoader.setLocation(getClass().getResource("/huongbien/fxml/OrderPaymentBillItem.fxml"));
                 HBox paymentBillBox = fxmlLoader.load();
                 OrderPaymentBillItemController _OrderPaymentBillItemController = fxmlLoader.getController();
                 _OrderPaymentBillItemController.setDataBill(orderDetails.get(i));
@@ -144,7 +145,7 @@ public class OrderPaymentController implements Initializable {
             double money = jsonObject.get("Cuisine Money").getAsDouble();
 
             Cuisine cuisine = new Cuisine();
-            cuisine.setCuisineId(id);
+            cuisine.setId(id);
             cuisine.setName(name);
             cuisine.setPrice(price);
             OrderDetail orderDetail = new OrderDetail(null, quantity, note, money, cuisine);
@@ -166,7 +167,7 @@ public class OrderPaymentController implements Initializable {
         for (JsonElement element : jsonArraySession) {
             JsonObject jsonObject = element.getAsJsonObject();
             String id = jsonObject.get("Employee ID").getAsString();
-            EmployeeDAO dao_employee = EmployeeDAO.getInstance();
+            EmployeeDAO dao_employee = new EmployeeDAO(PersistenceUnit.MARIADB_JPA);
             Employee employee = dao_employee.getManyById(id).get(0);
             currentUser  = (employee.getName() != null ? employee.getName() : "Không xác định");
         }
@@ -176,13 +177,13 @@ public class OrderPaymentController implements Initializable {
         for (JsonElement element : jsonArrayTable) {
             JsonObject jsonObject = element.getAsJsonObject();
             String id = jsonObject.get("Table ID").getAsString();
-            TableDAO dao_table = TableDAO.getInstance();
+            TableDAO dao_table = new TableDAO(PersistenceUnit.MARIADB_JPA);
             Table table = dao_table.getById(id);
             //append table info
             String floorStr = (table.getFloor() == 0 ? "Tầng trệt" : "Tầng " + table.getFloor());
             tabInfoBuilder.append(table.getName()).append(" (").append(floorStr).append(") ").append(", ");
             //calc table amount
-            tableAmount += (table.getTableType().getTableId().equals(Variable.tableVipID)) ? Variable.tableVipPrice : 0;
+            tableAmount += (table.getTableType().getId().equals(Variable.tableVipID)) ? Variable.tableVipPrice : 0;
         }
         if (!tabInfoBuilder.isEmpty()) {
             tabInfoBuilder.setLength(tabInfoBuilder.length() - 2);
@@ -253,7 +254,7 @@ public class OrderPaymentController implements Initializable {
         if (!customerArray.isEmpty()) {
             JsonObject customerObject = customerArray.get(0).getAsJsonObject();
             String idCustomer = customerObject.get("Customer ID").getAsString();
-            CustomerDAO customerDAO = CustomerDAO.getInstance();
+            CustomerDAO customerDAO = new CustomerDAO(PersistenceUnit.MARIADB_JPA);
             Customer customer = customerDAO.getById(idCustomer);
             searchCustomerField.setText((customer != null ? customer.getPhoneNumber() : ""));
         }
@@ -288,7 +289,7 @@ public class OrderPaymentController implements Initializable {
         }
         double discount = 0.0;
         if(!customerRankField.getText().isEmpty()){
-            PromotionDAO promotionDAO = PromotionDAO.getInstance();
+            PromotionDAO promotionDAO = new PromotionDAO(PersistenceUnit.MARIADB_JPA);
             List<Promotion> promotionList = promotionDAO.getPaymentPromotion(Utils.toIntMembershipLevel(customerRankField.getText()), totalAmount);
             ObservableList<Promotion> listPromotion = FXCollections.observableArrayList(promotionList);
             if (!listPromotion.isEmpty()) {
@@ -308,9 +309,9 @@ public class OrderPaymentController implements Initializable {
         for (JsonElement element : jsonArrayTable) {
             JsonObject jsonObject = element.getAsJsonObject();
             String id = jsonObject.get("Table ID").getAsString();
-            TableDAO dao_table = TableDAO.getInstance();
+            TableDAO dao_table = new TableDAO(PersistenceUnit.MARIADB_JPA);
             Table table = dao_table.getById(id);
-            tableAmount += (table.getTableType().getTableId().equals(Variable.tableVipID)) ? Variable.tableVipPrice : 0;
+            tableAmount += (table.getTableType().getId().equals(Variable.tableVipID)) ? Variable.tableVipPrice : 0;
         }
         double discountMoney = totalAmount * discount;
         double vat = totalAmount * 0.1;
@@ -326,16 +327,16 @@ public class OrderPaymentController implements Initializable {
     @FXML
     void onSearchCustomerButtonClicked(ActionEvent event) throws FileNotFoundException, SQLException {
         String inputPhone = searchCustomerField.getText().trim();
-        CustomerDAO customerDAO = CustomerDAO.getInstance();
-        Customer customer = customerDAO.getByOnePhoneNumber(inputPhone);
+        CustomerDAO customerDAO = new CustomerDAO(PersistenceUnit.MARIADB_JPA);
+        Customer customer = customerDAO.getByPhoneNumber(inputPhone);
         if (customer != null) {
             //Write Down JSON
-            String customerID = customer.getCustomerId();
+            String customerID = customer.getId();
             String promotionID = "";
             //display label
             customerIdField.setText(customerID);
             customerNameField.setText(customer.getName());
-            customerRankField.setText(Utils.toStringMembershipLevel(customer.getMembershipLevel()));
+            customerRankField.setText(Utils.toStringMembershipLevel(customer.getMembershipLevel().getLevel()));
             //enable table
             promotionTableView.setDisable(false);
             // Set discount
@@ -343,7 +344,7 @@ public class OrderPaymentController implements Initializable {
             //load list promotion
             setPromotionTableValue();
             if(!promotionTableView.getSelectionModel().isEmpty()){
-                promotionID = promotionTableView.getSelectionModel().getSelectedItem().getPromotionId();
+                promotionID = promotionTableView.getSelectionModel().getSelectedItem().getId();
             }
             JsonArray customerArray = new JsonArray();
             JsonObject customerObject = new JsonObject();
@@ -494,7 +495,7 @@ public class OrderPaymentController implements Initializable {
         System.out.println(tableArray.size());
         for (int i = 0; i < tableArray.size(); i++) {
             System.out.println(tableIDs.get(i).toString());
-            tableBUS.updateStatusTable(tableIDs.get(i).toString().replace("\"",""), "Phục vụ");
+            tableBUS.updateStatusTable(tableIDs.get(i).toString().replace("\"",""), TableStatus.RESERVED);
         }
 
         JsonArray cuisineOrderArray = new JsonArray();

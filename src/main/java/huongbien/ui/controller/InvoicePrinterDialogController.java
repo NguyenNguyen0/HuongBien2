@@ -1,20 +1,21 @@
-package com.huongbien.ui.controller;
+package huongbien.ui.controller;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.huongbien.config.Constants;
-import com.huongbien.config.Variable;
-import com.huongbien.dao.CustomerDAO;
-import com.huongbien.dao.EmployeeDAO;
-import com.huongbien.dao.PromotionDAO;
-import com.huongbien.dao.TableDAO;
-import com.huongbien.entity.*;
-import com.huongbien.utils.Utils;
+import huongbien.config.Constants;
+import huongbien.config.Variable;
+import huongbien.dao.CustomerDAO;
+import huongbien.dao.EmployeeDAO;
+import huongbien.dao.PromotionDAO;
+import huongbien.dao.TableDAO;
+import huongbien.entity.*;
+import huongbien.jpa.PersistenceUnit;
+import huongbien.util.Utils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.print.*;
+import javafx.print.PrinterJob;
 import javafx.scene.Node;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
@@ -79,7 +80,7 @@ public class InvoicePrinterDialogController implements Initializable {
         for (JsonElement element : jsonArraySession) {
             JsonObject jsonObject = element.getAsJsonObject();
             String id = jsonObject.get("Employee ID").getAsString();
-            EmployeeDAO dao_employee = EmployeeDAO.getInstance();
+            EmployeeDAO dao_employee = new EmployeeDAO();
             Employee employee = dao_employee.getManyById(id).get(0);
             currentLoginSession = (employee.getName() != null ? employee.getName() : "Không xác định");
         }
@@ -93,12 +94,12 @@ public class InvoicePrinterDialogController implements Initializable {
             JsonObject jsonObject = element.getAsJsonObject();
             //get customer
             String customerID = jsonObject.get("Customer ID").getAsString();
-            CustomerDAO customerDAO = CustomerDAO.getInstance();
+            CustomerDAO customerDAO = new CustomerDAO(PersistenceUnit.MARIADB_JPA);
             Customer customer = customerDAO.getById(customerID);
             currentCustomer = (customer.getName() != null ? customer.getName() : "Khách vãng lai");
             //get promotion
             String promotionID = jsonObject.get("Promotion ID").getAsString();
-            PromotionDAO promotionDAO = PromotionDAO.getInstance();
+            PromotionDAO promotionDAO = new PromotionDAO(PersistenceUnit.MARIADB_JPA);
             Promotion promotion = promotionDAO.getById(promotionID);
 
             if (promotion == null) {
@@ -106,7 +107,7 @@ public class InvoicePrinterDialogController implements Initializable {
                 promotionId = null;
             } else {
                 discount = promotion.getDiscount();
-                promotionId = (promotion.getPromotionId() != null ? promotion.getPromotionId() : "Không áp dụng");
+                promotionId = (promotion.getId() != null ? promotion.getId() : "Không áp dụng");
             }
         }
         content.setText(content.getText() + String.format("%-13s %37s", "Khách hàng:", currentCustomer));
@@ -121,7 +122,7 @@ public class InvoicePrinterDialogController implements Initializable {
         for (int i = 0; i < jsonArrayTable.size(); i++) {
             JsonObject jsonObject = jsonArrayTable.get(i).getAsJsonObject();
             String id = jsonObject.get("Table ID").getAsString();
-            TableDAO tableDAO = TableDAO.getInstance();
+            TableDAO tableDAO = new TableDAO(PersistenceUnit.MARIADB_JPA);
             Table table = tableDAO.getById(id);
             if (table != null) {
                 if (i == 0) {
@@ -130,7 +131,7 @@ public class InvoicePrinterDialogController implements Initializable {
                     content.setText(content.getText() + String.format("%-13s %37s", "", table.getName() + " " + (table.getFloor() == 0 ? "Tầng trệt" : "Tầng " + table.getFloor()) + " - " + table.getTableType().getName() + ")"));
                 }
                 newLine();
-                tableAmount += (table.getTableType().getTableId().equals("LB002") ? Variable.tableVipPrice : 0);
+                tableAmount += (table.getTableType().getId().equals("LB002") ? Variable.tableVipPrice : 0);
             }
         }
         content.setText(content.getText() + String.format("%-20s %30s", "Mã khuyến mãi:", promotionId));

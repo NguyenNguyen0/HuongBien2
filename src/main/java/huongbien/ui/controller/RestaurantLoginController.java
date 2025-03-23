@@ -1,16 +1,14 @@
-package com.huongbien.ui.controller;
+package huongbien.ui.controller;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.huongbien.config.AppConfig;
-import com.huongbien.config.Constants;
-import com.huongbien.dao.AccountDAO;
-import com.huongbien.entity.Account;
-import com.huongbien.service.EmailService;
-import com.huongbien.utils.ClearJSON;
-import com.huongbien.utils.ToastsMessage;
-import com.huongbien.utils.Utils;
-import javafx.animation.PauseTransition;
+import huongbien.config.AppConfig;
+import huongbien.config.Constants;
+import huongbien.dao.AccountDAO;
+import huongbien.entity.Account;
+import huongbien.service.EmailService;
+import huongbien.util.ToastsMessage;
+import huongbien.util.Utils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -29,7 +27,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.util.Duration;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -60,7 +57,7 @@ public class RestaurantLoginController implements Initializable {
 
     private void loadCarousel() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/huongbien/fxml/RestaurantLoginCarousel.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/huongbien/fxml/RestaurantLoginCarousel.fxml"));
             Parent carousel = loader.load();
             borderPaneCarousel.setCenter(carousel);
         } catch (IOException e) {
@@ -128,7 +125,7 @@ public class RestaurantLoginController implements Initializable {
 
                     String hashedPassword = Utils.hashPassword(newPassword);
 
-                    boolean isPasswordUpdated = AccountDAO.getInstance().changePassword(email, hashedPassword);
+                    boolean isPasswordUpdated = (new AccountDAO()).changePassword(email, hashedPassword);
                     if (isPasswordUpdated) {
                         Utils.showAlert(String.valueOf(Alert.AlertType.INFORMATION), "Mật khẩu đã được thay đổi thành công!");
                     } else {
@@ -164,7 +161,7 @@ public class RestaurantLoginController implements Initializable {
     @FXML
     void onToggleShowingPasswordButtonClicked(MouseEvent event) {
         if (!status) {
-            Image imgShow = new Image(getClass().getResourceAsStream("/com/huongbien/icon/mg_login/eye-16px.png"));
+            Image imgShow = new Image(getClass().getResourceAsStream("/huongbien/icon/mg_login/eye-16px.png"));
             toggleShowingPasswordButton.setImage(imgShow);
             compoent_show.setVisible(true);
             showedPasswordField.setVisible(true);
@@ -173,7 +170,7 @@ public class RestaurantLoginController implements Initializable {
             showedPasswordField.setText(hidedPasswordField.getText());
             status = true;
         } else {
-            Image imgHide = new Image(getClass().getResourceAsStream("/com/huongbien/icon/mg_login/hiddenEye-16px.png"));
+            Image imgHide = new Image(getClass().getResourceAsStream("/huongbien/icon/mg_login/hiddenEye-16px.png"));
             toggleShowingPasswordButton.setImage(imgHide);
             compoent_show.setVisible(false);
             showedPasswordField.setVisible(false);
@@ -196,7 +193,7 @@ public class RestaurantLoginController implements Initializable {
 
     @FXML
     void onLoginButtonClicked(ActionEvent event) throws SQLException, IOException {
-        AccountDAO accountDAO = AccountDAO.getInstance();
+        AccountDAO accountDAO = new AccountDAO();
 
         String username = employeeIdField.getText();
         String password = getCurrentPassword();
@@ -209,7 +206,7 @@ public class RestaurantLoginController implements Initializable {
             return;
         }
 
-        if(!account.getIsActive()) {
+        if(!account.isActive()) {
             ToastsMessage.showMessage("Tài khoản của bạn đã bị khoá, vui lòng liên hệ quản lý để mở lại!", "warning");
             return;
         }
@@ -219,10 +216,10 @@ public class RestaurantLoginController implements Initializable {
             //Role check
             String path;
             if(account.getRole().equals("Quản lý")) {
-                path = "/com/huongbien/fxml/RestaurantMainManager.fxml";
+                path = "/huongbien/fxml/RestaurantMainManager.fxml";
                 ToastsMessage.showMessage("Bạn đang đăng nhập với quyền quản lý", "success");
             } else {
-                path = "/com/huongbien/fxml/RestaurantMainStaff.fxml";
+                path = "/huongbien/fxml/RestaurantMainStaff.fxml";
                 ToastsMessage.showMessage("Bạn đang đăng nhập với quyền nhân viên", "success");
             }
             FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
@@ -235,7 +232,7 @@ public class RestaurantLoginController implements Initializable {
             mainStage.setMaximized(true);
             mainStage.setTitle("Dashboard - Huong Bien Restaurant");
             mainStage.initStyle(StageStyle.UNDECORATED);
-            mainStage.getIcons().add(new Image("/com/huongbien/icon/favicon/favicon-logo-restaurant-128px.png"));
+            mainStage.getIcons().add(new Image("/huongbien/icon/favicon/favicon-logo-restaurant-128px.png"));
             mainStage.show();
 
             //write JSON user current

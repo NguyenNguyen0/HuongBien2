@@ -1,28 +1,26 @@
-package com.huongbien.ui.controller;
+package huongbien.ui.controller;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.huongbien.bus.*;
-import com.huongbien.config.Constants;
-import com.huongbien.config.Variable;
-import com.huongbien.dao.EmployeeDAO;
-import com.huongbien.dao.PromotionDAO;
-import com.huongbien.dao.TableDAO;
-import com.huongbien.entity.*;
-import com.huongbien.utils.ClearJSON;
-import com.huongbien.utils.Converter;
-import com.huongbien.utils.ToastsMessage;
-import com.huongbien.utils.Utils;
+import huongbien.bus.*;
+import huongbien.config.Constants;
+import huongbien.config.Variable;
+import huongbien.dao.PromotionDAO;
+import huongbien.dao.TableDAO;
+import huongbien.entity.*;
+import huongbien.jpa.PersistenceUnit;
+import huongbien.util.ClearJSON;
+import huongbien.util.Converter;
+import huongbien.util.ToastsMessage;
+import huongbien.util.Utils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -109,7 +107,7 @@ public class OrderPaymentFinalController implements Initializable {
         try {
             for (int i = 0; i < orderDetails.size(); i++) {
                 FXMLLoader fxmlLoader = new FXMLLoader();
-                fxmlLoader.setLocation(getClass().getResource("/com/huongbien/fxml/OrderPaymentBillItem.fxml"));
+                fxmlLoader.setLocation(getClass().getResource("/huongbien/fxml/OrderPaymentBillItem.fxml"));
                 HBox paymentBillBox = fxmlLoader.load();
                 OrderPaymentBillItemController orderPaymentBillItemController = fxmlLoader.getController();
                 orderPaymentBillItemController.setDataBill(orderDetails.get(i));
@@ -142,7 +140,7 @@ public class OrderPaymentFinalController implements Initializable {
             double money = jsonObject.get("Cuisine Money").getAsDouble();
 
             Cuisine cuisine = new Cuisine();
-            cuisine.setCuisineId(id);
+            cuisine.setId(id);
             cuisine.setName(name);
             cuisine.setPrice(price);
             OrderDetail orderDetail = new OrderDetail(null, quantity, note, money, cuisine);
@@ -169,10 +167,10 @@ public class OrderPaymentFinalController implements Initializable {
         for (JsonElement element : jsonArrayTable) {
             JsonObject jsonObject = element.getAsJsonObject();
             String id = jsonObject.get("Table ID").getAsString();
-            tableBUS.updateStatusTable(id, "Bàn trống");
-            TableDAO dao_table = TableDAO.getInstance();
+            tableBUS.updateStatusTable(id, TableStatus.AVAILABLE);
+            TableDAO dao_table = new TableDAO(PersistenceUnit.MARIADB_JPA);
             Table table = dao_table.getById(id);
-            tableAmount += (table.getTableType().getTableId().equals(Variable.tableVipID)) ? Variable.tableVipPrice : 0;
+            tableAmount += (table.getTableType().getId().equals(Variable.tableVipID)) ? Variable.tableVipPrice : 0;
         }
         //calc cuisine amount
         double cuisineAmount = 0.0;
@@ -186,7 +184,7 @@ public class OrderPaymentFinalController implements Initializable {
         for (JsonElement element : jsonArrayCustomer) {
             JsonObject jsonObject = element.getAsJsonObject();
             String id = jsonObject.get("Promotion ID").getAsString();
-            PromotionDAO promotionDAO = PromotionDAO.getInstance();
+            PromotionDAO promotionDAO = new PromotionDAO(PersistenceUnit.MARIADB_JPA);
             Promotion promotion = promotionDAO.getById(id);
             if (promotion != null) {
                 discount = promotion.getDiscount();
@@ -325,7 +323,7 @@ public class OrderPaymentFinalController implements Initializable {
     }
 
     private void openPrinter() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/huongbien/fxml/InvoicePrinterDialog.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/huongbien/fxml/InvoicePrinterDialog.fxml"));
         Parent root = loader.load();
         Stage primaryStage = new Stage();
         primaryStage.initStyle(StageStyle.TRANSPARENT);
@@ -350,7 +348,7 @@ public class OrderPaymentFinalController implements Initializable {
             return;
         }
         try {
-            String orderId = Order.generateOrderId(LocalDate.now(), LocalTime.now());
+            String orderId = Order.generateId(LocalDate.now(), LocalTime.now());
 
             JsonArray jsonArraySession = Utils.readJsonFromFile(Constants.LOGIN_SESSION_PATH);
             Employee employee = null;
@@ -401,7 +399,7 @@ public class OrderPaymentFinalController implements Initializable {
             Payment payment = new Payment(moneyFromCustomer, Variable.paymentMethods[0]);
 
             Order order = new Order("", employee, customer, payment, promotion, orderDetails, tables);
-            order.setOrderId(orderId);
+            order.setId(orderId);
             order.setTotalAmount(finalAmount);
             order.setDispensedAmount(moneyFromCustomer - finalAmount);
 

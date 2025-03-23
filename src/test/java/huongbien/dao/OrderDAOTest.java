@@ -3,7 +3,6 @@ package huongbien.dao;
 import huongbien.data.DataGenerator;
 import huongbien.entity.Order;
 import huongbien.jpa.PersistenceUnit;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;

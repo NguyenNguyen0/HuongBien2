@@ -1,12 +1,13 @@
-package com.huongbien.bus;
+package huongbien.bus;
 
-import com.huongbien.dao.AccountDAO;
-import com.huongbien.entity.Account;
+import huongbien.dao.AccountDAO;
+import huongbien.entity.Account;
+import huongbien.jpa.PersistenceUnit;
 
 import java.util.List;
 
 public class AccountBUS {
-    private final AccountDAO accountDao = AccountDAO.getInstance();
+    private final AccountDAO accountDao = new AccountDAO(PersistenceUnit.MARIADB_JPA);
 
     public List<Account> getAllAccount() {
         return accountDao.getAll();

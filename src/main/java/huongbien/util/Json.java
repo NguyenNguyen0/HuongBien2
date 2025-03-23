@@ -1,4 +1,4 @@
-package com.huongbien.utils;
+package huongbien.util;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;

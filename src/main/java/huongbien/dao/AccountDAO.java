@@ -2,6 +2,7 @@ package huongbien.dao;
 
 import huongbien.entity.Account;
 import huongbien.jpa.PersistenceUnit;
+import huongbien.util.Utils;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
@@ -23,6 +24,24 @@ public class AccountDAO extends GenericDAO<Account> {
 
     public Account getByEmail(String email) {
         return findOne("SELECT a FROM Account a WHERE a.email = ?1", Account.class, email);
+    }
+
+    public boolean changePassword(String email, String newPassword) {
+        Account account = getByEmail(email);
+        if (account == null) return false;
+        account.setHashcode(Utils.hashPassword(newPassword));
+        return update(account);
+    }
+
+    public boolean updateEmail(String employeeId, String email) {
+        Account account = getByEmployeeId(employeeId);
+        if (account == null) return false;
+        account.setEmail(email);
+        return update(account);
+    }
+
+    private Account getByEmployeeId(String employeeId) {
+        return findOne("SELECT a FROM Account a WHERE a.employeeId = ?1", Account.class, employeeId);
     }
 }
 

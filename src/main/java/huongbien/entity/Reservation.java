@@ -10,7 +10,6 @@ import lombok.ToString;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Setter
@@ -18,7 +17,7 @@ import java.util.List;
 @ToString
 @NoArgsConstructor
 @Entity
-@Table(name = "reservations")
+@jakarta.persistence.Table(name = "reservations")
 public class Reservation {
     @Id
     @Column(name = "reservation_id")
@@ -71,7 +70,7 @@ public class Reservation {
             inverseJoinColumns = @JoinColumn(name = "table_id")
     )
     @ToString.Exclude
-    private List<RestaurantTable> tables;
+    private List<Table> tables;
 
     public static String generateId(LocalDate localDate, LocalTime localTime) {
         LocalDate currentDate = localDate == null ? LocalDate.now() : localDate;

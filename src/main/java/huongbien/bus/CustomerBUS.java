@@ -1,8 +1,9 @@
-package com.huongbien.bus;
+package huongbien.bus;
 
 
-import com.huongbien.dao.CustomerDAO;
-import com.huongbien.entity.Customer;
+import huongbien.dao.CustomerDAO;
+import huongbien.entity.Customer;
+import huongbien.jpa.PersistenceUnit;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -11,7 +12,7 @@ public class CustomerBUS {
     private final CustomerDAO customerDao;
 
     public CustomerBUS() {
-        customerDao = CustomerDAO.getInstance();
+        customerDao = new CustomerDAO(PersistenceUnit.MARIADB_JPA);
     }
 
     public int getTotalCustomerCount() {
@@ -70,9 +71,9 @@ public class CustomerBUS {
         return customerDao.getByName(name);
     }
 
-    public List<Customer> getCustomerByPhoneNumber(String phoneNumber) {
-        return customerDao.getByManyPhoneNumber(phoneNumber);
-    }
+//    public List<Customer> getCustomerByPhoneNumber(String phoneNumber) {
+//        return customerDao.getByManyPhoneNumber(phoneNumber);
+//    }
 
     public Customer getCustomerById(String id) {
         return customerDao.getById(id);
@@ -83,7 +84,7 @@ public class CustomerBUS {
     }
 
     public boolean updateCustomerInfo(Customer customer) {
-        return customerDao.updateCustomerInfo(customer);
+        return customerDao.update(customer);
     }
 
     public boolean addCustomer(Customer customer) {

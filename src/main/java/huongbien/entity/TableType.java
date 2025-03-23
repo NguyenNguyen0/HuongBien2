@@ -12,7 +12,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "table_types")
+@jakarta.persistence.Table(name = "table_types")
 public class TableType {
     @Id
     @Column(name = "table_type_id")
@@ -22,7 +22,7 @@ public class TableType {
 
     @ToString.Exclude
     @OneToMany(mappedBy = "tableType")
-    private List<RestaurantTable> tables;
+    private List<Table> tables;
 
     public TableType(String id, String name, String description) {
         this.id = id;
