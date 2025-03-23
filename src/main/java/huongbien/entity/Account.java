@@ -36,6 +36,7 @@ public class Account {
         this.role = role;
         this.email = email;
         this.isActive = isActive;
+        this.employee = null;
     }
 
     @Override
