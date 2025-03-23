@@ -1,0 +1,204 @@
+.all-bg {
+    -fx-background-image: url('../img/background/background.jpg');
+    -fx-background-color: black;
+    -fx-background-size: cover;
+    -fx-background-position: left;
+    -fx-background-repeat: no-repeat;
+}
+
+.gradient-main {
+    -fx-background-color: #2E3192;
+}
+
+.main-color {
+    -fx-background-color: #318DD1;
+}
+
+.bg-white {
+    -fx-background-color: white;
+}
+
+.transperant {
+    -fx-background-color: rgba(0, 0, 0, 0);
+}
+
+.transperant-50 {
+    -fx-background-color: rgba(255, 255, 255, 0.5);
+}
+
+.transperant-60 {
+    -fx-background-color: rgba(255, 255, 255, 0.6);
+}
+
+.transperant-70 {
+     -fx-background-color: rgba(255, 255, 255, 0.7);
+}
+
+.transperant-80 {
+    -fx-background-color: rgba(255, 255, 255, 0.8);
+}
+
+.transperant-90 {
+    -fx-background-color: rgba(255, 255, 255, 0.9);
+}
+
+.opacity50 {
+    -fx-opacity: 0.5;
+}
+
+.border-form {
+    -fx-border-width: 1;
+    -fx-border-color: #cdc7c7;
+}
+
+.border-radis-15 {
+    -fx-border-radius: 15;
+}
+
+.border-radis-50 {
+    -fx-border-radius: 50;
+}
+
+.bg-radis-15 {
+    -fx-background-radius: 15;
+}
+
+.border-bottom {
+    -fx-border-color: transparent transparent black transparent;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.main-theme-color {
+    -fx-background-color: #318DD1;
+    -fx-text-fill: white;
+}
+
+.color-menubar {
+    -fx-background-color: rgba(255, 255, 255, 0.5);
+}
+
+.border-line {
+    -fx-border-color: white;
+    -fx-border-width: 1px;
+    -fx-border-radius: 15px;
+}
+
+.border-line-top {
+    -fx-border-color: white transparent transparent transparent;
+    -fx-border-width: 1px 0 0 0;
+}
+
+.border-line-bottom {
+    -fx-border-color: transparent transparent white transparent;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.border-line-top-bot {
+    -fx-border-color: white transparent white transparent;
+    -fx-border-width: 1px 0 1px 0;
+}
+
+.titled-pane > .title {
+    -fx-background-color: transparent;
+    -fx-padding: 20px 0 0 0;
+}
+
+.titled-pane > .content {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+#menu_hide_manage_icon {
+    -fx-translate-x: 8px;
+}
+
+/*scrollPane css*/
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane{
+    -fx-background-color:transparent;
+}
+
+.scroll-bar:horizontal, .scroll-bar:vertical {
+    -fx-background-color: transparent;
+}
+
+/*textField bot line*/
+.textField-line-bot {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent black transparent;
+    -fx-border-width: 0 0 2 0;
+}
+
+.textField-transparent{
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}
+
+/*Table View*/
+.table-view {
+    -fx-selection-bar: #b3d4fc;
+}
+
+.table-view .column-header-background {
+    -fx-padding: 20px 0px;
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header {
+    -fx-background-color: rgba(0,0,0,0);
+    -fx-padding: 10px 0;
+}
+
+.table-view .column-header .label {
+    -fx-font-size: 23px;
+}
+
+.table-row-cell {
+    -fx-padding: 20px 0px;
+    -fx-font-size: 25px;
+}
+
+.table-cell {
+    -fx-alignment: CENTER;
+}
+
+/*Combobox*/
+.combo-box {
+    -fx-font-size: 25px;
+}
+
+.combo-box-popup .list-view {
+    -fx-font-size: 25px;
+}
+
+.date-picker {
+    -fx-font-size: 25px;
+}
+
+/*Tabpane NO DELETE*/
+.tab-pane .tab {
+    -fx-padding: 10px 15px;
+}
+
+.tab-pane .tab-label {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.tab-pane:focused .tab {
+    -fx-background-insets: 0;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.tab-pane .tab-header-area {
+    -fx-background-color: lightblue;
+}
+
+.tab-pane .tab-content-area {
+    -fx-background-color: white;
+}

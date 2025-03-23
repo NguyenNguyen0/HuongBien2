@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="BOTTOM_CENTER" prefHeight="368.0" prefWidth="330.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.huongbien.ui.controller.PreOrderCuisineItemController">
+   <children>
+      <VBox fx:id="cuisineItemComponent" alignment="BOTTOM_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#onCuisineItemClicked" prefHeight="218.0" prefWidth="330.0" style="-fx-background-color: white;">
+         <children>
+            <Circle fx:id="cuisineImageCircle" fill="WHITE" radius="139.0" stroke="BLACK" strokeType="INSIDE">
+               <VBox.margin>
+                  <Insets top="-250.0" />
+               </VBox.margin>
+            </Circle>
+            <VBox alignment="CENTER" prefHeight="70.0" prefWidth="300.0">
+               <children>
+                  <Label fx:id="cuisineNameLabel" text="TÔM HÙM HẤP BIA">
+                     <font>
+                        <Font name="System Bold" size="20.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="cuisineSalePriceLabel" text="1.200.000 VNĐ">
+                     <font>
+                        <Font name="System Italic" size="18.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="cuisineIdLabel" opacity="0.0" text="ID: M001" />
+               </children>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </VBox>
+         </children>
+      </VBox>
+   </children>
+</VBox>

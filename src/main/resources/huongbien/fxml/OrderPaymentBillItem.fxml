@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="60.0" prefWidth="1100.0" styleClass="border-line" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.huongbien.ui.controller.OrderPaymentBillItemController">
+   <children>
+      <VBox alignment="CENTER" opacity="0.0" prefHeight="1.0" prefWidth="1.0">
+         <children>
+            <Label fx:id="cuisineIdLabel" alignment="CENTER" prefHeight="1.0" prefWidth="1.0" text="ID">
+               <font>
+                  <Font size="18.0" />
+               </font></Label>
+         </children>
+         <HBox.margin>
+            <Insets />
+         </HBox.margin>
+      </VBox>
+      <VBox alignment="CENTER_LEFT" prefHeight="98.0" prefWidth="300.0" HBox.hgrow="ALWAYS">
+         <children>
+            <Label fx:id="cuisineNameLabel" text="Tôm hùm hấp bia">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+            </Label>
+         </children>
+      </VBox>
+      <VBox alignment="CENTER_LEFT" prefHeight="98.0" prefWidth="210.0">
+         <children>
+            <Label fx:id="cuisineNoteLabel" text="Cho nhiều bia">
+               <font>
+                  <Font size="15.0" />
+               </font></Label>
+         </children>
+      </VBox>
+      <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0">
+         <children>
+            <Label fx:id="cuisineQuantityLabel" alignment="CENTER" text="2">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+            </Label>
+         </children>
+      </VBox>
+      <VBox alignment="CENTER_RIGHT" prefHeight="98.0" prefWidth="200.0">
+         <children>
+            <Label fx:id="cuisineSalePriceLabel" text="1.200.000đ">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+         </children>
+      </VBox>
+      <VBox alignment="CENTER_RIGHT" prefHeight="68.0" prefWidth="200.0">
+         <children>
+            <Label fx:id="cuisineTotalPriceLabel" alignment="CENTER" prefHeight="18.0" text="2.400.000đ">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+            </Label>
+         </children>
+         <HBox.margin>
+            <Insets right="20.0" />
+         </HBox.margin>
+      </VBox>
+   </children>
+</HBox>

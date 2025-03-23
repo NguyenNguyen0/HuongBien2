@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="960.0" prefWidth="1600.0" styleClass="gradient-main" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.huongbien.ui.controller.RestaurantHelpController">
+
+   <top>
+      <VBox alignment="CENTER" prefHeight="100.0" spacing="10.0" style="-fx-padding: 20;">
+         <children>
+            <Label style="-fx-font-size: 42px; -fx-font-weight: bold;" text="Welcome to Huong Bien Restaurant" textFill="WHITE" />
+            <Label style="-fx-font-size: 26px;" text="Your comprehensive guide to restaurant operations and dining experiences." textFill="WHITE" />
+         </children>
+      </VBox>
+   </top>
+
+   <center>
+      <HBox alignment="CENTER" spacing="30.0" style="-fx-padding: 20;">
+         <children>
+            <VBox prefWidth="450.0" spacing="15.0" style="-fx-padding: 20; -fx-font-weight: bold; -fx-border-color: #ddd; -fx-border-width: 1; -fx-border-radius: 10; -fx-background-radius: 10; -fx-background-color: white;">
+               <children>
+                  <Label style="-fx-font-size: 20px; -fx-font-weight: bold;" text="          Hướng dẫn chức năng Đặt Bàn" textAlignment="CENTER" />
+                  <Label style="-fx-font-size: 14px; -fx-text-fill: gray;" text="Necessary information for staff about table reservations" />
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label style="-fx-font-size: 17px; -fx-font-weight: bold;" text="1. Nhân viên phải là Tiếp Tân hoặc Quản lý.">
+                           <font>
+                              <Font size="18.0" />
+                           </font></Label>
+                        <Label style="-fx-font-size: 17px; -fx-font-weight: bold;" text="2. Truy cập vào phần Đặt Bàn ở MENU Chinh.">
+                           <font>
+                              <Font size="18.0" />
+                           </font></Label>
+                        <Label prefHeight="28.0" prefWidth="408.0" style="-fx-font-size: 17px; -fx-font-weight: bold;" text="3. Nhân viên chọn bàn theo yêu cầu của khách">
+                           <font>
+                              <Font size="18.0" />
+                           </font></Label>
+                        <Label prefHeight="27.0" prefWidth="387.0" style="-fx-font-size: 17px; -fx-font-weight: bold;" text="hàng ở giao diện.">
+                           <font>
+                              <Font size="18.0" />
+                           </font></Label>
+                        <Label prefHeight="40.0" prefWidth="408.0" style="-fx-font-size: 17px; -fx-font-weight: bold;" text="4. Chọn &quot;Đặt trước&quot; hoặc &quot;Tại chổ&quot;.">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label prefHeight="28.0" prefWidth="408.0" style="-fx-font-size: 17px; -fx-font-weight: bold;" text=" 4.1 Đối với &quot;Đặt trước&quot; Khi nhập thông tin xong ">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label prefHeight="28.0" prefWidth="408.0" style="-fx-font-size: 17px; -fx-font-weight: bold;" text="     và bấm lưu, đơn đặt sẽ được lưu vào &quot;Danh ">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label prefHeight="28.0" prefWidth="408.0" style="-fx-font-size: 17px; -fx-font-weight: bold;" text="     sách đặt trước&quot;, nhân viên vào tính  năng trên">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="250.0" prefHeight="28.0" prefWidth="408.0" style="-fx-font-size: 17px; -fx-font-weight: bold;" text="     để theo dõi đơn đặt từ khách hàng.">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label prefHeight="28.0" prefWidth="408.0" style="-fx-font-size: 17px; -fx-font-weight: bold;" text=" 4.2 Đối với &quot;Đặt tại chổ&quot; Khi chọn xong món ăn,">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label prefHeight="28.0" prefWidth="408.0" style="-fx-font-size: 17px; -fx-font-weight: bold;" text="    nhân viên có thể thanh toán bấm thanh toán và">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label prefHeight="28.0" prefWidth="408.0" style="-fx-font-size: 17px; -fx-font-weight: bold;" text="    in hoá đơn nếu khách hàng yêu cầu, hoặc có thể">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label prefHeight="28.0" prefWidth="408.0" style="-fx-font-size: 17px; -fx-font-weight: bold;" text="    bấm lưu tạm, đơn sẽ được lưu vào &quot;Đơn đặt&quot;. ">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="415.0" prefHeight="28.0" prefWidth="408.0" style="-fx-font-size: 17px; -fx-font-weight: bold;" text="    Nhân viên lưu ý để có thể làm đúng trình tự!">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+
+            <VBox prefWidth="450.0" spacing="15.0" style="-fx-padding: 20; -fx-border-color: #ddd; -fx-border-width: 1; -fx-border-radius: 10; -fx-background-radius: 10; -fx-background-color: white;">
+               <children>
+                  <Label style="-fx-font-size: 20px; -fx-font-weight: bold;" text="          Hướng dẫn chức năng thống kê" textAlignment="CENTER" />
+                  <Label style="-fx-font-size: 14px; -fx-text-fill: gray;" text="Instructions for using the system's statistical features" />
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label style="-fx-font-size: 17px; -fx-font-weight: bold;" text="1. Nhân viên truy cập vào phần Thống kê ở MENU " />
+                        <Label layoutX="10.0" layoutY="10.0" style="-fx-font-size: 17px; -fx-font-weight: bold;" text="Chính." />
+                        <Label style="-fx-font-size: 17px;-fx-font-weight: bold;" text="2. Giao diện sẽ hiển thị 4 ô vuông để hỗ trợ việc " />
+                        <Label style="-fx-font-size: 17px; -fx-font-weight: bold;" text="theo dõi doanh thu." />
+                        <Label style="-fx-font-size: 17px; -fx-font-weight: bold;" text="3. Ở phần chọn tiêu chi, nhân viên có thể chọn " />
+                        <Label style="-fx-font-size: 17px; -fx-font-weight: bold;" text="theo Quý, Năm, Tháng theo yêu cầu. " />
+                        <Label style="-fx-font-size: 17px; -fx-font-weight: bold;" text="4. Tiếp theo là 2 bảng thống kê nhanh trong ngày" />
+                        <Label style="-fx-font-size: 17px; -fx-font-weight: bold;" text="hỗ trợ cho  việc xem thống kê nhanh." />
+                        <Label style="-fx-font-size: 17px; -fx-font-weight: bold;" text="5. Cuối cùng, là 2 biểu đồ doanh thu và đơn " />
+                        <Label style="-fx-font-size: 17px; -fx-font-weight: bold;" text="đặt bàn. Giúp hiển thị thống kê 1 cách trực quan " />
+                        <Label layoutX="10.0" layoutY="296.0" style="-fx-font-size: 17px; -fx-font-weight: bold;" text="nhất." />
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+            <VBox prefWidth="450.0" spacing="15.0" style="-fx-padding: 20; -fx-border-color: #ddd; -fx-border-width: 1; -fx-border-radius: 10; -fx-background-radius: 10; -fx-background-color: white;">
+               <children>
+                  <Label style="-fx-font-size: 20px; -fx-font-weight: bold;" text="  Hướng dẫn tự thay đổi thông tin cá nhân" textAlignment="CENTER" />
+                  <Label style="-fx-font-size: 14px; -fx-text-fill: gray;" text="Instructions for changing personal information" />
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label style="-fx-font-size: 17px; -fx-font-weight: bold;" text="1. Nhân viên bấm vào biểu tượng ảnh đại diện">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label style="-fx-font-size: 17px; -fx-font-weight: bold;" text="ở giao diện chính.">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label prefHeight="28.0" prefWidth="408.0" style="-fx-font-size: 17px; -fx-font-weight: bold;" text="2. Tại đây nhân viên có thể tự thay đổi thông tin">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label prefHeight="27.0" prefWidth="387.0" style="-fx-font-size: 17px; -fx-font-weight: bold;" text="cá nhân của mình.">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label prefHeight="40.0" prefWidth="408.0" style="-fx-font-size: 17px; -fx-font-weight: bold;" text="3. Ngoài ra, nhân viên có thể tự thay đổi mật khẩu">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label prefHeight="28.0" prefWidth="408.0" style="-fx-font-size: 17px; -fx-font-weight: bold;" text="theo định kì, để giúp bảo mật thông tin tốt hơn">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label prefHeight="28.0" prefWidth="408.0" style="-fx-font-size: 17px; -fx-font-weight: bold;" text="và có thể tự thay đổi ảnh đại diện cho bản thân.">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="250.0" prefHeight="28.0" prefWidth="408.0" style="-fx-font-size: 17px;">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </center>
+
+   <bottom>
+      <VBox alignment="CENTER" spacing="5.0" style="-fx-padding: 10;">
+         <children>
+            <Label style="-fx-font-size: 12px; -fx-text-fill: gray;" text="© 2024 HuongBienRestaurant. All rights reserved." />
+         </children>
+      </VBox>
+   </bottom>
+</BorderPane>
