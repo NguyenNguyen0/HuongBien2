@@ -1,5 +1,6 @@
 package huongbien.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import huongbien.config.Constant;
 import huongbien.util.Util;
 import jakarta.persistence.*;
@@ -61,12 +62,12 @@ public class Order {
     @JoinColumn(name = "payment_id", unique = true)
     private Payment payment;
 
-    @ToString.Exclude
     @OneToMany(mappedBy = "order", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<OrderDetail> orderDetails;
 
     @ToString.Exclude
-    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JsonIgnore
+    @ManyToMany
     @JoinTable(
             name = "orders_tables",
             joinColumns = @JoinColumn(name = "order_id"),

@@ -4,10 +4,19 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Util {
+
     public static int randomNumber(int min, int max) {
-        return (int) (Math.random() * (max - min + 1) + min);
+        // Ensures bounds are valid
+        if (min > max) {
+            throw new IllegalArgumentException("Min must be less than or equal to max");
+        }
+
+        // ThreadLocalRandom provides better randomization than Math.random()
+        // and performs better in concurrent environments
+        return ThreadLocalRandom.current().nextInt(min, max + 1);
     }
 
     public static byte[] readImage(String path) {

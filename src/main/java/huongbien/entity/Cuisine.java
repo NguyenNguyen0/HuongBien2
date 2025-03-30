@@ -1,5 +1,6 @@
 package huongbien.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import huongbien.jpa.converter.CuisineStatusConverter;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
@@ -27,6 +28,7 @@ public class Cuisine {
     @Convert(converter = CuisineStatusConverter.class)
     private CuisineStatus status;
 
+    @JsonIgnore
     @Lob
     @Column(name = "image", columnDefinition = "LONGBLOB")
     private byte[] image;

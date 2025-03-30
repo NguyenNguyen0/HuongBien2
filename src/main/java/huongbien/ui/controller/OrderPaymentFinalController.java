@@ -396,7 +396,7 @@ public class OrderPaymentFinalController implements Initializable {
 
             double moneyFromCustomer = Converter.parseMoney(paymentAmountField.getText());
             double finalAmount = Converter.parseMoney(totalAmountLabel.getText());
-            Payment payment = new Payment(moneyFromCustomer, Variable.paymentMethods[0]);
+            Payment payment = new Payment(moneyFromCustomer, PaymentMethod.CASH);
 
             Order order = new Order("", employee, customer, payment, promotion, orderDetails, tables);
             order.setId(orderId);
@@ -431,7 +431,8 @@ public class OrderPaymentFinalController implements Initializable {
                     }
                 }
             } else {
-                ToastsMessage.showMessage("Thanh toán thất bại", "success");
+                System.err.println("order: " + order);
+                ToastsMessage.showMessage("Thanh toán thất bại", "error");
             }
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);

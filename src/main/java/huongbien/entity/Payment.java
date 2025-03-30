@@ -48,9 +48,9 @@ public class Payment {
         this.paymentMethod = paymentMethod;
     }
 
-    public Payment(double moneyFromCustomer, String paymentMethod) {
+    public Payment(double moneyFromCustomer, PaymentMethod paymentMethod) {
         this.amount = moneyFromCustomer;
-        this.paymentMethod = PaymentMethod.valueOf(paymentMethod);
+        this.paymentMethod = paymentMethod;
         this.paymentDate = LocalDate.now();
         this.paymentTime = LocalTime.now();
         this.paymentId = generateId(paymentDate, paymentTime);

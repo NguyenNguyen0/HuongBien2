@@ -1,7 +1,9 @@
 package huongbien.dao;
 
 import huongbien.entity.TableType;
+import huongbien.jpa.JPAUtil;
 import huongbien.jpa.PersistenceUnit;
+import jakarta.persistence.NoResultException;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
@@ -25,8 +27,28 @@ public class TableTypeDAO extends GenericDAO<TableType> {
         if (name == null || name.isEmpty() || name.isBlank()) {
             throw new NullPointerException("Name is null");
         }
-        String query = "SELECT t FROM TableType t WHERE t.name = ?1";
-        return findOne(query, TableType.class, name);
+
+        // First try exact match
+        String exactQuery = "SELECT t FROM TableType t WHERE t.name = :name";
+        TableType result = findOneWithNamedParam(exactQuery, TableType.class, "name", name);
+
+        if (result == null) {
+            // Try case-insensitive match if exact match fails
+            String caseInsensitiveQuery = "SELECT t FROM TableType t WHERE LOWER(t.name) = LOWER(:name)";
+            result = findOneWithNamedParam(caseInsensitiveQuery, TableType.class, "name", name);
+        }
+
+        return result;
+    }
+
+    protected <T> T findOneWithNamedParam(String jpql, Class<T> resultClass, String paramName, Object paramValue) {
+        try {
+            return JPAUtil.getEntityManager().createQuery(jpql, resultClass)
+                    .setParameter(paramName, paramValue)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     public String getTypeName(String name) {

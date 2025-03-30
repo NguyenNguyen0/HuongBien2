@@ -11,7 +11,9 @@ import jakarta.persistence.Query;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @NoArgsConstructor
 public class ReservationDAO extends GenericDAO<Reservation> {
@@ -33,11 +35,9 @@ public class ReservationDAO extends GenericDAO<Reservation> {
 
     public List<Reservation> getStatusReservationByDate(LocalDate date, String status, String cusId) {
         try {
-            // Convert string to enum
             ReservationStatus enumStatus = ReservationStatus.fromStatus(status);
-
             String jpql = "SELECT r FROM Reservation r WHERE r.status = :status " +
-                         "AND r.receiveDate = :date AND r.id LIKE :customerId";
+                    "AND r.receiveDate = :date AND r.id LIKE :customerId";
 
             EntityManager em = JPAUtil.getEntityManager();
             Query query = em.createQuery(jpql, Reservation.class);
@@ -47,12 +47,10 @@ public class ReservationDAO extends GenericDAO<Reservation> {
 
             return query.getResultList();
         } catch (IllegalArgumentException e) {
-            // Handle case where status string doesn't match enum value
             e.printStackTrace();
-            return List.of(); // Return empty list if status is invalid
+            return List.of();
         }
     }
-
     public int getCountStatusReservationByDate(LocalDate date, String status, String cusId) {
         String jpql = "SELECT COUNT(r) FROM Reservation r WHERE r.status = :status " +
                      "AND r.receiveDate = :date AND r.id LIKE :customerId";
@@ -79,18 +77,6 @@ public class ReservationDAO extends GenericDAO<Reservation> {
     public List<Reservation> getListWaitedToday() {
         return findMany("SELECT r FROM Reservation r WHERE r.status = 'Chưa xác nhận' AND r.receiveDate = CURRENT_DATE", Reservation.class);
     }
-
-//    public List<RestaurantTable> getListTableStatusToday(List<Reservation> reservationList) {
-//        List<RestaurantTable> tableList = new ArrayList<>();
-//        if (reservationList != null) {
-//            for (Reservation reservation : reservationList) {
-//                String jpql = "SELECT rt FROM Reservation r JOIN r.tables rt WHERE r.id = ?1";
-//                List<RestaurantTable> tables = findMany(jpql, RestaurantTable.class, reservation.getId());
-//                tableList.addAll(tables);
-//            }
-//        }
-//        return tableList;
-//    }
 
     public Reservation getById(String id) {
         return findOne("SELECT r FROM Reservation r WHERE r.id = ?1", Reservation.class, id);

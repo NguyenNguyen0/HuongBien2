@@ -158,6 +158,18 @@ public class OrderTableController implements Initializable {
 
     private List<Table> getTableDataByCriteria(int floor, String status, String type, String seat) {
         TableDAO tableDAO = new TableDAO(PersistenceUnit.MARIADB_JPA);
+        if (status.equals("Trạng thái")) {
+            status = null;
+        }
+        if (type.equals("Loại bàn")) {
+            type = null;
+        }
+        if (seat.equals("Số chỗ")) {
+            seat = null;
+        }
+        if (seat != null) {
+            seat = seat.replace(" chỗ", "");
+        }
         return tableDAO.getByCriteria(String.valueOf(floor), status, type, seat);
     }
 
@@ -201,8 +213,11 @@ public class OrderTableController implements Initializable {
         TableDAO tableDAO = new TableDAO(PersistenceUnit.MARIADB_JPA);
         TableTypeDAO tableTypeDAO = new TableTypeDAO();
         //floor
-        List<String> floors = tableDAO.getDistinctFloor();
-        ObservableList<String> floorOptions = FXCollections.observableArrayList(floors);
+        List<Integer> floors = tableDAO.getDistinctFloor();
+        ObservableList<String> floorOptions = FXCollections.observableArrayList();
+        for (Integer floor : floors) {
+            floorOptions.add(floor.toString());
+        }
         tableFloorComboBox.setItems(floorOptions);
         tableFloorComboBox.setConverter(new StringConverter<String>() {
             @Override
@@ -212,7 +227,7 @@ public class OrderTableController implements Initializable {
 
             @Override
             public String fromString(String string) {
-                return string.replace("Tầng ", "").trim();
+                return string.replace("Tầng ", "").trim() + string.replace("Tầng trệt", "0").trim();
             }
         });
         tableFloorComboBox.getSelectionModel().selectFirst();

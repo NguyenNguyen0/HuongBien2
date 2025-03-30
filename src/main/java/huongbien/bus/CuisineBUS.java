@@ -36,7 +36,7 @@ public class CuisineBUS {
     }
 
     public List<Cuisine> getCuisinesByCategoryWithPagination(int offset, int limit, String category) {
-        return cuisineDao.getByCategoryWithPagination(offset, limit, category);
+        return cuisineDao.getByCategoryWithPagination(category, offset, limit);
     }
 
     public List<Cuisine> getCuisinesByNameWithPagination(int offset, int limit, String name) {

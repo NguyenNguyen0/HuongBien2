@@ -76,7 +76,14 @@ public class OrderPaymentController implements Initializable {
     private QRCodeHandler qrCodeHandler;
 
     static {
-        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+//        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+        try {
+            // Use the absolute path to the native library
+            System.load(System.getProperty("user.dir") + "/libs/native/opencv_java451.dll");
+        } catch (UnsatisfiedLinkError e) {
+            System.err.println("Native code library failed to load.\n" + e);
+            System.exit(1);
+        }
     }
 
     //Controller area
@@ -226,12 +233,13 @@ public class OrderPaymentController implements Initializable {
         promotionTableView.getItems().clear();
         PromotionBUS promotionBUS = new PromotionBUS();
         if (!customerRankField.getText().isEmpty()) {
+            System.out.println("Rank: " + customerRankField.getText() + " Rank level: " + Utils.toIntMembershipLevel(customerRankField.getText()) + "Total: " + totalAmount);
             int memberShipLevel = Utils.toIntMembershipLevel(customerRankField.getText());
             List<Promotion> promotionList = promotionBUS.getPaymentPromotion(memberShipLevel, totalAmount);
             promotionList.sort(Comparator.comparing(Promotion::getDiscount).reversed());
 
             ObservableList<Promotion> listPromotion = FXCollections.observableArrayList(promotionList);
-            promotionIdColumn.setCellValueFactory(new PropertyValueFactory<>("promotionId"));
+            promotionIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
             promotionNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
             promotionDiscountColumn.setCellValueFactory(new PropertyValueFactory<>("discount"));
             promotionDiscountColumn.setCellFactory(col -> new TableCell<Promotion, Double>() {
@@ -328,7 +336,12 @@ public class OrderPaymentController implements Initializable {
     void onSearchCustomerButtonClicked(ActionEvent event) throws FileNotFoundException, SQLException {
         String inputPhone = searchCustomerField.getText().trim();
         CustomerDAO customerDAO = new CustomerDAO(PersistenceUnit.MARIADB_JPA);
-        Customer customer = customerDAO.getByPhoneNumber(inputPhone);
+        Customer customer;
+        try {
+            customer = customerDAO.getByPhoneNumber(inputPhone);
+        } catch (Exception e) {
+            customer = null;
+        }
         if (customer != null) {
             //Write Down JSON
             String customerID = customer.getId();

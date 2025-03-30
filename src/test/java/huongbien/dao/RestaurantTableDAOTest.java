@@ -98,7 +98,7 @@ public class RestaurantTableDAOTest {
 
     @Test
     void getDistinctFloor() {
-        List<String> floors = restaurantTableDAO.getDistinctFloor();
+        List<Integer> floors = restaurantTableDAO.getDistinctFloor();
         assertFalse(floors.isEmpty());
     }
 

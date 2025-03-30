@@ -1,5 +1,6 @@
 package huongbien.dao;
 
+import huongbien.entity.MembershipLevel;
 import huongbien.entity.Promotion;
 import huongbien.jpa.JPAUtil;
 import huongbien.jpa.PersistenceUnit;
@@ -46,8 +47,10 @@ public class PromotionDAO extends GenericDAO<Promotion> {
     }
 
     public List<Promotion> getAllByIdWithPagination(int offset, int limit, String id) {
-        return findMany("SELECT p FROM Promotion p WHERE p.id LIKE ?1 ORDER BY p.endDate DESC, p.membershipLevel DESC",
-                Promotion.class, id + "%", offset, limit);
+        Map<String, Object> params = Map.of("id", id + "%");
+        return findManyWithPagination(
+                "SELECT p FROM Promotion p WHERE p.id LIKE :id ORDER BY p.endDate DESC, p.membershipLevel DESC",
+                Promotion.class, params, offset, limit);
     }
 
     public Promotion getById(String id) {
@@ -84,7 +87,8 @@ public class PromotionDAO extends GenericDAO<Promotion> {
     }
 
     public List<String> getDistinctPromotionStatus() {
-        return executeQuery("SELECT DISTINCT p.status FROM Promotion p", String.class);
+        // Since the entity seems to use isAvailable boolean instead of status String
+        return executeQuery("SELECT DISTINCT CASE WHEN p.isAvailable = true THEN 'Còn hiệu lực' ELSE 'Hết hiệu lực' END FROM Promotion p", String.class);
     }
 
     public List<String> getDistinctPromotionMinimumOrderAmount() {
@@ -132,8 +136,9 @@ public class PromotionDAO extends GenericDAO<Promotion> {
     }
 
     public List<Promotion> getPaymentPromotion(int memberShipLevel, double totalMoney) {
-        return findMany("SELECT p FROM Promotion p WHERE p.membershipLevel <= ?1 AND p.status = 'Còn hiệu lực' AND p.minimumOrderAmount <= ?2",
-                Promotion.class, memberShipLevel, totalMoney);
+        MembershipLevel level = MembershipLevel.fromValue(memberShipLevel); // Assuming this method exists
+        return findMany("SELECT p FROM Promotion p WHERE p.membershipLevel <= ?1 AND p.isAvailable = true AND p.minimumOrderAmount <= ?2",
+                Promotion.class, level, totalMoney);
     }
 
     public int countTotalById(String id) {

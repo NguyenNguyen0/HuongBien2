@@ -51,6 +51,6 @@ public class OrderBUS {
 
     public boolean addOrder(Order order) {
         if (order == null) return false;
-        return orderDao.add(order);
+        return orderDao.addOrder(order);
     }
 }

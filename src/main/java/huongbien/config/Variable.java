@@ -11,7 +11,7 @@ public class Variable {
     //OrderTableController
     //--
 //    public static int floor = (new TableDAO(PersistenceUnit.MARIADB_JPA)).getTopFloor().getFloor();
-    public static int floor = 3;
+    public static int floor = 0;
     public static String status = "Trạng thái";
     public static String tableTypeName = "Loại bàn";
     public static String seats = "Số chỗ";

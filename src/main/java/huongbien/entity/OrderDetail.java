@@ -1,5 +1,6 @@
 package huongbien.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import huongbien.util.Util;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
@@ -29,6 +30,7 @@ public class OrderDetail {
     @ManyToOne
     private Cuisine cuisine;
 
+    @JsonIgnore
     @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "order_id")
@@ -36,7 +38,7 @@ public class OrderDetail {
 
     public OrderDetail(String id, int quantity, String note, double money, Cuisine cuisine) {
         if (id != null) {
-            this.id = id;
+            setId(id);
         }
         this.quantity = quantity;
         this.note = note;
@@ -50,6 +52,14 @@ public class OrderDetail {
 
     public static String generateId(String orderId) {
         return String.format("%sCT%03d", orderId, Util.randomNumber(1, 999));
+    }
+
+    public void setId(String id) {
+        if (id == null || id.isEmpty()) {
+            this.id = generateId(order.getId());
+        } else {
+            this.id = generateId(id);
+        }
     }
 
     @Override

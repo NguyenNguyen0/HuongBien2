@@ -31,6 +31,8 @@ public class JacksonUtil {
     public static void printJson(Object object) {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
+        // Enable pretty printing with indentation
+        objectMapper.enable(com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT);
         try {
             System.out.println(objectMapper.writeValueAsString(object));
         } catch (IOException e) {

@@ -7,6 +7,7 @@ import huongbien.config.Constants;
 import huongbien.config.Variable;
 import huongbien.dao.TableDAO;
 import huongbien.entity.Table;
+import huongbien.entity.TableStatus;
 import huongbien.jpa.PersistenceUnit;
 import huongbien.util.ToastsMessage;
 import huongbien.util.Utils;
@@ -39,21 +40,31 @@ public class OrderTableItemController {
         tableIdLabel.setText(table.getId());
         tableNameLabel.setText(table.getName());
         tableSeatLabel.setText("Số chỗ: " + table.getSeats());
-        setTableImage(table.getStatus().getValue(), table.getTableType().getId());
+        setTableImage(table.getStatus(), table.getTableType().getId());
         setCheckedTableFromJSON();
     }
 
-    private void setTableImage(String tableStatus, String tableType) {
+    private void setTableImage(TableStatus tableStatus, String tableType) {
+//        String imagePath = switch (tableStatus) {
+//            case Constants.tableReserved -> "/huongbien/icon/order/tableReserved-512px.png";
+//            case Constants.tableOpen -> "/huongbien/icon/order/tableOpen-512px.png";
+//            case Constants.tableClosed -> "/huongbien/icon/order/tableClosed-512px.png";
+//            case Constants.tableEmpty -> "/huongbien/icon/order/tableEmpty-512px.png";
+//            default -> "/huongbien/icon/order/tableEmpty-512px.png";
+//        };
         String imagePath = switch (tableStatus) {
-            case Constants.tableReserved -> "/huongbien/icon/order/tableReserved-512px.png";
-            case Constants.tableOpen -> "/huongbien/icon/order/tableOpen-512px.png";
-            case Constants.tableClosed -> "/huongbien/icon/order/tableClosed-512px.png";
-            case Constants.tableEmpty -> "/huongbien/icon/order/tableEmpty-512px.png";
-            default -> null;
+            case TableStatus.OCCUPIED -> "/huongbien/icon/order/tableReserved-512px.png";
+            case TableStatus.RESERVED -> "/huongbien/icon/order/tableOpen-512px.png";
+            case TableStatus.UNAVAILABLE -> "/huongbien/icon/order/tableClosed-512px.png";
+            case TableStatus.AVAILABLE -> "/huongbien/icon/order/tableEmpty-512px.png";
         };
         assert imagePath != null;
         tableImageView.setImage(new Image(imagePath));
-        tableTypeImageView.setImage(tableType.equals(Variable.tableVipID) ? new Image("/huongbien/icon/order/vip-128px.png") : null);
+        if (tableType != null && tableType.equals(Variable.tableVipID)) {
+            tableTypeImageView.setImage(new Image("/huongbien/icon/order/vip-128px.png"));
+        } else {
+            tableTypeImageView.setImage(null);
+        }
     }
 
     private void setCheckedTableFromJSON() {
@@ -139,15 +150,24 @@ public class OrderTableItemController {
         //check status of table
         String tableId = tableIdLabel.getText();
         Table table = new TableDAO(PersistenceUnit.MARIADB_JPA).getById(tableId);
-        switch (table.getStatus().getValue()) {
-            case Constants.tableReserved -> ToastsMessage.showMessage("Bàn đang được đặt trước, không thể chọn bàn này.", "warning");
-            case Constants.tableOpen -> ToastsMessage.showMessage("Bàn đang được phục vụ, không thể chọn bàn này.", "warning");
-            case Constants.tableClosed -> ToastsMessage.showMessage("Bàn đã đóng, không thể chọn bàn này.", "warning");
-            case Constants.tableEmpty -> {
+        switch (table.getStatus()) {
+//            case Constants.tableReserved -> ToastsMessage.showMessage("Bàn đang được đặt trước, không thể chọn bàn này.", "warning");
+//            case Constants.tableOpen -> ToastsMessage.showMessage("Bàn đang được phục vụ, không thể chọn bàn này.", "warning");
+//            case Constants.tableClosed -> ToastsMessage.showMessage("Bàn đã đóng, không thể chọn bàn này.", "warning");
+//            case Constants.tableEmpty -> {
+//                writeDataToJSONFile(tableId);
+//                orderTableController.tableInfoTabPane.getTabs().clear();
+//                orderTableController.readTableDataFromJSON();
+//            }
+            case TableStatus.OCCUPIED -> ToastsMessage.showMessage("Bàn đang được đặt trước, không thể chọn bàn này.", "warning");
+            case TableStatus.RESERVED -> ToastsMessage.showMessage("Bàn đang được phục vụ, không thể chọn bàn này.", "warning");
+            case TableStatus.UNAVAILABLE -> ToastsMessage.showMessage("Bàn đã đóng, không thể chọn bàn này.", "warning");
+            case TableStatus.AVAILABLE -> {
                 writeDataToJSONFile(tableId);
                 orderTableController.tableInfoTabPane.getTabs().clear();
                 orderTableController.readTableDataFromJSON();
             }
+            default -> System.out.println("Unknown table status: " + table.getStatus().getValue());
         }
     }
 }

@@ -1,5 +1,6 @@
 package huongbien.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
 import lombok.*;
@@ -21,6 +22,7 @@ public class Category {
     private String name;
     private String description;
 
+    @JsonIgnore
     @ToString.Exclude
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<Cuisine> cuisines;

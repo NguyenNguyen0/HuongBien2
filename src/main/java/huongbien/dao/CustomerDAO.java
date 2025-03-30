@@ -1,7 +1,10 @@
 package huongbien.dao;
 
 import huongbien.entity.Customer;
+import huongbien.jpa.JPAUtil;
 import huongbien.jpa.PersistenceUnit;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
@@ -81,7 +84,14 @@ public class CustomerDAO extends GenericDAO<Customer> {
     }
 
     public List<Customer> getTopMembershipCustomers(int year, int limit) {
-        return findMany("SELECT c FROM Customer c WHERE FUNCTION('YEAR', c.registrationDate) = ?1 ORDER BY c.membershipLevel DESC", Customer.class, limit, year);
+        String jpql = "SELECT c FROM Customer c WHERE FUNCTION('YEAR', c.registrationDate) = ?1 ORDER BY c.membershipLevel DESC";
+
+        EntityManager em = JPAUtil.getEntityManager();
+        TypedQuery<Customer> query = em.createQuery(jpql, Customer.class);
+        query.setParameter(1, year);
+        query.setMaxResults(limit); // Apply the limit here
+
+        return query.getResultList();
     }
 
     public int countNewCustomerQuantityByYear(int year) {

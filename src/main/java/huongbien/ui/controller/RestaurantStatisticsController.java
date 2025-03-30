@@ -244,7 +244,7 @@ public class RestaurantStatisticsController {
         statisticalComboBox.getItems().addAll("Tháng", "Quý", "Năm");
         statisticalComboBox.getSelectionModel().select("Tháng");
         int currentYear = Year.now().getValue();
-        yearComboBox.getItems().addAll(IntStream.rangeClosed(currentYear - 3, currentYear).boxed().toList());
+        yearComboBox.getItems().addAll(IntStream.rangeClosed(StatisticsBUS.getFirstYear(), currentYear).boxed().toList());
         yearComboBox.getSelectionModel().selectLast();
     }
 
@@ -320,7 +320,7 @@ public class RestaurantStatisticsController {
                 series.getData().add(new XYChart.Data<>("Quý " + quarterRevenue.get("quarter"), quarterRevenue.get("totalRevenue")));
             }
         } else if ("Năm".equals(criteria)) {
-            List<HashMap<String, Integer>> yearlyRevenues = StatisticsBUS.getYearlyRevenues(2021, LocalDate.now().getYear()); // TODO: sửa lại năm bắt đầu
+            List<HashMap<String, Integer>> yearlyRevenues = StatisticsBUS.getYearlyRevenues(StatisticsBUS.getFirstYear(), LocalDate.now().getYear()); // TODO: sửa lại năm bắt đầu
             for (HashMap<String, Integer> yearlyRevenue : yearlyRevenues) {
                 series.getData().add(new XYChart.Data<>("Năm " + yearlyRevenue.get("year"), yearlyRevenue.get("totalRevenue")));
             }
@@ -346,7 +346,7 @@ public class RestaurantStatisticsController {
                 series.getData().add(new XYChart.Data<>("Quý " + quarterOrderQuantity.get("quarter"), quarterOrderQuantity.get("orderQuantity")));
             }
         } else if ("Năm".equals(criteria)) {
-            List<HashMap<String, Integer>> yearlyOrderQuantities = StatisticsBUS.getYearlyOrderQuantity(2021, LocalDate.now().getYear());
+            List<HashMap<String, Integer>> yearlyOrderQuantities = StatisticsBUS.getYearlyOrderQuantity(StatisticsBUS.getFirstYear(), LocalDate.now().getYear());
             for (HashMap<String, Integer> yearlyOrderQuantity : yearlyOrderQuantities) {
                 series.getData().add(new XYChart.Data<>("Năm " + yearlyOrderQuantity.get("year"), yearlyOrderQuantity.get("orderQuantity")));
             }
@@ -595,7 +595,7 @@ public class RestaurantStatisticsController {
                     CuisineBUS cuisineBUS = new CuisineBUS();
                     List<String> cuisineNames = cuisineBUS.getCuisineNamesByCategory(categoryName);
                     for (String name : cuisineNames) {
-                        List<HashMap<String, Integer>> cuisineRevenues = StatisticsBUS.getYearlyCuisineRevenues(name, 2021, LocalDate.now().getYear());
+                        List<HashMap<String, Integer>> cuisineRevenues = StatisticsBUS.getYearlyCuisineRevenues(name, StatisticsBUS.getFirstYear(), LocalDate.now().getYear());
                         XYChart.Series<String, Number> series = new XYChart.Series<>();
                         series.setName(name);
                         for (HashMap<String, Integer> cuisineRevenue : cuisineRevenues) {
@@ -604,7 +604,7 @@ public class RestaurantStatisticsController {
                         cuisineRevenueLineChart.getData().add(series);
                     }
                 } else {
-                    List<HashMap<String, Integer>> cuisineRevenues = StatisticsBUS.getYearlyCuisineRevenues(cuisineName, 2021, LocalDate.now().getYear());
+                    List<HashMap<String, Integer>> cuisineRevenues = StatisticsBUS.getYearlyCuisineRevenues(cuisineName, StatisticsBUS.getFirstYear(), LocalDate.now().getYear());
                     XYChart.Series<String, Number> series = new XYChart.Series<>();
                     series.setName(cuisineName);
                     for (HashMap<String, Integer> cuisineRevenue : cuisineRevenues) {
@@ -729,7 +729,7 @@ public class RestaurantStatisticsController {
             case "Năm" -> {
                 XYChart.Series<String, Number> series = new XYChart.Series<>();
                 series.setName("Khách hàng mới theo năm");
-                List<HashMap<String, Integer>> yearlyNewCustomers = StatisticsBUS.getYearlyNewCustomer(2021, LocalDate.now().getYear());
+                List<HashMap<String, Integer>> yearlyNewCustomers = StatisticsBUS.getYearlyNewCustomer(StatisticsBUS.getFirstYear(), LocalDate.now().getYear());
                 for (HashMap<String, Integer> yearlyNewCustomer : yearlyNewCustomers) {
                     series.getData().add(new XYChart.Data<>("Năm " + yearlyNewCustomer.get("year"), yearlyNewCustomer.get("newCustomerQuantity")));
                 }

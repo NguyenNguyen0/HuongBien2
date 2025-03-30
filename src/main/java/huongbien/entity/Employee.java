@@ -1,5 +1,6 @@
 package huongbien.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import huongbien.jpa.converter.GenderConverter;
 import huongbien.util.Util;
 import jakarta.persistence.*;
@@ -56,6 +57,7 @@ public class Employee {
     @JoinColumn(name = "manager_id")
     private Employee manager;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "manager", targetEntity = Employee.class)
     private List<Employee> subordinates;
 

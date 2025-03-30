@@ -580,4 +580,16 @@ public class StatisticsDAO {
         ReservationBUS reservationBUS = new ReservationBUS();
         return reservationBUS.countTotalReservations();
     }
+
+    public static int getFirstYear() {
+        try {
+            String jpql = "SELECT MIN(FUNCTION('YEAR', o.orderDate)) FROM Order o";
+            Integer result = entityManager.createQuery(jpql, Integer.class)
+                    .getSingleResult();
+            return result != null ? result : 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
 }

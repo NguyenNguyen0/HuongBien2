@@ -29,7 +29,7 @@ public class DataGenerator {
     private static final List<Promotion> promotions = new ArrayList<>();
 
     public static void main(String[] args) {
-        generateData(2025, 2026, 12, PersistenceUnit.MARIADB_JPA_CREATE);
+        generateData(2023, 2026, 12, PersistenceUnit.MARIADB_JPA_CREATE);
     }
 
     public static void generateData(int fromYear, int toYear, int maxMonth, PersistenceUnit persistenceUnit) {

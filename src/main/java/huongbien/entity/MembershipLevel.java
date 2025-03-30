@@ -31,6 +31,15 @@ public enum MembershipLevel {
         return null;
     }
 
+    public static MembershipLevel fromValue(int memberShipLevel) {
+        for (MembershipLevel level : values()) {
+            if (level.ordinal() == memberShipLevel) {
+                return level;
+            }
+        }
+        return null;
+    }
+
     @JsonValue
     public int getLevel() {
         return ordinal();

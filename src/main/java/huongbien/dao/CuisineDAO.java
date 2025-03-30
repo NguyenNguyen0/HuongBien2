@@ -20,7 +20,7 @@ public class CuisineDAO extends GenericDAO<Cuisine> {
     }
 
     public List<String> getCuisineNamesByCategory(String categoryName) {
-        return executeQuery("SELECT c.name FROM Cuisine c WHERE c.category.id = ?1",
+        return executeQuery("SELECT c.name FROM Cuisine c WHERE c.category.name = ?1",
                 String.class, categoryName);
     }
 
@@ -33,6 +33,15 @@ public class CuisineDAO extends GenericDAO<Cuisine> {
     }
 
     public List<Cuisine> getLookUpCuisine(String name, String category) {
+        System.out.println("getLookUpCuisine in Dao: name = " + name + ", category = " + category);
+        if ((category == null || category.isEmpty()) && (name == null || name.isEmpty())) {
+            return getAll();
+        }
+
+        if (category == null || category.isEmpty()) {
+            return getByName(name);
+        }
+
         return findMany("SELECT c FROM Cuisine c WHERE c.name LIKE ?1 AND c.category.id = ?2",
                 Cuisine.class, "%" + name + "%", category);
     }
@@ -55,9 +64,12 @@ public class CuisineDAO extends GenericDAO<Cuisine> {
         return executeQuery("SELECT DISTINCT c.category.id FROM Cuisine c", String.class);
     }
 
-    public List<Cuisine> getByCategoryWithPagination(int offset, int limit, String category) {
-        return findMany("SELECT c FROM Cuisine c WHERE c.category.id = ?1 ORDER BY c.id",
-                Cuisine.class, category, offset, limit);
+    public List<Cuisine> getByCategoryWithPagination(String category, int offset, int limit) {
+        Map<String, Object> params = Map.of("category", category);
+        return findManyWithPagination(
+                "SELECT c FROM Cuisine c WHERE c.category.id = :category ORDER BY c.id",
+                Cuisine.class, params, offset, limit
+        );
     }
 
     public List<Cuisine> getByNameWithPagination(int offset, int limit, String name) {

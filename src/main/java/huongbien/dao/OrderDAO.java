@@ -1,9 +1,14 @@
 package huongbien.dao;
 
 import huongbien.entity.Order;
+import huongbien.entity.Table;
+import huongbien.jpa.JPAUtil;
 import huongbien.jpa.PersistenceUnit;
+import huongbien.util.JacksonUtil;
+import jakarta.persistence.EntityManager;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,5 +75,30 @@ public class OrderDAO extends GenericDAO<Order> {
 
     public int countTotalByEmployeeId(String employeeId) {
         return count("SELECT COUNT(o) FROM Order o WHERE o.employee.id LIKE ?1", employeeId + "%");
+    }
+
+    public boolean addOrder(Order order) {
+        List<String> tableIds = order.getTables().stream().map(Table::getId).toList();
+        order.setTables(new ArrayList<>());
+        add(order);
+
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            for (String tableId : tableIds) {
+                em.createNativeQuery("INSERT INTO orders_tables (order_id, table_id) VALUES (:orderId, :tableId)")
+                        .setParameter("orderId", order.getId())
+                        .setParameter("tableId", tableId)
+                        .executeUpdate();
+            }
+            em.getTransaction().commit();
+            return true;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            e.printStackTrace();
+            return false;
+        }
     }
 }

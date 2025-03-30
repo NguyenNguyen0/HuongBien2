@@ -9,6 +9,10 @@ import java.util.HashMap;
 import java.util.List;
 
 public class StatisticsBUS {
+    public static int getFirstYear() {
+        return StatisticsDAO.getFirstYear();
+    }
+
     public static int getTotalCustomerQuantity() {
         return StatisticsDAO.getTotalCustomers();
     }

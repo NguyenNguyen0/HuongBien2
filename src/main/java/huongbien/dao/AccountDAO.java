@@ -43,8 +43,6 @@ public class AccountDAO extends GenericDAO<Account> {
     private Account getByEmployeeId(String employeeId) {
         return findOne("SELECT a FROM Account a WHERE a.employeeId = ?1", Account.class, employeeId);
     }
-}
-
 
     public boolean addAccount(Account account) {
         return add(account);
@@ -58,6 +56,5 @@ public class AccountDAO extends GenericDAO<Account> {
         account.setActive(false);
         return update(account);
     }
-
 
 }

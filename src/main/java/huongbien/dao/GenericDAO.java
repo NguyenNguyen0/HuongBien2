@@ -68,6 +68,23 @@ public abstract class GenericDAO<T> {
         }
     }
 
+    public List<T> findMany(String jpql, Class<T> clazz, Map<String, Object> parameters) {
+        try {
+            TypedQuery<T> query = entityManager.createQuery(jpql, clazz);
+
+            if (parameters != null) {
+                for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+                    query.setParameter(entry.getKey(), entry.getValue());
+                }
+            }
+
+            return query.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public <T> List<T> findManyWithPagination(String jpql, Class<T> type, Map<String, Object> parameters, int offset, int limit) {
         TypedQuery<T> query = entityManager.createQuery(jpql, type);
 

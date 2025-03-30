@@ -7,8 +7,11 @@ import huongbien.jpa.PersistenceUnit;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 public class TableDAO extends GenericDAO<Table> {
@@ -62,32 +65,37 @@ public class TableDAO extends GenericDAO<Table> {
 
     public List<Table> getByCriteria(String floor, String status, String typeID, String seat) {
         StringBuilder jpqlBuilder = new StringBuilder("SELECT t FROM Table t WHERE t.status != 'Bàn đóng'");
+        Map<String, Object> params = new HashMap<>();
 
-        if (!floor.isEmpty()) {
-            jpqlBuilder.append(" AND t.floor = ?1");
+        if (floor != null && !floor.isEmpty()) {
+            jpqlBuilder.append(" AND t.floor = :floor");
+            params.put("floor", Integer.valueOf(floor));
         }
 
-        if (!status.isEmpty()) {
-            jpqlBuilder.append(" AND t.status = ?2");
+        if (status != null && !status.isEmpty()) {
+            jpqlBuilder.append(" AND t.status = :status");
+            params.put("status", TableStatus.fromString(status));
         }
 
-        if (!typeID.isEmpty()) {
-            jpqlBuilder.append(" AND t.tableType.id = ?3");
+        if (typeID != null && !typeID.isEmpty()) {
+            jpqlBuilder.append(" AND t.tableType.id = :typeID");
+            params.put("typeID", typeID);
         }
 
-        if (!seat.isEmpty()) {
-            jpqlBuilder.append(" AND t.seats = ?4");
+        if (seat != null && !seat.isEmpty()) {
+            jpqlBuilder.append(" AND t.seats = :seat");
+            params.put("seat", Integer.valueOf(seat));
         }
-
-        return findMany(jpqlBuilder.toString(), Table.class, floor, TableStatus.fromString(status), typeID, 0);
+//        System.out.println("seat: " + seat + " typeID: " + typeID + " status: " + status + " floor: " + floor);
+        return findMany(jpqlBuilder.toString(), Table.class, params);
     }
 
-    public List<String> getDistinctFloor() {
-        return executeQuery("SELECT DISTINCT t.floor FROM Table t", String.class);
+    public List<Integer> getDistinctFloor() {
+        return executeQuery("SELECT DISTINCT t.floor FROM Table t", Integer.class);
     }
 
     public List<String> getDistinctSeat() {
-        return executeQuery("SELECT DISTINCT t.seats FROM Table t", String.class);
+        return executeQuery("SELECT DISTINCT t.seats FROM Table t", Integer.class).stream().map(Object::toString).collect(Collectors.toList());
     }
 
     public Table getTopFloor() {
@@ -99,7 +107,12 @@ public class TableDAO extends GenericDAO<Table> {
     }
 
     public List<String> getDistinctStatuses() {
-        return executeQuery("SELECT DISTINCT t.status FROM Table t WHERE t.status != 'Bàn đóng'", String.class);
+        List<TableStatus> statusEnums = executeQuery("SELECT DISTINCT t.status FROM Table t", TableStatus.class);
+        List<String> statusStrings = new ArrayList<>();
+        for (TableStatus status : statusEnums) {
+            statusStrings.add(status.toString());
+        }
+        return statusStrings;
     }
 
     public List<Integer> getDistinctFloors() {
@@ -115,44 +128,77 @@ public class TableDAO extends GenericDAO<Table> {
     }
 
     public List<Table> getLookUpTable(int floor, String name, int seat, String type, String status, int pageIndex) {
-        StringBuilder jpqlBuilder = new StringBuilder("SELECT t FROM Table t WHERE t.name LIKE ?1 AND t.tableType.id LIKE ?2 AND t.status LIKE ?3");
+        StringBuilder jpqlBuilder = new StringBuilder("SELECT t FROM Table t WHERE t.name LIKE :name AND t.tableType.id LIKE :type");
+
+        Map<String, Object> params = new java.util.HashMap<>();
+        params.put("name", "%" + name + "%");
+        params.put("type", "%" + type + "%");
 
         if (floor != -1) {
-            jpqlBuilder.append(" AND t.floor = ?4");
+            jpqlBuilder.append(" AND t.floor = :floor");
+            params.put("floor", floor);
         }
         if (seat != -1) {
-            jpqlBuilder.append(" AND t.seats = ?5");
-        }
-        try {
-            type = TableStatus.valueOf(type).getValue();
-        } catch (Exception e) {
-            type = "";
+            jpqlBuilder.append(" AND t.seats = :seat");
+            params.put("seat", seat);
         }
 
-        return findMany(jpqlBuilder.toString(), Table.class, "%" + name + "%", type, "%" + status + "%", floor, seat);
+        // Handle status parameter
+        if (status != null && !status.isEmpty()) {
+            try {
+                TableStatus tableStatus = TableStatus.fromString(status);
+                jpqlBuilder.append(" AND t.status = :status");
+                params.put("status", tableStatus);
+            } catch (IllegalArgumentException e) {
+                // If status string doesn't match any enum value, don't filter by status
+                jpqlBuilder.append(" AND 1=1");
+            }
+        } else {
+            jpqlBuilder.append(" AND 1=1");
+        }
+
+        // Calculate pagination
+        int offset = pageIndex * 10; // Assuming 10 items per page
+        int limit = 10;
+
+        return findManyWithPagination(jpqlBuilder.toString(), Table.class, params, offset, limit);
     }
 
     public int getCountLookUpTable(int floor, String name, int seat, String type, String status) {
-        StringBuilder jpqlBuilder = new StringBuilder("SELECT COUNT(t) FROM Table t WHERE t.name LIKE ?1 AND t.tableType.id LIKE ?2");
+        StringBuilder jpqlBuilder = new StringBuilder("SELECT t FROM Table t WHERE t.name LIKE :name AND t.tableType.id LIKE :type");
+
+        Map<String, Object> params = new java.util.HashMap<>();
+        params.put("name", "%" + name + "%");
+        params.put("type", "%" + type + "%");
 
         // Handle the status parameter separately
         if (status != null && !status.isEmpty()) {
-            // Convert string to TableStatus enum
-            jpqlBuilder.append(" AND t.status = ?3");
+            try {
+                // Use the fromString method instead of valueOf for conversion
+                TableStatus tableStatus = TableStatus.fromString(status);
+                jpqlBuilder.append(" AND t.status = :status");
+                params.put("status", tableStatus);
+            } catch (IllegalArgumentException e) {
+                // Use a string-based condition for wildcard matching
+                jpqlBuilder.append(" AND CAST(t.status AS string) LIKE :statusStr");
+                params.put("statusStr", "%");
+            }
         } else {
-            jpqlBuilder.append(" AND t.status LIKE ?3");
-            status = "";
+            // For null or empty status, match any status using a different approach
+            jpqlBuilder.append(" AND 1=1"); // Always true condition
         }
 
         if (floor != -1) {
-            jpqlBuilder.append(" AND t.floor = ?4");
+            jpqlBuilder.append(" AND t.floor = :floor");
+            params.put("floor", floor);
         }
         if (seat != -1) {
-            jpqlBuilder.append(" AND t.seats = ?5");
+            jpqlBuilder.append(" AND t.seats = :seat");
+            params.put("seat", seat);
         }
 
-        Object statusParam = status.equals("") ? "" : TableStatus.valueOf(status);
-        return count(jpqlBuilder.toString(), "%" + name + "%", "%" + type + "%", statusParam, floor, seat);
+        List<Table> resultList = findMany(jpqlBuilder.toString(), Table.class, params);
+        return resultList != null ? resultList.size() : 0;
     }
 
     public List<Table> getAllWithPagination(int offset, int limit) {
@@ -184,8 +230,19 @@ public class TableDAO extends GenericDAO<Table> {
     }
 
     public List<Table> getListTableStatusToday(List<Reservation> reservationList) {
-//        TODO: Implement this method
-        return null;
+        List<Table> tableList = new ArrayList<>();
+        if (reservationList != null && !reservationList.isEmpty()) {
+            try {
+                reservationList.forEach(reservation -> {
+                    List<Table> tables = findMany("SELECT * FROM reservation_tables WHERE reservation_id ", Table.class, reservation.getId());
+                    tables.addAll(tables);
+                });
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return tableList;
     }
 
     public void updateStatusTable(String id, TableStatus status) {

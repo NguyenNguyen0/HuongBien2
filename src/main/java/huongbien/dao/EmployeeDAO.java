@@ -80,7 +80,8 @@ public class EmployeeDAO extends GenericDAO<Employee> {
     }
 
     public List<Employee> getAllWithPagination(int offset, int limit) {
-        return findMany("SELECT e FROM Employee e ORDER BY e.position", Employee.class, offset, limit);
+        return findManyWithPagination("SELECT e FROM Employee e ORDER BY e.position",
+                Employee.class, null, offset, limit);
     }
 
     public List<Employee> getAllStillWorkingWithPagination(int offset, int limit) {
@@ -89,15 +90,21 @@ public class EmployeeDAO extends GenericDAO<Employee> {
     }
 
     public List<Employee> getByPositionWithPagination(String position, int offset, int limit) {
-        return findMany("SELECT e FROM Employee e WHERE e.position LIKE ?1 ORDER BY e.status", Employee.class, offset, limit, "%" + position + "%");
+        Map<String, Object> params = Map.of("position", "%" + position + "%");
+        return findManyWithPagination("SELECT e FROM Employee e WHERE e.position LIKE :position ORDER BY e.status",
+                Employee.class, params, offset, limit);
     }
 
     public List<Employee> getByPhoneNumberWithPagination(String phoneNumber, int offset, int limit) {
-        return findMany("SELECT e FROM Employee e WHERE e.phoneNumber LIKE ?1 ORDER BY e.status", Employee.class, offset, limit, phoneNumber + "%");
+        Map<String, Object> params = Map.of("phoneNumber", phoneNumber + "%");
+        return findManyWithPagination("SELECT e FROM Employee e WHERE e.phoneNumber LIKE :phoneNumber ORDER BY e.status",
+                Employee.class, params, offset, limit);
     }
 
     public List<Employee> getByNameWithPagination(String name, int offset, int limit) {
-        return findMany("SELECT e FROM Employee e WHERE e.name LIKE ?1 ORDER BY e.status", Employee.class, offset, limit, "%" + name + "%");
+        Map<String, Object> params = Map.of("name", "%" + name + "%");
+        return findManyWithPagination("SELECT e FROM Employee e WHERE e.name LIKE :name ORDER BY e.status",
+                Employee.class, params, offset, limit);
     }
 
     public int countByPhoneNumber(String phoneNumber) {

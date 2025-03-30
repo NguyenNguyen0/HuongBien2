@@ -16,7 +16,9 @@ public class TableTypeBUS {
         return tableTypeDao.getAll();
     }
 
-    public TableType getTableTypeName (String tableTypeId){ return tableTypeDao.getById(tableTypeId); }
+    public TableType getTableTypeName (String tableTypeId){
+
+        return tableTypeDao.getById(tableTypeId); }
 
     public String getTableTypeId (String tableTypeName){ return tableTypeDao.getTypeName(tableTypeName); }
 

@@ -77,7 +77,7 @@ public class PreOrderCuisineController implements Initializable {
     public void loadCategoryComboBox() {
         List<Category> categories = (new CategoryDAO()).getAll();
         ObservableList<Pair<String, String>> categoryItems = FXCollections.observableArrayList();
-        categoryItems.add(new Pair<>("-1", "Loại món"));
+        categoryItems.add(new Pair<>("", "Loại món"));
         for (Category category : categories) {
             categoryItems.add(new Pair<>(String.valueOf(category.getId()), category.getName()));
         }
@@ -171,7 +171,7 @@ public class PreOrderCuisineController implements Initializable {
     }
 
     private List<Cuisine> getCuisineData(String cuisineName, String category) {
-        CuisineDAO cuisineDAO = (new CuisineDAO());
+        CuisineDAO cuisineDAO = new CuisineDAO();
         return cuisineDAO.getLookUpCuisine(cuisineName, category);
     }
 
@@ -233,7 +233,7 @@ public class PreOrderCuisineController implements Initializable {
         Pair<String, String> selectedCategory = categoryComboBox.getValue();
         String categoryId = selectedCategory != null ? selectedCategory.getKey() : "";
         cuisineGridPane.getChildren().clear();
-        loadCuisine(cuisineName, categoryId.equals("-1") ? "" : categoryId);
+        loadCuisine(cuisineName, categoryId);
     }
 
     @FXML

@@ -90,7 +90,12 @@ public class PreOrderController implements Initializable {
     private QRCodeHandler qrCodeHandler;
 
     static {
-        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+        try {
+            System.load(System.getProperty("user.dir") + "/libs/native/opencv_java451.dll");
+        } catch (UnsatisfiedLinkError e) {
+            System.err.println("Native code library failed to load.\n" + e);
+            System.exit(1);
+        }
     }
 
     //Controller area
@@ -531,7 +536,7 @@ public class PreOrderController implements Initializable {
             }
 
             reservation.setStatus(ReservationStatus.PENDING);
-            Payment payment = new Payment(deposit, Variable.paymentMethods[0]); //Default payment method is cash
+            Payment payment = new Payment(deposit, PaymentMethod.CASH); //Default payment method is cash
             reservation.setPayment(payment);
 
             if (reservationBUS.addReservation(reservation)) {
