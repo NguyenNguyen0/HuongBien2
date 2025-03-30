@@ -33,7 +33,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.videoio.VideoCapture;
 
@@ -50,31 +49,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class OrderPaymentController implements Initializable {
-    @FXML public TableView<Promotion> promotionTableView;
-    @FXML private TableColumn<Promotion, Double> promotionDiscountColumn;
-    @FXML private TableColumn<Promotion, String> promotionIdColumn;
-    @FXML private TableColumn<Promotion, String> promotionNameColumn;
-    @FXML private Label employeeLabel;
-    @FXML private Label tableInfoLabel;
-    @FXML private Label cuisineQuantityLabel;
-    @FXML private Label tableAmountLabel;
-    @FXML private Label cuisineAmountLabel;
-    @FXML private Label vATLabel;
-    @FXML private Label vatNameLabel;
-    @FXML private Label promotionDiscountLabel;
-    @FXML private Label finalAmountLabel;
-    @FXML private ScrollPane billScrollPane;
-    @FXML public GridPane billGridPane;
-    @FXML private TextField searchCustomerField;
-    @FXML private TextField customerIdField;
-    @FXML private TextField customerNameField;
-    @FXML private TextField customerRankField;
-    @FXML private Button searchCustomerButton;
-
-    private VideoCapture capture;
-    private Timer timer;
-    private QRCodeHandler qrCodeHandler;
-
     static {
 //        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         try {
@@ -86,13 +60,57 @@ public class OrderPaymentController implements Initializable {
         }
     }
 
+    @FXML
+    public TableView<Promotion> promotionTableView;
+    @FXML
+    public GridPane billGridPane;
     //Controller area
     public RestaurantMainManagerController restaurantMainManagerController;
+    public RestaurantMainStaffController restaurantMainStaffController;
+    @FXML
+    private TableColumn<Promotion, Double> promotionDiscountColumn;
+    @FXML
+    private TableColumn<Promotion, String> promotionIdColumn;
+    @FXML
+    private TableColumn<Promotion, String> promotionNameColumn;
+    @FXML
+    private Label employeeLabel;
+    @FXML
+    private Label tableInfoLabel;
+    @FXML
+    private Label cuisineQuantityLabel;
+    @FXML
+    private Label tableAmountLabel;
+    @FXML
+    private Label cuisineAmountLabel;
+    @FXML
+    private Label vATLabel;
+    @FXML
+    private Label vatNameLabel;
+    @FXML
+    private Label promotionDiscountLabel;
+    @FXML
+    private Label finalAmountLabel;
+    @FXML
+    private ScrollPane billScrollPane;
+    @FXML
+    private TextField searchCustomerField;
+    @FXML
+    private TextField customerIdField;
+    @FXML
+    private TextField customerNameField;
+    @FXML
+    private TextField customerRankField;
+    @FXML
+    private Button searchCustomerButton;
+    private VideoCapture capture;
+    private Timer timer;
+    private QRCodeHandler qrCodeHandler;
+
     public void setRestaurantMainManagerController(RestaurantMainManagerController restaurantMainManagerController) {
         this.restaurantMainManagerController = restaurantMainManagerController;
     }
 
-    public RestaurantMainStaffController restaurantMainStaffController;
     public void setRestaurantMainStaffController(RestaurantMainStaffController restaurantMainStaffController) {
         this.restaurantMainStaffController = restaurantMainStaffController;
     }
@@ -109,7 +127,7 @@ public class OrderPaymentController implements Initializable {
             throw new RuntimeException(e);
         }
         promotionTableView.setMouseTransparent(true);
-        vatNameLabel.setText(vatNameLabel.getText()+"("+(int)(Constants.VAT * 100)+"%):");
+        vatNameLabel.setText(vatNameLabel.getText() + "(" + (int) (Constants.VAT * 100) + "%):");
     }
 
     public void loadCuisine() throws FileNotFoundException {
@@ -176,7 +194,7 @@ public class OrderPaymentController implements Initializable {
             String id = jsonObject.get("Employee ID").getAsString();
             EmployeeDAO dao_employee = new EmployeeDAO(PersistenceUnit.MARIADB_JPA);
             Employee employee = dao_employee.getManyById(id).get(0);
-            currentUser  = (employee.getName() != null ? employee.getName() : "Không xác định");
+            currentUser = (employee.getName() != null ? employee.getName() : "Không xác định");
         }
         //get info table and calc table amout
         StringBuilder tabInfoBuilder = new StringBuilder();
@@ -270,7 +288,7 @@ public class OrderPaymentController implements Initializable {
 
     @FXML
     void onBackButtonClicked(ActionEvent event) throws IOException {
-        if(restaurantMainManagerController != null) {
+        if (restaurantMainManagerController != null) {
             restaurantMainManagerController.openOrderCuisine();
         } else {
             restaurantMainStaffController.openOrderCuisine();
@@ -279,7 +297,7 @@ public class OrderPaymentController implements Initializable {
 
     @FXML
     void addCustomerButton(ActionEvent event) throws IOException {
-        if(restaurantMainManagerController != null) {
+        if (restaurantMainManagerController != null) {
             restaurantMainManagerController.openCustomerManagement();
         } else {
             restaurantMainStaffController.openCustomerManagement();
@@ -296,7 +314,7 @@ public class OrderPaymentController implements Initializable {
             totalAmount += cuisineMoney;
         }
         double discount = 0.0;
-        if(!customerRankField.getText().isEmpty()){
+        if (!customerRankField.getText().isEmpty()) {
             PromotionDAO promotionDAO = new PromotionDAO(PersistenceUnit.MARIADB_JPA);
             List<Promotion> promotionList = promotionDAO.getPaymentPromotion(Utils.toIntMembershipLevel(customerRankField.getText()), totalAmount);
             ObservableList<Promotion> listPromotion = FXCollections.observableArrayList(promotionList);
@@ -323,7 +341,7 @@ public class OrderPaymentController implements Initializable {
         }
         double discountMoney = totalAmount * discount;
         double vat = totalAmount * 0.1;
-        double finalAmount = tableAmount + totalAmount  + vat - discountMoney;
+        double finalAmount = tableAmount + totalAmount + vat - discountMoney;
         //set Label
         tableAmountLabel.setText(String.format("%,.0f VNĐ", tableAmount));
         cuisineAmountLabel.setText(String.format("%,.0f VNĐ", totalAmount));
@@ -356,7 +374,7 @@ public class OrderPaymentController implements Initializable {
             setDiscountFromPromotionSearch();
             //load list promotion
             setPromotionTableValue();
-            if(!promotionTableView.getSelectionModel().isEmpty()){
+            if (!promotionTableView.getSelectionModel().isEmpty()) {
                 promotionID = promotionTableView.getSelectionModel().getSelectedItem().getId();
             }
             JsonArray customerArray = new JsonArray();
@@ -508,7 +526,7 @@ public class OrderPaymentController implements Initializable {
         System.out.println(tableArray.size());
         for (int i = 0; i < tableArray.size(); i++) {
             System.out.println(tableIDs.get(i).toString());
-            tableBUS.updateStatusTable(tableIDs.get(i).toString().replace("\"",""), TableStatus.RESERVED);
+            tableBUS.updateStatusTable(tableIDs.get(i).toString().replace("\"", ""), TableStatus.RESERVED);
         }
 
         JsonArray cuisineOrderArray = new JsonArray();
@@ -538,7 +556,7 @@ public class OrderPaymentController implements Initializable {
     @FXML
     void onSavePaymentQueueButtonClicked(ActionEvent event) throws IOException {
         addNewPaymentQueue();
-        if(restaurantMainManagerController != null) {
+        if (restaurantMainManagerController != null) {
             restaurantMainManagerController.openReservationManagement();
         } else {
             restaurantMainStaffController.openReservationManagement();
@@ -554,7 +572,7 @@ public class OrderPaymentController implements Initializable {
 
     @FXML
     void onPaymentButtonClicked(ActionEvent event) throws IOException {
-        if(restaurantMainManagerController != null) {
+        if (restaurantMainManagerController != null) {
             restaurantMainManagerController.openOrderPaymentFinal();
         } else {
             restaurantMainStaffController.openOrderPaymentFinal();

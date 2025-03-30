@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class OrderManagementController implements Initializable {
+    private static final OrderBUS orderBUS = new OrderBUS();
+    private static Pagination<Order> orderPagination;
     @FXML
     public TextField orderIdField;
     @FXML
@@ -45,11 +47,7 @@ public class OrderManagementController implements Initializable {
     @FXML
     public TextField orderPaymentIdField;
     @FXML
-    private TextField orderTablesField;
-    @FXML
     public TextArea orderNoteTextArea;
-    @FXML
-    private ComboBox<String> searchMethodComboBox;
     @FXML
     public TextField orderSearchField;
     @FXML
@@ -71,6 +69,10 @@ public class OrderManagementController implements Initializable {
     @FXML
     public DatePicker orderDateDatePicker;
     @FXML
+    private TextField orderTablesField;
+    @FXML
+    private ComboBox<String> searchMethodComboBox;
+    @FXML
     private Label pageIndexLabel;
     @FXML
     private TableColumn<OrderDetail, String> orderDetailCuisineColumn;
@@ -82,9 +84,6 @@ public class OrderManagementController implements Initializable {
     private TableColumn<OrderDetail, Double> orderDetailSalePriceColumn;
     @FXML
     private TableView<OrderDetail> orderDetailTable;
-
-    private static final OrderBUS orderBUS = new OrderBUS();
-    private static Pagination<Order> orderPagination;
 
     // initialize area
     @Override

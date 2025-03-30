@@ -32,86 +32,59 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class CustomerManagementController implements Initializable {
+    private final CustomerBUS customerBUS = new CustomerBUS();
     @FXML
     public Button createCustomerQRButton;
-
     @FXML
     public Button searchCustomerButton;
-
     @FXML
     public ComboBox<String> searchMethodComboBox;
-
-    @FXML
-    private Button handleActionCustomerButton;
-
-    @FXML
-    private Button swapModeCustomerButton;
-
-    @FXML
-    private DatePicker customerBirthdayDatePicker;
-
-    @FXML
-    private DatePicker customerRegistrationDateDatePicker;
-
-    @FXML
-    private ToggleGroup genderGroup;
-
-    @FXML
-    private RadioButton femaleRadioButton;
-
-    @FXML
-    private RadioButton maleRadioButton;
-
-    @FXML
-    private TableColumn<Customer, Integer> customerAccumulatedPointColumn;
-
-    @FXML
-    private TableColumn<Customer, String> customerPhoneNumberColumn;
-
-    @FXML
-    private TableColumn<Customer, String> customerGenderColumn;
-
-    @FXML
-    private TableColumn<Customer, String> customerIdColumn;
-
-    @FXML
-    private TableColumn<Customer, String> customerMembershipLevelColumn;
-
-    @FXML
-    private TableColumn<Customer, String> customerNameColumn;
-
-    @FXML
-    private TableView<Customer> customerTable;
-
-    @FXML
-    private TextField customerAccumulatedPointsField;
-
-    @FXML
-    private TextField customerAddressField;
-
-    @FXML
-    private TextField customerEmailField;
-
-    @FXML
-    private TextField customerMembershipLevelField;
-
-    @FXML
-    private TextField customerNameField;
-
-    @FXML
-    private TextField customerPhoneField;
-
-    @FXML
-    private TextField searchCustomerField;
-
-    @FXML
-    private ImageView clearSearchButton;
-
     @FXML
     public Label pageIndexLabel;
-
-    private final CustomerBUS customerBUS = new CustomerBUS();
-
+    @FXML
+    private Button handleActionCustomerButton;
+    @FXML
+    private Button swapModeCustomerButton;
+    @FXML
+    private DatePicker customerBirthdayDatePicker;
+    @FXML
+    private DatePicker customerRegistrationDateDatePicker;
+    @FXML
+    private ToggleGroup genderGroup;
+    @FXML
+    private RadioButton femaleRadioButton;
+    @FXML
+    private RadioButton maleRadioButton;
+    @FXML
+    private TableColumn<Customer, Integer> customerAccumulatedPointColumn;
+    @FXML
+    private TableColumn<Customer, String> customerPhoneNumberColumn;
+    @FXML
+    private TableColumn<Customer, String> customerGenderColumn;
+    @FXML
+    private TableColumn<Customer, String> customerIdColumn;
+    @FXML
+    private TableColumn<Customer, String> customerMembershipLevelColumn;
+    @FXML
+    private TableColumn<Customer, String> customerNameColumn;
+    @FXML
+    private TableView<Customer> customerTable;
+    @FXML
+    private TextField customerAccumulatedPointsField;
+    @FXML
+    private TextField customerAddressField;
+    @FXML
+    private TextField customerEmailField;
+    @FXML
+    private TextField customerMembershipLevelField;
+    @FXML
+    private TextField customerNameField;
+    @FXML
+    private TextField customerPhoneField;
+    @FXML
+    private TextField searchCustomerField;
+    @FXML
+    private ImageView clearSearchButton;
     private Pagination<Customer> customerPagination;
 
     private void setCustomerTableColumns() {
@@ -310,7 +283,7 @@ public class CustomerManagementController implements Initializable {
             ToastsMessage.showMessage("Tên khách hàng không được để trống", "error");
             return false;
         }
-        if(!swapModeCustomerButton.getText().equals("Thêm")) {
+        if (!swapModeCustomerButton.getText().equals("Thêm")) {
             if (!customerPhoneField.getText().trim().isEmpty()) {
                 CustomerDAO customerDAO = new CustomerDAO(PersistenceUnit.MARIADB_JPA);
                 List<String> customerList = customerDAO.getPhoneNumber();

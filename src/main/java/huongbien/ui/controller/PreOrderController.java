@@ -31,7 +31,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.StageStyle;
-import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.videoio.VideoCapture;
 
@@ -50,6 +49,20 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class PreOrderController implements Initializable {
+    static {
+        try {
+            System.load(System.getProperty("user.dir") + "/libs/native/opencv_java451.dll");
+        } catch (UnsatisfiedLinkError e) {
+            System.err.println("Native code library failed to load.\n" + e);
+            System.exit(1);
+        }
+    }
+
+    @FXML
+    public Label tableFeeLabel;
+    //Controller area
+    public RestaurantMainManagerController restaurantMainManagerController;
+    public RestaurantMainStaffController restaurantMainStaffController;
     @FXML
     private Label reservationIDLabel;
     @FXML
@@ -82,29 +95,14 @@ public class PreOrderController implements Initializable {
     private TextField nameField;
     @FXML
     private TextField noteField;
-    @FXML
-    public Label tableFeeLabel;
-
     private VideoCapture capture;
     private Timer timer;
     private QRCodeHandler qrCodeHandler;
 
-    static {
-        try {
-            System.load(System.getProperty("user.dir") + "/libs/native/opencv_java451.dll");
-        } catch (UnsatisfiedLinkError e) {
-            System.err.println("Native code library failed to load.\n" + e);
-            System.exit(1);
-        }
-    }
-
-    //Controller area
-    public RestaurantMainManagerController restaurantMainManagerController;
     public void setRestaurantMainManagerController(RestaurantMainManagerController restaurantMainManagerController) {
         this.restaurantMainManagerController = restaurantMainManagerController;
     }
 
-    public RestaurantMainStaffController restaurantMainStaffController;
     public void setRestaurantMainStaffController(RestaurantMainStaffController restaurantMainStaffController) {
         this.restaurantMainStaffController = restaurantMainStaffController;
     }
@@ -135,7 +133,7 @@ public class PreOrderController implements Initializable {
     }
 
     private void setInfoPreOrder() throws FileNotFoundException {
-        tableFeeLabel.setText(tableFeeLabel.getText()+ Converter.formatMoney(Variable.tableVipPrice)+" VNĐ");
+        tableFeeLabel.setText(tableFeeLabel.getText() + Converter.formatMoney(Variable.tableVipPrice) + " VNĐ");
         receiveDatePicker.setValue(LocalDate.now());
         setTimeComboBox();
         ObservableList<String> partyTypes = FXCollections.observableArrayList(Variable.partyTypesArray);
@@ -307,7 +305,7 @@ public class PreOrderController implements Initializable {
 
     @FXML
     void onBackButtonAction(ActionEvent event) throws IOException {
-        if(restaurantMainManagerController != null) {
+        if (restaurantMainManagerController != null) {
             restaurantMainManagerController.openOrderTable();
         } else {
             restaurantMainStaffController.openOrderTable();
@@ -321,7 +319,7 @@ public class PreOrderController implements Initializable {
 
     @FXML
     void onReservationManagementButtonAction(ActionEvent event) throws IOException {
-        if(restaurantMainManagerController != null) {
+        if (restaurantMainManagerController != null) {
             restaurantMainManagerController.openReservationManagement();
         } else {
             restaurantMainStaffController.openReservationManagement();
@@ -344,7 +342,7 @@ public class PreOrderController implements Initializable {
 
     @FXML
     void onEditTableButtonAction(ActionEvent event) throws IOException {
-        if(restaurantMainManagerController != null) {
+        if (restaurantMainManagerController != null) {
             restaurantMainManagerController.openOrderTable();
         } else {
             restaurantMainStaffController.openOrderTable();
@@ -353,7 +351,7 @@ public class PreOrderController implements Initializable {
 
     @FXML
     void onPreOrderCuisineButtonAction(ActionEvent event) throws IOException {
-        if(restaurantMainManagerController != null) {
+        if (restaurantMainManagerController != null) {
             restaurantMainManagerController.openPreOrderCuisine();
         } else {
             restaurantMainStaffController.openPreOrderCuisine();
@@ -530,7 +528,7 @@ public class PreOrderController implements Initializable {
             //Check receive time is valid
             LocalDateTime receiveDateTime = LocalDateTime.of(receiveDatePicker.getValue(), LocalTime.of(Integer.parseInt(hourComboBox.getValue()), Integer.parseInt(minuteComboBox.getValue())));
             LocalDateTime currentDateTime = LocalDateTime.now();
-            if(receiveDateTime.isBefore(currentDateTime)){
+            if (receiveDateTime.isBefore(currentDateTime)) {
                 ToastsMessage.showMessage("Thời gian nhận phải lớn hơn thời gian hiện tại", "warning");
                 return;
             }
@@ -601,7 +599,7 @@ public class PreOrderController implements Initializable {
         }
 
         ClearJSON.clearAllJsonWithoutLoginSession_PaymentQueue();
-        if(restaurantMainManagerController != null) {
+        if (restaurantMainManagerController != null) {
             restaurantMainManagerController.openReservationManagement();
         } else {
             restaurantMainStaffController.openReservationManagement();

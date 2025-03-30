@@ -33,6 +33,8 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class CuisineManagementController implements Initializable {
+    private final CuisineBUS cuisineBUS = new CuisineBUS();
+    private final Image DEFAULT_IMAGE = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/huongbien/icon/all/gallery-512px.png")));
     @FXML
     public Label pageIndexLabel;
     @FXML
@@ -41,6 +43,8 @@ public class CuisineManagementController implements Initializable {
     public Button searchCuisineButton;
     @FXML
     public ImageView clearCuisineSearchButton;
+    @FXML
+    public ComboBox<String> cuisineStatusComboBox;
     @FXML
     private TableColumn<Cuisine, String> cuisineCategoryColumn;
     @FXML
@@ -57,8 +61,6 @@ public class CuisineManagementController implements Initializable {
     private TextField cuisineNameField;
     @FXML
     private TextField cuisinePriceField;
-    @FXML
-    public ComboBox<String> cuisineStatusComboBox;
     @FXML
     private ComboBox<Category> cuisineCategoryComboBox;
     @FXML
@@ -77,13 +79,7 @@ public class CuisineManagementController implements Initializable {
     private Button chooseImageButton;
     @FXML
     private ImageView cuisineImageView;
-
     private byte[] imageCuisineByte = null;
-
-    private final CuisineBUS cuisineBUS = new CuisineBUS();
-
-    private final Image DEFAULT_IMAGE = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/huongbien/icon/all/gallery-512px.png")));
-
     private Pagination<Cuisine> cuisinePagination;
 
     @Override

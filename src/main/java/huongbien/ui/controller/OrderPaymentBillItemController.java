@@ -5,19 +5,26 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
 public class OrderPaymentBillItemController {
-    @FXML private Label cuisineIdLabel;
-    @FXML private Label cuisineNameLabel;
-    @FXML private Label cuisineNoteLabel;
-    @FXML private Label cuisineQuantityLabel;
-    @FXML private Label cuisineSalePriceLabel;
-    @FXML private Label cuisineTotalPriceLabel;
-
     //Controller area
     public OrderPaymentController orderPaymentController;
+    public OrderPaymentFinalController orderPaymentFinalController;
+    @FXML
+    private Label cuisineIdLabel;
+    @FXML
+    private Label cuisineNameLabel;
+    @FXML
+    private Label cuisineNoteLabel;
+    @FXML
+    private Label cuisineQuantityLabel;
+    @FXML
+    private Label cuisineSalePriceLabel;
+    @FXML
+    private Label cuisineTotalPriceLabel;
+
     public void setOrderPaymentController(OrderPaymentController orderPaymentController) {
         this.orderPaymentController = orderPaymentController;
     }
-    public OrderPaymentFinalController orderPaymentFinalController;
+
     public void setOrderPaymentFinalController(OrderPaymentFinalController orderPaymentFinalController) {
         this.orderPaymentFinalController = orderPaymentFinalController;
     }

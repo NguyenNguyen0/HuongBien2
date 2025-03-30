@@ -46,6 +46,11 @@ public class OrderPaymentFinalController implements Initializable {
     @FXML
     public GridPane suggestMoneyButtonContainer;
     @FXML
+    public GridPane cuisineGridPane;
+    //Controller area
+    public RestaurantMainManagerController restaurantMainManagerController;
+    public RestaurantMainStaffController restaurantMainStaffController;
+    @FXML
     private VBox screenCashMethodVBox;
     @FXML
     private VBox screenBankingMethodVBox;
@@ -53,8 +58,6 @@ public class OrderPaymentFinalController implements Initializable {
     private VBox screenEWalletMethodVBox;
     @FXML
     private ScrollPane cuisineScrollPane;
-    @FXML
-    public GridPane cuisineGridPane;
     @FXML
     private TextField paymentAmountField;
     @FXML
@@ -65,16 +68,12 @@ public class OrderPaymentFinalController implements Initializable {
     private Label dispensedAmountLabel;
     @FXML
     private Label statusLabel;
-
     private boolean statusFlags = false;
 
-    //Controller area
-    public RestaurantMainManagerController restaurantMainManagerController;
     public void setRestaurantMainManagerController(RestaurantMainManagerController restaurantMainManagerController) {
         this.restaurantMainManagerController = restaurantMainManagerController;
     }
 
-    public RestaurantMainStaffController restaurantMainStaffController;
     public void setRestaurantMainStaffController(RestaurantMainStaffController restaurantMainStaffController) {
         this.restaurantMainStaffController = restaurantMainStaffController;
     }
@@ -266,7 +265,7 @@ public class OrderPaymentFinalController implements Initializable {
 
     @FXML
     void onBackButtonClicked(ActionEvent event) throws IOException {
-        if(restaurantMainManagerController != null) {
+        if (restaurantMainManagerController != null) {
             restaurantMainManagerController.openOrderPayment();
         } else {
             restaurantMainStaffController.openOrderPayment();
@@ -343,7 +342,7 @@ public class OrderPaymentFinalController implements Initializable {
 
     @FXML
     void onCompleteOrderPaymentFinalAction(ActionEvent event) throws IOException {
-        if(!statusFlags) {
+        if (!statusFlags) {
             ToastsMessage.showMessage("Vui lòng thu tiền thanh toán", "warning");
             return;
         }
@@ -418,13 +417,13 @@ public class OrderPaymentFinalController implements Initializable {
                 Optional<ButtonType> result = alert.showAndWait();
                 ClearJSON.clearAllJsonWithoutLoginSession_PaymentQueue();
                 if (result.isPresent() && result.get() == btn_ok) {
-                    if(restaurantMainManagerController != null) {
+                    if (restaurantMainManagerController != null) {
                         restaurantMainManagerController.openOrderTable();
                     } else {
                         restaurantMainStaffController.openOrderTable();
                     }
                 } else {
-                    if(restaurantMainManagerController != null) {
+                    if (restaurantMainManagerController != null) {
                         restaurantMainManagerController.openHome();
                     } else {
                         restaurantMainStaffController.openHome();
@@ -443,7 +442,7 @@ public class OrderPaymentFinalController implements Initializable {
     void onClearOrderPaymentFinalAction(ActionEvent event) throws IOException {
         try {
             ClearJSON.clearAllJsonWithoutLoginSession_PaymentQueue();
-            if(restaurantMainManagerController != null) {
+            if (restaurantMainManagerController != null) {
                 restaurantMainManagerController.openOrderTable();
             } else {
                 restaurantMainStaffController.openOrderTable();

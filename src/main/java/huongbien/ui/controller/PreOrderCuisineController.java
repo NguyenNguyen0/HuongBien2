@@ -39,24 +39,33 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class PreOrderCuisineController implements Initializable {
-    //cuisine
-    @FXML private ScrollPane cuisineScrollPane;
-    @FXML private GridPane cuisineGridPane;
-    @FXML private ScrollPane billScrollPane;
-    @FXML public GridPane billGridPane;
-    @FXML private Label cuisineAmountLabel;
-    @FXML private Label cuisineQuantityLabel;
-    @FXML private Label totalAmountLabel;
-    @FXML public TextField cuisineNameTextField;
-    @FXML public ComboBox<Pair<String, String>> categoryComboBox;
-
+    @FXML
+    public GridPane billGridPane;
+    @FXML
+    public TextField cuisineNameTextField;
+    @FXML
+    public ComboBox<Pair<String, String>> categoryComboBox;
     //Controller area
     public RestaurantMainManagerController restaurantMainManagerController;
+    public RestaurantMainStaffController restaurantMainStaffController;
+    //cuisine
+    @FXML
+    private ScrollPane cuisineScrollPane;
+    @FXML
+    private GridPane cuisineGridPane;
+    @FXML
+    private ScrollPane billScrollPane;
+    @FXML
+    private Label cuisineAmountLabel;
+    @FXML
+    private Label cuisineQuantityLabel;
+    @FXML
+    private Label totalAmountLabel;
+
     public void setRestaurantMainManagerController(RestaurantMainManagerController restaurantMainManagerController) {
         this.restaurantMainManagerController = restaurantMainManagerController;
     }
 
-    public RestaurantMainStaffController restaurantMainStaffController;
     public void setRestaurantMainStaffController(RestaurantMainStaffController restaurantMainStaffController) {
         this.restaurantMainStaffController = restaurantMainStaffController;
     }
@@ -87,6 +96,7 @@ public class PreOrderCuisineController implements Initializable {
             public String toString(Pair<String, String> pair) {
                 return pair.getValue();
             }
+
             @Override
             public Pair<String, String> fromString(String string) {
                 return null;
@@ -201,7 +211,7 @@ public class PreOrderCuisineController implements Initializable {
 
     @FXML
     void onUpdateCuisineButtonAction(ActionEvent event) throws IOException {
-        if(restaurantMainManagerController != null) {
+        if (restaurantMainManagerController != null) {
             restaurantMainManagerController.openPreOrder();
         } else {
             restaurantMainStaffController.openPreOrder();
