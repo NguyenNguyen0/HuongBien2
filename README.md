@@ -4,7 +4,7 @@ Huong Bien 2 is a Java application that leverages JavaFX for its graphical user 
 
 ## Members
 - Nguyễn Trung Nguyên
-- Nguy Trần Gia Sĩ
+- Nguyễn Trần Gia Sĩ
 - Nguyễn Văn Minh
 - Trần Di Phong
 
