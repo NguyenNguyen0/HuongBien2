@@ -285,7 +285,7 @@ public class RestaurantStatisticsController {
         });
     }
 
-//    START: REVENUE STATISTICAL
+    //    START: REVENUE STATISTICAL
     public void setYearlyRevenueLabels(int year) {
         HashMap<String, String> yearlyStat = StatisticsBUS.getYearStat(year);
         revenueYearLabel.setText("DOANH THU NĂM " + year);
@@ -424,7 +424,7 @@ public class RestaurantStatisticsController {
 
 //    END: REVENUE STATISTICAL
 
-//    START: CUISINE STATISTICAL
+    //    START: CUISINE STATISTICAL
     public void setBestSellerCuisineTableColumn() {
         setTablePlaceholder(bestSellerCuisineTable, "Không có dữ liệu nào để hiển thị");
         bestSellerCuisineIdColumn.setCellValueFactory(cellData -> {
@@ -489,7 +489,7 @@ public class RestaurantStatisticsController {
         cuisineComboBox.setValue("Tất cả");
     }
 
-    public void setCuisineStatisticLabels()  {
+    public void setCuisineStatisticLabels() {
         String cuisineName = cuisineComboBox.getSelectionModel().getSelectedItem();
         String criteria = cuisineStatisticalComboBox.getSelectionModel().getSelectedItem();
         String categoryName = cuisineCategoryComboBox.getSelectionModel().getSelectedItem();
@@ -644,7 +644,7 @@ public class RestaurantStatisticsController {
 
 //    END: CUISINE STATISTICAL
 
-//    START: CUSTOMER STATISTICAL
+    //    START: CUSTOMER STATISTICAL
     public void setNewCustomerTableColumn() {
         setTablePlaceholder(newCustomerTable, "Không có dữ liệu nào để hiển thị");
         newCustomerIdColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getId()));
@@ -753,7 +753,7 @@ public class RestaurantStatisticsController {
 
 //    END: CUSTOMER STATISTICAL
 
-//    START: EMPLOYEE STATISTICAL
+    //    START: EMPLOYEE STATISTICAL
     public void setPersonalStatisticLabels() {
         String currentLoginSessionEmployee = null;
         String employeeId = null;
@@ -845,7 +845,7 @@ public class RestaurantStatisticsController {
             default -> throw new IllegalArgumentException("Invalid criteria: " + criteria);
         }
 
-        List<HashMap<String, String>> personalRevenueAndOrder = StatisticsBUS.getPersonalRevenueAndOrder(employeeId , criteria, year);
+        List<HashMap<String, String>> personalRevenueAndOrder = StatisticsBUS.getPersonalRevenueAndOrder(employeeId, criteria, year);
 
         XYChart.Series<String, Number> personalRevenue = new XYChart.Series<>();
         XYChart.Series<String, Number> personalTotalOrder = new XYChart.Series<>();

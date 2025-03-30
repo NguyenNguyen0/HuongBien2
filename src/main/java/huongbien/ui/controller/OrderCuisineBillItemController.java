@@ -20,6 +20,8 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 public class OrderCuisineBillItemController {
+    //Controller area
+    public OrderCuisineController orderCuisineController;
     @FXML
     private Label cuisineIdLabel;
     @FXML
@@ -33,8 +35,6 @@ public class OrderCuisineBillItemController {
     @FXML
     private Label cuisineTotalPriceLabel;
 
-    //Controller area
-    public OrderCuisineController orderCuisineController;
     public void setOrderBillController(OrderCuisineController orderCuisineController) {
         this.orderCuisineController = orderCuisineController;
     }
@@ -62,7 +62,7 @@ public class OrderCuisineBillItemController {
             if (existingCuisineID.equals(cuisineID)) {
                 CuisineDAO cuisineDAO = new CuisineDAO(PersistenceUnit.MARIADB_JPA);
                 jsonArray.remove(i);
-                ToastsMessage.showMessage("Đã xoá món"+ cuisineDAO.getById(cuisineID).getName() +" ra khỏi danh sách", "success");
+                ToastsMessage.showMessage("Đã xoá món" + cuisineDAO.getById(cuisineID).getName() + " ra khỏi danh sách", "success");
                 break;
             }
         }
@@ -124,7 +124,7 @@ public class OrderCuisineBillItemController {
                     jsonObject.addProperty("Cuisine Money", newMoney);
                 } else {
                     jsonArray.remove(i);
-                    ToastsMessage.showMessage("Đã xoá món: "+ cuisineDAO.getById(cuisineID).getName() +" ra khỏi danh sách", "success");
+                    ToastsMessage.showMessage("Đã xoá món: " + cuisineDAO.getById(cuisineID).getName() + " ra khỏi danh sách", "success");
                 }
                 break;
             }
@@ -147,7 +147,7 @@ public class OrderCuisineBillItemController {
 
             if (existingCuisineID.equals(cuisineID)) {
                 jsonObject.addProperty("Cuisine Note", newNote);
-                ToastsMessage.showMessage("Đã cập nhật ghi chú cho món: "+ cuisineDAO.getById(cuisineID).getName()+" với nội dung là: "+newNote, "success");
+                ToastsMessage.showMessage("Đã cập nhật ghi chú cho món: " + cuisineDAO.getById(cuisineID).getName() + " với nội dung là: " + newNote, "success");
                 break;
             }
         }

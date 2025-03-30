@@ -36,16 +36,24 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class RestaurantLoginController implements Initializable {
-    @FXML private TextField employeeIdField;
-    @FXML private PasswordField hidedPasswordField;
-    @FXML private TextField showedPasswordField;
-    @FXML private BorderPane borderPaneCarousel;
-    @FXML private AnchorPane compoent_hide;
-    @FXML private AnchorPane compoent_show;
-    @FXML private ImageView toggleShowingPasswordButton;
-    @FXML private Button loginButton;
     private final String emailUsername = AppConfig.getEmailUsername();
     private final String emailPassword = AppConfig.getEmailPassword();
+    @FXML
+    private TextField employeeIdField;
+    @FXML
+    private PasswordField hidedPasswordField;
+    @FXML
+    private TextField showedPasswordField;
+    @FXML
+    private BorderPane borderPaneCarousel;
+    @FXML
+    private AnchorPane compoent_hide;
+    @FXML
+    private AnchorPane compoent_show;
+    @FXML
+    private ImageView toggleShowingPasswordButton;
+    @FXML
+    private Button loginButton;
     @FXML
     private boolean status = false;
 
@@ -206,7 +214,7 @@ public class RestaurantLoginController implements Initializable {
             return;
         }
 
-        if(!account.isActive()) {
+        if (!account.isActive()) {
             ToastsMessage.showMessage("Tài khoản của bạn đã bị khoá, vui lòng liên hệ quản lý để mở lại!", "warning");
             return;
         }
@@ -215,7 +223,7 @@ public class RestaurantLoginController implements Initializable {
             ToastsMessage.showMessage("Đăng nhập thành công", "success");
             //Role check
             String path;
-            if(account.getRole().equals("Quản lý")) {
+            if (account.getRole().equals("Quản lý")) {
                 path = "/huongbien/fxml/RestaurantMainManager.fxml";
                 ToastsMessage.showMessage("Bạn đang đăng nhập với quyền quản lý", "success");
             } else {
@@ -252,7 +260,7 @@ public class RestaurantLoginController implements Initializable {
             jsonArray.add(jsonObject);
             Utils.writeJsonToFile(jsonArray, Constants.LOGIN_SESSION_PATH);
 
-            if(account.getRole().equals("Quản lý")) {
+            if (account.getRole().equals("Quản lý")) {
                 RestaurantMainManagerController restaurantMainManagerController = loader.getController();
                 restaurantMainManagerController.loadUserInfoFromJSON();
             } else {

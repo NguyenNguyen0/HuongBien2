@@ -46,6 +46,15 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 public class EmployeeManagementController implements Initializable {
+    private final EmployeeBUS employeeBUS = new EmployeeBUS();
+    private final Image DEFAULT_AVATAR = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/huongbien/icon/mg_employee/user-256px.png")));
+    @FXML
+    public TextField employeeAddressField;
+    @FXML
+    public Label pageIndexLabel;
+    public TextField employeeWorkingHourField;
+    public RestaurantMainManagerController restaurantMainManagerController;
+    public RestaurantMainStaffController restaurantMainStaffController;
     @FXML
     private TableColumn<Employee, String> employeeGenderColumn;
     @FXML
@@ -73,8 +82,6 @@ public class EmployeeManagementController implements Initializable {
     @FXML
     private RadioButton maleRadioButton;
     @FXML
-    public TextField employeeAddressField;
-    @FXML
     private TextField employeeCitizenIdField;
     @FXML
     private ComboBox<Employee> employeeManagerIdComboBox;
@@ -97,8 +104,6 @@ public class EmployeeManagementController implements Initializable {
     @FXML
     private TextField employeeSearchField;
     @FXML
-    public Label pageIndexLabel;
-    @FXML
     private Button searchEmployeeButton;
     @FXML
     private ToggleGroup genderGroup;
@@ -114,19 +119,13 @@ public class EmployeeManagementController implements Initializable {
     private Button chooseImageButton;
     @FXML
     private Circle employeeAvatarCircle;
-    public TextField employeeWorkingHourField;
     private byte[] employeeImageBytes = null;
     private Pagination<Employee> employeePagination;
-    private final EmployeeBUS employeeBUS = new EmployeeBUS();
 
-    private final Image DEFAULT_AVATAR = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/huongbien/icon/mg_employee/user-256px.png")));
-
-    public RestaurantMainManagerController restaurantMainManagerController;
     public void setRestaurantMainManagerController(RestaurantMainManagerController restaurantMainManagerController) {
         this.restaurantMainManagerController = restaurantMainManagerController;
     }
 
-    public RestaurantMainStaffController restaurantMainStaffController;
     public void setRestaurantMainStaffController(RestaurantMainStaffController restaurantMainStaffController) {
         this.restaurantMainStaffController = restaurantMainStaffController;
     }
@@ -575,9 +574,9 @@ public class EmployeeManagementController implements Initializable {
         }
         clearEmployeeForm();
 
-        if(restaurantMainManagerController != null) {
+        if (restaurantMainManagerController != null) {
             restaurantMainManagerController.setDetailUserInfo();
-        }else {
+        } else {
             restaurantMainStaffController.setDetailUserInfo();
         }
     }

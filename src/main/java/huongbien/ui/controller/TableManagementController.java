@@ -4,8 +4,8 @@ import huongbien.bus.TableBUS;
 import huongbien.bus.TableTypeBUS;
 import huongbien.dao.TableDAO;
 import huongbien.entity.Table;
-import huongbien.entity.TableType;
 import huongbien.entity.TableStatus;
+import huongbien.entity.TableType;
 import huongbien.jpa.PersistenceUnit;
 import huongbien.util.Pagination;
 import huongbien.util.ToastsMessage;
@@ -30,73 +30,50 @@ import java.util.ResourceBundle;
 import java.util.function.BiFunction;
 
 public class TableManagementController implements Initializable {
+    private final Image DEFAULT_IMAGE = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/huongbien/icon/all/gallery-512px.png")));
+    private final TableBUS tableBUS = new TableBUS();
     @FXML
     public Button searchTableButton;
-
     @FXML
     public ComboBox<String> searchMethodComboBox;
-
     @FXML
     public Label pageIndexLabel;
-
     @FXML
     public ImageView clearSearchFieldButton;
-
     @FXML
     private Button clearTableFormButton;
-
     @FXML
     private Button handleActionTableButton;
-
     @FXML
     private Button swapModeTableButton;
-
     @FXML
     private ComboBox<Integer> tableFloorComboBox;
-
     @FXML
     private ComboBox<String> tableStatusComboBox;
-
     @FXML
     private ComboBox<TableType> tableTypeComboBox;
-
     @FXML
     private ImageView tableImageView;
-
     @FXML
     private TableColumn<Table, String> tableFloorColumn;
-
     @FXML
     private TableColumn<Table, String> tableIdColumn;
-
     @FXML
     private TableColumn<Table, String> tableNameColumn;
-
     @FXML
     private TableColumn<Table, Integer> tableSeatsColumn;
-
     @FXML
     private TableColumn<Table, String> tableStatusColumn;
-
     @FXML
     private TableColumn<Table, String> tableTypeColumn;
-
     @FXML
     private TableView<Table> tableTableView;
-
     @FXML
     private TextField tableNameField;
-
     @FXML
     private TextField tableSearchField;
-
     @FXML
     private TextField tableSeatsField;
-
-    private final Image DEFAULT_IMAGE = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/huongbien/icon/all/gallery-512px.png")));
-
-    private final TableBUS tableBUS = new TableBUS();
-
     private Pagination<Table> tablePagination;
 
     public void setTableTableViewColumn() {
@@ -120,10 +97,14 @@ public class TableManagementController implements Initializable {
 
     private void setTableImage(TableStatus tableStatus) {
         switch (tableStatus) {
-            case TableStatus.AVAILABLE -> tableImageView.setImage(new Image("/huongbien/icon/order/tableEmpty-512px.png"));
-            case TableStatus.OCCUPIED -> tableImageView.setImage(new Image("/huongbien/icon/order/tableReserved-512px.png"));
-            case TableStatus.RESERVED -> tableImageView.setImage(new Image("/huongbien/icon/order/tableOpen-512px.png"));
-            case TableStatus.UNAVAILABLE -> tableImageView.setImage(new Image("/huongbien/icon/order/tableClosed-512px.png"));
+            case TableStatus.AVAILABLE ->
+                    tableImageView.setImage(new Image("/huongbien/icon/order/tableEmpty-512px.png"));
+            case TableStatus.OCCUPIED ->
+                    tableImageView.setImage(new Image("/huongbien/icon/order/tableReserved-512px.png"));
+            case TableStatus.RESERVED ->
+                    tableImageView.setImage(new Image("/huongbien/icon/order/tableOpen-512px.png"));
+            case TableStatus.UNAVAILABLE ->
+                    tableImageView.setImage(new Image("/huongbien/icon/order/tableClosed-512px.png"));
             default -> tableImageView.setImage(DEFAULT_IMAGE);
         }
     }

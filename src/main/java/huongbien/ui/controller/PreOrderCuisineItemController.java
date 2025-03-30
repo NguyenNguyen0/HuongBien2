@@ -21,13 +21,17 @@ import java.io.FileNotFoundException;
 import java.sql.SQLException;
 
 public class PreOrderCuisineItemController {
-    @FXML private Circle cuisineImageCircle;
-    @FXML private Label cuisineIdLabel;
-    @FXML private Label cuisineNameLabel;
-    @FXML private Label cuisineSalePriceLabel;
-
     //Controller area
     public PreOrderCuisineController preOrderCuisineController;
+    @FXML
+    private Circle cuisineImageCircle;
+    @FXML
+    private Label cuisineIdLabel;
+    @FXML
+    private Label cuisineNameLabel;
+    @FXML
+    private Label cuisineSalePriceLabel;
+
     public void setPreOrderCuisineController(PreOrderCuisineController preOrderCuisineController) {
         this.preOrderCuisineController = preOrderCuisineController;
     }
@@ -97,6 +101,6 @@ public class PreOrderCuisineItemController {
         preOrderCuisineController.loadBill();
         //update lbl
         preOrderCuisineController.setCuisinesInfoFromJSON();
-        ToastsMessage.showMessage("Đã thêm món: "+cuisine.getName()+" vào danh sách", "success");
+        ToastsMessage.showMessage("Đã thêm món: " + cuisine.getName() + " vào danh sách", "success");
     }
 }

@@ -57,14 +57,23 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class RestaurantMainManagerController implements Initializable {
+    private static ScheduledExecutorService scheduler;
+    private static final List<String> listSentEmailAlready = null;
+    //timer
+    private final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+    private final SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE");
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    private final ReservationBUS reservationBUS = new ReservationBUS();
+    @FXML
+    public Label employeeNameLabel;
+    @FXML
+    public Label featureTitleLabel;
     @FXML
     private Label userNameDetailUserLabel;
     @FXML
     private Circle avatarDetailUserCircle;
     @FXML
     private Circle avatarMainCircle;
-    @FXML
-    public Label employeeNameLabel;
     @FXML
     private Button hideMenuButton;
     @FXML
@@ -89,8 +98,6 @@ public class RestaurantMainManagerController implements Initializable {
     private Label currentDayLabel;
     @FXML
     private Label currentTimeLabel;
-    @FXML
-    public Label featureTitleLabel;
     @FXML
     private BorderPane mainBorderPane;
     @FXML
@@ -125,19 +132,7 @@ public class RestaurantMainManagerController implements Initializable {
     private Label countHourWorkDetailUserLabel;
     @FXML
     private Label worksHourDetailUserLabel;
-
-
-    //timer
-    private final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-    private final SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE");
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-
     private byte[] employeeImageBytes = null;
-
-    private final ReservationBUS reservationBUS = new ReservationBUS();
-    private static ScheduledExecutorService scheduler;
-
-    private static List<String> listSentEmailAlready = null;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -158,7 +153,7 @@ public class RestaurantMainManagerController implements Initializable {
         Runnable task = () -> {
             List<Reservation> reservationList = reservationBUS.getListWaitedToday();
             CustomerBUS customerBUS = new CustomerBUS();
-            if(reservationList != null){
+            if (reservationList != null) {
                 for (Reservation reservation : reservationList) {
                     LocalTime receiveTime = reservation.getReceiveTime();
                     LocalTime now = LocalTime.now();
@@ -166,20 +161,21 @@ public class RestaurantMainManagerController implements Initializable {
                     int minutesDifference = now.getMinute() - receiveTime.getMinute();
                     int totalMinutesDifference = hoursDifference * 60 + minutesDifference;
                     //Thời gian đơn sau thời gian hiện tại 20p
-                    if(totalMinutesDifference>=20){
+                    if (totalMinutesDifference >= 20) {
                         reservationBUS.updateStatus(reservation.getId(), ReservationStatus.CANCELLED);
                     }
                     //Gửi email khi đơn đặt còn cách 1 tiếng
-                    if(totalMinutesDifference>=-60){
+                    if (totalMinutesDifference >= -60) {
                         int check = 0;
-                        if(listSentEmailAlready != null){
-                            for (String s: listSentEmailAlready) {
-                                if (s.equals(reservation.getId())){
+                        if (listSentEmailAlready != null) {
+                            for (String s : listSentEmailAlready) {
+                                if (s.equals(reservation.getId())) {
                                     check = 1;
+                                    break;
                                 }
                             }
                         }
-                        if(check == 0) {
+                        if (check == 0) {
                             String htmlContent = "<html>" +
                                     "<body style=\"font-family: Arial, sans-serif; line-height: 1.6; text-align: left;\">" +
                                     "<h2 style=\"color: #2c3e50;\">Quý khách có đơn đặt bàn sắp đến giờ!</h2>" +
@@ -862,7 +858,7 @@ public class RestaurantMainManagerController implements Initializable {
         alert.initStyle(StageStyle.UNDECORATED);
         alert.setTitle("Exit");
         double hours = Double.parseDouble(countHourWorkDetailUserLabel.getText().split(":")[0]);
-        alert.setHeaderText("Bạn có muốn kết thúc phiên làm việc, với số giờ đã ghi nhận là " + (int)hours + " giờ?");
+        alert.setHeaderText("Bạn có muốn kết thúc phiên làm việc, với số giờ đã ghi nhận là " + (int) hours + " giờ?");
         ButtonType btn_ok = new ButtonType("Ok");
         ButtonType onCancelButtonClicked = new ButtonType("Cancel");
         alert.getButtonTypes().setAll(btn_ok, onCancelButtonClicked);

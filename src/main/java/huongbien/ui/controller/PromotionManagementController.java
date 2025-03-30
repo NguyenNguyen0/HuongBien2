@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class PromotionManagementController implements Initializable {
+    PromotionBUS promotionBUS = new PromotionBUS();
+    Pagination<Promotion> promotionPagination;
     @FXML
     private Label pageIndexLabel;
     @FXML
@@ -68,9 +70,6 @@ public class PromotionManagementController implements Initializable {
     private TableColumn<Promotion, Double> promotionDiscountColumn;
     @FXML
     private TableColumn<Promotion, String> promotionMembershipLevelColumn;
-
-    PromotionBUS promotionBUS = new PromotionBUS();
-    Pagination<Promotion> promotionPagination;
 
     //initialize area
     @Override

@@ -16,10 +16,15 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class EmployeeAddressDialogController implements Initializable {
-    @FXML private TextField addressDetailField;
-    @FXML private ComboBox<String> cityComboBox;
-    @FXML private ComboBox<String> districtComboBox;
-    @FXML private ComboBox<String> wardComboBox;
+    @FXML
+    private TextField addressDetailField;
+    @FXML
+    private ComboBox<String> cityComboBox;
+    @FXML
+    private ComboBox<String> districtComboBox;
+    @FXML
+    private ComboBox<String> wardComboBox;
+    private EmployeeManagementController employeeManagementController;
 
     //Initialize area
     @Override
@@ -115,7 +120,6 @@ public class EmployeeAddressDialogController implements Initializable {
         districtComboBox.getSelectionModel().clearSelection();
     }
 
-    private EmployeeManagementController employeeManagementController;
     public void setEmployeeManagementController(EmployeeManagementController employeeManagementController) {
         this.employeeManagementController = employeeManagementController;
     }

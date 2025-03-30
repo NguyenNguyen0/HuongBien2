@@ -21,17 +21,22 @@ import java.io.FileNotFoundException;
 import java.sql.SQLException;
 
 public class OrderTableItemController {
-    @FXML private ImageView tableImageView;
-    @FXML private ImageView checkedImageView;
-    @FXML private ImageView tableTypeImageView;
-    @FXML private Label tableIdLabel; // Table ID displayed in the table item, get from the database !important
-    @FXML private Label tableNameLabel;
-    @FXML private Label tableSeatLabel;
-
-    private boolean isCheck = false;
-
     //Controller area
     public OrderTableController orderTableController;
+    @FXML
+    private ImageView tableImageView;
+    @FXML
+    private ImageView checkedImageView;
+    @FXML
+    private ImageView tableTypeImageView;
+    @FXML
+    private Label tableIdLabel; // Table ID displayed in the table item, get from the database !important
+    @FXML
+    private Label tableNameLabel;
+    @FXML
+    private Label tableSeatLabel;
+    private boolean isCheck = false;
+
     public void setOrderTableController(OrderTableController orderTableController) {
         this.orderTableController = orderTableController;
     }
@@ -159,9 +164,12 @@ public class OrderTableItemController {
 //                orderTableController.tableInfoTabPane.getTabs().clear();
 //                orderTableController.readTableDataFromJSON();
 //            }
-            case TableStatus.OCCUPIED -> ToastsMessage.showMessage("Bàn đang được đặt trước, không thể chọn bàn này.", "warning");
-            case TableStatus.RESERVED -> ToastsMessage.showMessage("Bàn đang được phục vụ, không thể chọn bàn này.", "warning");
-            case TableStatus.UNAVAILABLE -> ToastsMessage.showMessage("Bàn đã đóng, không thể chọn bàn này.", "warning");
+            case TableStatus.OCCUPIED ->
+                    ToastsMessage.showMessage("Bàn đang được đặt trước, không thể chọn bàn này.", "warning");
+            case TableStatus.RESERVED ->
+                    ToastsMessage.showMessage("Bàn đang được phục vụ, không thể chọn bàn này.", "warning");
+            case TableStatus.UNAVAILABLE ->
+                    ToastsMessage.showMessage("Bàn đã đóng, không thể chọn bàn này.", "warning");
             case TableStatus.AVAILABLE -> {
                 writeDataToJSONFile(tableId);
                 orderTableController.tableInfoTabPane.getTabs().clear();

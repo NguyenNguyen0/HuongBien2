@@ -46,6 +46,9 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class ReservationManagementController implements Initializable {
+    //Controller area
+    public RestaurantMainManagerController restaurantMainManagerController;
+    public RestaurantMainStaffController restaurantMainStaffController;
     //Payment-Queue
     @FXML
     private TableView<Map<String, Object>> paymentQueueTableView;
@@ -115,13 +118,10 @@ public class ReservationManagementController implements Initializable {
     @FXML
     private TextField searchReservation;
 
-    //Controller area
-    public RestaurantMainManagerController restaurantMainManagerController;
     public void setRestaurantMainManagerController(RestaurantMainManagerController restaurantMainManagerController) {
         this.restaurantMainManagerController = restaurantMainManagerController;
     }
 
-    public RestaurantMainStaffController restaurantMainStaffController;
     public void setRestaurantMainStaffController(RestaurantMainStaffController restaurantMainStaffController) {
         this.restaurantMainStaffController = restaurantMainStaffController;
     }
@@ -281,7 +281,7 @@ public class ReservationManagementController implements Initializable {
             //
             paymentQueueArray.remove(selectedPaymentQueueIndex);
             Utils.writeJsonToFile(paymentQueueArray, Constants.PAYMENT_QUEUE_PATH);
-            if(restaurantMainManagerController != null) {
+            if (restaurantMainManagerController != null) {
                 restaurantMainManagerController.openOrderPayment();
             } else {
                 restaurantMainStaffController.openOrderPayment();
@@ -394,9 +394,9 @@ public class ReservationManagementController implements Initializable {
         ReservationDAO reservationDAO = new ReservationDAO();
         CustomerBUS customerBUS = new CustomerBUS();
         String id = "";
-        if(!searchReservation.getText().isEmpty()) {
+        if (!searchReservation.getText().isEmpty()) {
             String search = searchReservation.getText();
-            if(customerBUS.getCustomerSearchReservation(search) != null){
+            if (customerBUS.getCustomerSearchReservation(search) != null) {
                 id = customerBUS.getCustomerSearchReservation(search).getId();
             }
         }
@@ -466,7 +466,7 @@ public class ReservationManagementController implements Initializable {
     @FXML
     void onPreOrderButtonAction(ActionEvent event) throws IOException {
         ClearJSON.clearAllJsonWithoutLoginSession();
-        if(restaurantMainManagerController != null) {
+        if (restaurantMainManagerController != null) {
             restaurantMainManagerController.openPreOrder();
         } else {
             restaurantMainStaffController.openPreOrder();
@@ -520,7 +520,7 @@ public class ReservationManagementController implements Initializable {
             jsonArrayCustomer.add(jsonObjectCustomer);
             Utils.writeJsonToFile(jsonArrayCustomer, Constants.CUSTOMER_PATH);
         }
-        if(restaurantMainManagerController != null) {
+        if (restaurantMainManagerController != null) {
             restaurantMainManagerController.openPreOrder();
         } else {
             restaurantMainStaffController.openPreOrder();
@@ -534,12 +534,12 @@ public class ReservationManagementController implements Initializable {
         if (selectedIndex != -1) {
             Reservation reservation = preOrderTableView.getSelectionModel().getSelectedItem();
             //check status before write JSON
-            if(!reservation.getStatus().equals(Variable.statusReservation[0])){
-                ToastsMessage.showMessage("Đơn đặt đang ở trạng thái: "+ reservation.getStatus() +", nên không thể nhận bàn", "warning");
+            if (!reservation.getStatus().equals(Variable.statusReservation[0])) {
+                ToastsMessage.showMessage("Đơn đặt đang ở trạng thái: " + reservation.getStatus() + ", nên không thể nhận bàn", "warning");
                 return;
             }
             //check receice date valid
-            if(!reservation.getReceiveDate().equals(LocalDate.now())){
+            if (!reservation.getReceiveDate().equals(LocalDate.now())) {
                 ToastsMessage.showMessage("Vui lòng đợi đến ngày: " + reservation.getReceiveDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + " để nhận bàn.", "success");
                 ToastsMessage.showMessage("Chưa đến ngày nhận bàn này!", "warning");
                 return;
@@ -572,7 +572,7 @@ public class ReservationManagementController implements Initializable {
             Utils.writeJsonToFile(jsonArrayCustomer, Constants.CUSTOMER_PATH);
             Utils.writeJsonToFile(jsonArrayCuisine, Constants.CUISINE_PATH);
             reservationDAO.updateStatus(reservation.getId(), ReservationStatus.COMPLETED);
-            if(restaurantMainManagerController != null) {
+            if (restaurantMainManagerController != null) {
                 restaurantMainManagerController.openOrderPayment();
             } else {
                 restaurantMainStaffController.openOrderPayment();
@@ -639,6 +639,7 @@ public class ReservationManagementController implements Initializable {
             ToastsMessage.showMessage("Vui lòng chọn một đơn đặt để huỷ", "warning");
         }
     }
+
     @FXML
     void onSearchReservationKeyTyped(KeyEvent keyEvent) {
         setPreOrderTableViewColumn();

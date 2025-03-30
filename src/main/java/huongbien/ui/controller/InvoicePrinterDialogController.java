@@ -9,7 +9,10 @@ import huongbien.dao.CustomerDAO;
 import huongbien.dao.EmployeeDAO;
 import huongbien.dao.PromotionDAO;
 import huongbien.dao.TableDAO;
-import huongbien.entity.*;
+import huongbien.entity.Customer;
+import huongbien.entity.Employee;
+import huongbien.entity.Promotion;
+import huongbien.entity.Table;
 import huongbien.jpa.PersistenceUnit;
 import huongbien.util.Utils;
 import javafx.event.ActionEvent;
@@ -31,10 +34,10 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class InvoicePrinterDialogController implements Initializable {
+    public OrderPaymentFinalController orderPaymentFinalController;
     @FXML
     private TextArea content;
 
-    public OrderPaymentFinalController orderPaymentFinalController;
     public void setOrderPaymentFinalController(OrderPaymentFinalController orderPaymentFinalController) {
         this.orderPaymentFinalController = orderPaymentFinalController;
     }

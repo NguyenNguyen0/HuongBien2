@@ -44,29 +44,17 @@ import java.util.ResourceBundle;
 
 public class OrderTableController implements Initializable {
     @FXML
-    private Label tableEmptyCountLabel;
-    @FXML
-    private Label tablePreOrderCountLabel;
-    @FXML
-    private Label tableOpenCountLabel;
-    @FXML
     public Label statisticalOverviewLabel;
     @FXML
     public Label currentFloorLabel;
     @FXML
     public Label statisticalFloorLabel;
     @FXML
-    private ScrollPane orderTableScrollPane;
-    @FXML
-    private GridPane orderTableGridPane;
-    @FXML
     public ComboBox<String> tableFloorComboBox;
     @FXML
     public ComboBox<String> tableStatusComboBox;
     @FXML
     public ComboBox<String> tableTypeComboBox;
-    @FXML
-    private ComboBox<String> tableSeatsComboBox;
     @FXML
     public TabPane tableInfoTabPane;
     @FXML
@@ -77,14 +65,26 @@ public class OrderTableController implements Initializable {
     public Label tableAmountLabel;
     @FXML
     public Label tableFeeLabel;
-
     //Controller area
     public RestaurantMainManagerController restaurantMainManagerController;
+    public RestaurantMainStaffController restaurantMainStaffController;
+    @FXML
+    private Label tableEmptyCountLabel;
+    @FXML
+    private Label tablePreOrderCountLabel;
+    @FXML
+    private Label tableOpenCountLabel;
+    @FXML
+    private ScrollPane orderTableScrollPane;
+    @FXML
+    private GridPane orderTableGridPane;
+    @FXML
+    private ComboBox<String> tableSeatsComboBox;
+
     public void setRestaurantMainManagerController(RestaurantMainManagerController restaurantMainManagerController) {
         this.restaurantMainManagerController = restaurantMainManagerController;
     }
 
-    public RestaurantMainStaffController restaurantMainStaffController;
     public void setRestaurantMainStaffController(RestaurantMainStaffController restaurantMainStaffController) {
         this.restaurantMainStaffController = restaurantMainStaffController;
     }
@@ -177,9 +177,9 @@ public class OrderTableController implements Initializable {
         ReservationBUS reservationBUS = new ReservationBUS();
         TableBUS tableBUS = new TableBUS();
         List<Reservation> reservationList = reservationBUS.getListWaitedToday();
-        if(reservationList !=null ){
+        if (reservationList != null) {
             List<Table> tableList = reservationBUS.getListTableStatusToday(reservationList);
-            if(tableList != null) {
+            if (tableList != null) {
                 for (Table table : tableList) {
                     tableBUS.updateStatusTable(table.getId(), TableStatus.OCCUPIED);
                 }
@@ -187,7 +187,7 @@ public class OrderTableController implements Initializable {
         }
     }
 
-    private void setDefaultStatusTable(){
+    private void setDefaultStatusTable() {
         TableBUS tableBUS = new TableBUS();
         List<Table> tableList = tableBUS.getAllTable();
         for (Table table : tableList) {
@@ -401,18 +401,18 @@ public class OrderTableController implements Initializable {
             ToastsMessage.showMessage("Vui lòng chọn bàn", "warning");
             return;
         }
-        if(restaurantMainManagerController != null) {
+        if (restaurantMainManagerController != null) {
             restaurantMainManagerController.openOrderCuisine();
-        }else {
+        } else {
             restaurantMainStaffController.openOrderCuisine();
         }
     }
 
     @FXML
     void onPreOrderButtonAction(ActionEvent event) throws IOException {
-        if(restaurantMainManagerController != null) {
+        if (restaurantMainManagerController != null) {
             restaurantMainManagerController.openPreOrder();
-        }else {
+        } else {
             restaurantMainStaffController.openPreOrder();
         }
     }
@@ -436,9 +436,9 @@ public class OrderTableController implements Initializable {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == btn_ok) {
             Utils.writeJsonToFile(new JsonArray(), Constants.TABLE_PATH);
-            if(restaurantMainManagerController != null) {
+            if (restaurantMainManagerController != null) {
                 restaurantMainManagerController.openOrderTable();
-            }else {
+            } else {
                 restaurantMainStaffController.openOrderTable();
             }
         }

@@ -13,10 +13,15 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class RestaurantLoginCarouselController implements Initializable {
-    @FXML private AnchorPane slide01;
-    @FXML private AnchorPane slide02;
-    @FXML private AnchorPane slide03;
-    @FXML private AnchorPane slide04;
+    @FXML
+    private AnchorPane slide01;
+    @FXML
+    private AnchorPane slide02;
+    @FXML
+    private AnchorPane slide03;
+    @FXML
+    private AnchorPane slide04;
+    private int currentSlide = 0;
 
     //initialize area
     @Override
@@ -32,8 +37,6 @@ public class RestaurantLoginCarouselController implements Initializable {
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
     }
-
-    private int currentSlide = 0;
 
     private void autoSlide() {
         if (currentSlide == 0) {

@@ -1,7 +1,10 @@
 package huongbien.ui.controller;
 
 import huongbien.bus.*;
-import huongbien.entity.*;
+import huongbien.entity.Cuisine;
+import huongbien.entity.Promotion;
+import huongbien.entity.Reservation;
+import huongbien.entity.Table;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -26,6 +29,18 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class RestaurantLookupController implements Initializable {
+    //BUS area
+    private final CuisineBUS cuisineBUS = new CuisineBUS();
+    private final CategoryBUS categoryBUS = new CategoryBUS();
+    private final OrderDetailBUS orderDetailBUS = new OrderDetailBUS();
+    private final PromotionBUS promotionBUS = new PromotionBUS();
+    private final TableBUS tableBUS = new TableBUS();
+    private final TableTypeBUS tableTypeBUS = new TableTypeBUS();
+    private final ReservationBUS reservationBUS = new ReservationBUS();
+    private final CustomerBUS customerBUS = new CustomerBUS();
+    //Controller area
+    public RestaurantMainManagerController restaurantMainManagerController;
+    public RestaurantMainStaffController restaurantMainStaffController;
     //Vbox1
     @FXML
     private ComboBox<String> tableFloorComboBox;
@@ -136,23 +151,10 @@ public class RestaurantLookupController implements Initializable {
     @FXML
     private VBox restaurantLookupTableVBox;
 
-    //BUS area
-    private final CuisineBUS cuisineBUS = new CuisineBUS();
-    private final CategoryBUS categoryBUS = new CategoryBUS();
-    private final OrderDetailBUS orderDetailBUS = new OrderDetailBUS();
-    private final PromotionBUS promotionBUS = new PromotionBUS();
-    private final TableBUS tableBUS = new TableBUS();
-    private final TableTypeBUS tableTypeBUS = new TableTypeBUS();
-    private final ReservationBUS reservationBUS = new ReservationBUS();
-    private final CustomerBUS customerBUS = new CustomerBUS();
-
-    //Controller area
-    public RestaurantMainManagerController restaurantMainManagerController;
     public void setRestaurantMainManagerController(RestaurantMainManagerController restaurantMainManagerController) {
         this.restaurantMainManagerController = restaurantMainManagerController;
     }
 
-    public RestaurantMainStaffController restaurantMainStaffController;
     public void setRestaurantMainStaffController(RestaurantMainStaffController restaurantMainStaffController) {
         this.restaurantMainStaffController = restaurantMainStaffController;
     }
@@ -549,7 +551,7 @@ public class RestaurantLookupController implements Initializable {
         restaurantLookupTableVBox.setVisible(false);
         switch (selectedItem) {
             case "Bàn":
-                if(restaurantMainManagerController != null) {
+                if (restaurantMainManagerController != null) {
                     restaurantMainManagerController.featureTitleLabel.setText("Tra cứu bàn");
                 } else {
                     restaurantMainStaffController.featureTitleLabel.setText("Tra cứu bàn");
@@ -563,7 +565,7 @@ public class RestaurantLookupController implements Initializable {
                 setTableViewColumn();
                 break;
             case "Món ăn":
-                if(restaurantMainManagerController != null) {
+                if (restaurantMainManagerController != null) {
                     restaurantMainManagerController.featureTitleLabel.setText("Tra cứu món ăn");
                 } else {
                     restaurantMainStaffController.featureTitleLabel.setText("Tra cứu món ăn");
@@ -574,7 +576,7 @@ public class RestaurantLookupController implements Initializable {
                 setTableViewColumn();
                 break;
             case "Khuyến mãi":
-                if(restaurantMainManagerController != null) {
+                if (restaurantMainManagerController != null) {
                     restaurantMainManagerController.featureTitleLabel.setText("Tra cứu khuyến mãi");
                 } else {
                     restaurantMainStaffController.featureTitleLabel.setText("Tra cứu khuyến mãi");
@@ -589,7 +591,7 @@ public class RestaurantLookupController implements Initializable {
                 setTableViewColumn();
                 break;
             case "Đơn đặt trước":
-                if(restaurantMainManagerController != null) {
+                if (restaurantMainManagerController != null) {
                     restaurantMainManagerController.featureTitleLabel.setText("Tra cứu đơn đặt trước");
                 } else {
                     restaurantMainStaffController.featureTitleLabel.setText("Tra cứu đơn đặt trước");

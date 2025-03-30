@@ -1,3 +1,4 @@
 package huongbien.ui.controller;
 
-public class RestaurantHomeController {}
+public class RestaurantHomeController {
+}
