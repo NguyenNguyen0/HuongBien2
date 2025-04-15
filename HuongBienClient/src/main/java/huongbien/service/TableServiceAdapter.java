@@ -1,232 +1,237 @@
 package huongbien.service;
 
-import huongbien.entity.Reservation;
 import huongbien.entity.Table;
-import huongbien.entity.TableStatus;
 import huongbien.rmi.RmiClient;
+import huongbien.util.ExceptionHandler;
 
 import java.rmi.RemoteException;
 import java.time.LocalDate;
-import java.util.Collections;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Client-side adapter for the TableService.
- * Provides error handling and simplifies the use of the remote TableService.
+ * Adapter for TableService remote interface.
+ * Provides a simplified API for UI components and handles remote exceptions.
  */
 public class TableServiceAdapter {
-
+    
     /**
-     * Get all tables from the remote service.
+     * Gets all tables from the server.
      * 
-     * @return List of all tables, or an empty list if an error occurs.
+     * @return List of all tables or empty list if an error occurs
      */
     public static List<Table> getAllTables() {
         try {
             return RmiClient.getTableService().getAllTables();
         } catch (RemoteException e) {
-            handleRemoteException("Error retrieving all tables", e);
-            return Collections.emptyList();
+            ExceptionHandler.handleRemoteException(
+                "Table Service Error", 
+                "Failed to retrieve tables", 
+                e
+            );
+            return new ArrayList<>();
         }
     }
     
     /**
-     * Get a table by its ID.
+     * Gets a table by ID from the server.
      * 
-     * @param tableId Table ID to retrieve.
-     * @return The table if found, null otherwise.
+     * @param id The table ID
+     * @return The table with the specified ID or null if not found or an error occurs
      */
-    public static Table getTableById(String tableId) {
+    public static Table getTableById(String id) {
         try {
-            return RmiClient.getTableService().getTableById(tableId);
+            return RmiClient.getTableService().getTableById(id);
         } catch (RemoteException e) {
-            handleRemoteException("Error retrieving table with ID: " + tableId, e);
+            ExceptionHandler.handleRemoteException(
+                "Table Service Error", 
+                "Failed to retrieve table with ID: " + id, 
+                e
+            );
             return null;
         }
     }
     
     /**
-     * Get tables with pagination.
+     * Gets tables by area from the server.
      * 
-     * @param offset Starting index.
-     * @param limit Maximum number of records to return.
-     * @return List of tables, or an empty list if an error occurs.
+     * @param area The area to filter by
+     * @return List of tables in the specified area or empty list if an error occurs
      */
-    public static List<Table> getTablesWithPagination(int offset, int limit) {
+    public static List<Table> getTablesByArea(String area) {
         try {
-            return RmiClient.getTableService().getTablesWithPagination(offset, limit);
+            return RmiClient.getTableService().getTablesByArea(area);
         } catch (RemoteException e) {
-            handleRemoteException("Error retrieving tables with pagination", e);
-            return Collections.emptyList();
+            ExceptionHandler.handleRemoteException(
+                "Table Service Error", 
+                "Failed to retrieve tables by area: " + area, 
+                e
+            );
+            return new ArrayList<>();
         }
     }
     
     /**
-     * Get tables by floor with pagination.
+     * Gets tables by capacity from the server.
      * 
-     * @param floor Floor number.
-     * @param offset Starting index.
-     * @param limit Maximum number of records to return.
-     * @return List of tables, or an empty list if an error occurs.
+     * @param minCapacity The minimum capacity
+     * @param maxCapacity The maximum capacity
+     * @return List of tables within the capacity range or empty list if an error occurs
      */
-    public static List<Table> getTablesByFloorWithPagination(int floor, int offset, int limit) {
+    public static List<Table> getTablesByCapacity(int minCapacity, int maxCapacity) {
         try {
-            return RmiClient.getTableService().getTablesByFloorWithPagination(floor, offset, limit);
+            return RmiClient.getTableService().getTablesByCapacity(minCapacity, maxCapacity);
         } catch (RemoteException e) {
-            handleRemoteException("Error retrieving tables by floor with pagination", e);
-            return Collections.emptyList();
+            ExceptionHandler.handleRemoteException(
+                "Table Service Error", 
+                "Failed to retrieve tables by capacity range", 
+                e
+            );
+            return new ArrayList<>();
         }
     }
     
     /**
-     * Get tables by name with pagination.
+     * Gets available tables for a specific date and time from the server.
      * 
-     * @param offset Starting index.
-     * @param limit Maximum number of records to return.
-     * @param name Name to search for.
-     * @return List of tables, or an empty list if an error occurs.
+     * @param date The date to check
+     * @param time The time to check
+     * @param duration The expected duration in minutes
+     * @return List of available tables or empty list if an error occurs
      */
-    public static List<Table> getTablesByNameWithPagination(int offset, int limit, String name) {
+    public static List<Table> getAvailableTables(LocalDate date, LocalTime time, int duration) {
         try {
-            return RmiClient.getTableService().getTablesByNameWithPagination(offset, limit, name);
+            return RmiClient.getTableService().getAvailableTables(date, time, duration);
         } catch (RemoteException e) {
-            handleRemoteException("Error retrieving tables by name with pagination", e);
-            return Collections.emptyList();
+            ExceptionHandler.handleRemoteException(
+                "Table Service Error", 
+                "Failed to retrieve available tables", 
+                e
+            );
+            return new ArrayList<>();
         }
     }
     
     /**
-     * Get all tables associated with an order.
+     * Gets available tables for a specific date and time with minimum capacity from the server.
      * 
-     * @param orderId Order ID.
-     * @return List of tables, or an empty list if an error occurs.
+     * @param date The date to check
+     * @param time The time to check
+     * @param duration The expected duration in minutes
+     * @param minCapacity The minimum required capacity
+     * @return List of available tables meeting the capacity requirement or empty list if an error occurs
      */
-    public static List<Table> getAllTableByOrderId(String orderId) {
+    public static List<Table> getAvailableTablesByCapacity(LocalDate date, LocalTime time, int duration, int minCapacity) {
         try {
-            return RmiClient.getTableService().getAllTableByOrderId(orderId);
+            return RmiClient.getTableService().getAvailableTablesByCapacity(date, time, duration, minCapacity);
         } catch (RemoteException e) {
-            handleRemoteException("Error retrieving tables for order ID: " + orderId, e);
-            return Collections.emptyList();
+            ExceptionHandler.handleRemoteException(
+                "Table Service Error", 
+                "Failed to retrieve available tables by capacity", 
+                e
+            );
+            return new ArrayList<>();
         }
     }
     
     /**
-     * Get all tables associated with a reservation.
+     * Reserves tables for a specific date and time on the server.
      * 
-     * @param reservationId Reservation ID.
-     * @return List of tables, or an empty list if an error occurs.
+     * @param tableIds List of table IDs to reserve
+     * @param reservationId The reservation ID
+     * @param date The date of the reservation
+     * @param time The time of the reservation
+     * @param duration The expected duration in minutes
+     * @return true if successful, false otherwise
      */
-    public static List<Table> getAllTableByReservationId(String reservationId) {
+    public static boolean reserveTables(List<String> tableIds, String reservationId, LocalDate date, LocalTime time, int duration) {
         try {
-            return RmiClient.getTableService().getAllTableByReservationId(reservationId);
+            return RmiClient.getTableService().reserveTables(tableIds, reservationId, date, time, duration);
         } catch (RemoteException e) {
-            handleRemoteException("Error retrieving tables for reservation ID: " + reservationId, e);
-            return Collections.emptyList();
-        }
-    }
-    
-    /**
-     * Perform a table lookup with filters.
-     * 
-     * @param floor Floor number filter.
-     * @param name Name filter.
-     * @param seat Seat count filter.
-     * @param type Table type filter.
-     * @param status Status filter.
-     * @param pageIndex Page index for pagination.
-     * @return List of matching tables, or an empty list if an error occurs.
-     */
-    public static List<Table> getLookUpTable(int floor, String name, int seat, String type, String status, int pageIndex) {
-        try {
-            return RmiClient.getTableService().getLookUpTable(floor, name, seat, type, status, pageIndex);
-        } catch (RemoteException e) {
-            handleRemoteException("Error performing table lookup", e);
-            return Collections.emptyList();
-        }
-    }
-    
-    /**
-     * Update a table's information.
-     * 
-     * @param table Table with updated information.
-     * @return true if successful, false otherwise.
-     */
-    public static boolean updateTableInfo(Table table) {
-        try {
-            return RmiClient.getTableService().updateTableInfo(table);
-        } catch (RemoteException e) {
-            handleRemoteException("Error updating table information", e);
+            ExceptionHandler.handleRemoteException(
+                "Table Service Error", 
+                "Failed to reserve tables", 
+                e
+            );
             return false;
         }
     }
     
     /**
-     * Add a new table.
+     * Releases tables from a reservation on the server.
      * 
-     * @param table Table to add.
-     * @return true if successful, false otherwise.
+     * @param tableIds List of table IDs to release
+     * @param reservationId The reservation ID
+     * @return true if successful, false otherwise
      */
-    public static boolean addTable(Table table) {
+    public static boolean releaseTables(List<String> tableIds, String reservationId) {
+        try {
+            return RmiClient.getTableService().releaseTables(tableIds, reservationId);
+        } catch (RemoteException e) {
+            ExceptionHandler.handleRemoteException(
+                "Table Service Error", 
+                "Failed to release tables", 
+                e
+            );
+            return false;
+        }
+    }
+    
+    /**
+     * Updates a table's information on the server.
+     * 
+     * @param table The updated table information
+     * @return true if successful, false otherwise
+     */
+    public static boolean updateTable(Table table) {
+        try {
+            return RmiClient.getTableService().updateTable(table);
+        } catch (RemoteException e) {
+            ExceptionHandler.handleRemoteException(
+                "Table Service Error", 
+                "Failed to update table", 
+                e
+            );
+            return false;
+        }
+    }
+    
+    /**
+     * Adds a new table to the server.
+     * 
+     * @param table The table to add
+     * @return The added table with generated ID or null if an error occurs
+     */
+    public static Table addTable(Table table) {
         try {
             return RmiClient.getTableService().addTable(table);
         } catch (RemoteException e) {
-            handleRemoteException("Error adding table", e);
+            ExceptionHandler.handleRemoteException(
+                "Table Service Error", 
+                "Failed to add table", 
+                e
+            );
+            return null;
+        }
+    }
+    
+    /**
+     * Deletes a table from the server.
+     * 
+     * @param id The ID of the table to delete
+     * @return true if successful, false otherwise
+     */
+    public static boolean deleteTable(String id) {
+        try {
+            return RmiClient.getTableService().deleteTable(id);
+        } catch (RemoteException e) {
+            ExceptionHandler.handleRemoteException(
+                "Table Service Error", 
+                "Failed to delete table with ID: " + id, 
+                e
+            );
             return false;
         }
-    }
-    
-    /**
-     * Update a table's status.
-     * 
-     * @param id Table ID.
-     * @param status New status.
-     */
-    public static void updateStatusTable(String id, TableStatus status) {
-        try {
-            RmiClient.getTableService().updateStatusTable(id, status);
-        } catch (RemoteException e) {
-            handleRemoteException("Error updating table status", e);
-        }
-    }
-    
-    /**
-     * Count total tables.
-     * 
-     * @return Total number of tables, or 0 if an error occurs.
-     */
-    public static int countTotalTables() {
-        try {
-            return RmiClient.getTableService().countTotalTables();
-        } catch (RemoteException e) {
-            handleRemoteException("Error counting total tables", e);
-            return 0;
-        }
-    }
-    
-    /**
-     * Get distinct table statuses.
-     * 
-     * @return List of distinct statuses, or an empty list if an error occurs.
-     */
-    public static List<String> getDistinctStatuses() {
-        try {
-            return RmiClient.getTableService().getDistinctStatuses();
-        } catch (RemoteException e) {
-            handleRemoteException("Error retrieving distinct table statuses", e);
-            return Collections.emptyList();
-        }
-    }
-    
-    /**
-     * Handle RemoteException by logging and possibly displaying an error message.
-     * 
-     * @param message Error message to log.
-     * @param e The exception that occurred.
-     */
-    private static void handleRemoteException(String message, RemoteException e) {
-        System.err.println(message + ": " + e.getMessage());
-        e.printStackTrace();
-        
-        // TODO: Add proper logging and/or user notification
     }
 }

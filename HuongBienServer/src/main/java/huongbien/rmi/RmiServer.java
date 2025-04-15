@@ -1,83 +1,116 @@
 package huongbien.rmi;
 
 import huongbien.config.ServerConfig;
-import huongbien.rmi.impl.*;
-import huongbien.rmi.interfaces.*;
+import huongbien.service.impl.*;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 /**
- * RMI Server for HuongBien Restaurant Management System.
- * Starts and registers all remote services.
+ * Main RMI server class for HuongBien Restaurant Management System.
+ * Starts the RMI registry and registers all remote services.
  */
 public class RmiServer {
+    private Registry registry;
     
-    public static void main(String[] args) {
+    /**
+     * Starts the RMI server using the default port from configuration.
+     */
+    public void start() {
+        int port = ServerConfig.getRmiPort();
+        start(port);
+    }
+    
+    /**
+     * Starts the RMI server using the specified port.
+     * 
+     * @param port The port to use for the RMI registry
+     */
+    public void start(int port) {
         try {
-            System.out.println("Starting HuongBien RMI Server...");
+            System.out.println("Starting HuongBien RMI server on port " + port + "...");
             
-            // Load server configuration
-            String host = ServerConfig.getRmiHost();
-            int port = ServerConfig.getRmiPort();
+            // Create and export the registry on the specified port
+            registry = LocateRegistry.createRegistry(port);
             
-            System.out.println("Using RMI host: " + host);
-            System.out.println("Using RMI port: " + port);
+            // Register all services
+            registerServices();
             
-            // Set the java.rmi.server.hostname property if host is not localhost
-            if (!host.equals("localhost") && !host.equals("127.0.0.1")) {
-                System.setProperty("java.rmi.server.hostname", host);
-            }
-            
-            // Create and export remote service implementations
-            CustomerServiceImpl customerService = new CustomerServiceImpl();
-            CuisineServiceImpl cuisineService = new CuisineServiceImpl();
-            EmployeeServiceImpl employeeService = new EmployeeServiceImpl();
-            OrderServiceImpl orderService = new OrderServiceImpl();
-            PromotionServiceImpl promotionService = new PromotionServiceImpl();
-            ReservationServiceImpl reservationService = new ReservationServiceImpl();
-            StatisticsServiceImpl statisticsService = new StatisticsServiceImpl();
-            TableServiceImpl tableService = new TableServiceImpl();
-            
-            // Create remote stubs for the implementations
-            CustomerService customerStub = (CustomerService) 
-                UnicastRemoteObject.exportObject(customerService, 0);
-            CuisineService cuisineStub = (CuisineService) 
-                UnicastRemoteObject.exportObject(cuisineService, 0);
-            EmployeeService employeeStub = (EmployeeService) 
-                UnicastRemoteObject.exportObject(employeeService, 0);
-            OrderService orderStub = (OrderService) 
-                UnicastRemoteObject.exportObject(orderService, 0);
-            PromotionService promotionStub = (PromotionService) 
-                UnicastRemoteObject.exportObject(promotionService, 0);
-            ReservationService reservationStub = (ReservationService) 
-                UnicastRemoteObject.exportObject(reservationService, 0);
-            StatisticsService statisticsStub = (StatisticsService) 
-                UnicastRemoteObject.exportObject(statisticsService, 0);
-            TableService tableStub = (TableService) 
-                UnicastRemoteObject.exportObject(tableService, 0);
-            
-            // Create or get the RMI registry
-            System.out.println("Starting RMI registry on port " + port);
-            Registry registry = LocateRegistry.createRegistry(port);
-            
-            // Register remote objects with the registry
-            registry.rebind("CustomerService", customerStub);
-            registry.rebind("CuisineService", cuisineStub);
-            registry.rebind("EmployeeService", employeeStub);
-            registry.rebind("OrderService", orderStub);
-            registry.rebind("PromotionService", promotionStub);
-            registry.rebind("ReservationService", reservationStub);
-            registry.rebind("StatisticsService", statisticsStub);
-            registry.rebind("TableService", tableStub);
-            
-            System.out.println("HuongBien RMI Server is running on port " + port);
-            System.out.println("Press Ctrl+C to stop the server");
-            
+            System.out.println("HuongBien RMI server started successfully on port " + port);
+            System.out.println("Server is running. Press Ctrl+C to stop.");
         } catch (Exception e) {
-            System.err.println("RMI Server exception: " + e.toString());
+            System.err.println("HuongBien RMI server error: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+    
+    /**
+     * Registers all remote service implementations with the RMI registry.
+     */
+    private void registerServices() {
+        try {
+            // Create service instances
+            CustomerServiceImpl customerService = new CustomerServiceImpl();
+            TableServiceImpl tableService = new TableServiceImpl();
+            ReservationServiceImpl reservationService = new ReservationServiceImpl();
+            // Add more service implementations as needed
+            
+            // Register services with the registry
+            System.out.println("Registering CustomerService...");
+            registry.rebind("CustomerService", customerService);
+            
+            System.out.println("Registering TableService...");
+            registry.rebind("TableService", tableService);
+            
+            System.out.println("Registering ReservationService...");
+            registry.rebind("ReservationService", reservationService);
+            
+            // Register additional services here
+            
+            System.out.println("All services registered successfully");
+        } catch (Exception e) {
+            System.err.println("Error registering services: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Stops the RMI server and unbinds all services.
+     */
+    public void stop() {
+        try {
+            System.out.println("Stopping HuongBien RMI server...");
+            
+            // Unbind all services
+            for (String name : registry.list()) {
+                System.out.println("Unbinding service: " + name);
+                registry.unbind(name);
+            }
+            
+            // Unexport the registry
+            UnicastRemoteObject.unexportObject(registry, true);
+            
+            System.out.println("HuongBien RMI server stopped successfully");
+        } catch (Exception e) {
+            System.err.println("Error stopping RMI server: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Main method to start the server.
+     */
+    public static void main(String[] args) {
+        RmiServer server = new RmiServer();
+        
+        // Add a shutdown hook to stop the server gracefully
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("Shutdown signal received. Stopping server...");
+            server.stop();
+        }));
+        
+        // Start the server
+        server.start();
     }
 }

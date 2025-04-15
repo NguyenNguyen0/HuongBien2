@@ -1,1 +1,3 @@
-rootProject.name = "HuongBien2"
+rootProject.name = 'HuongBien2'
+include 'HuongBienClient'
+include 'HuongBienServer'

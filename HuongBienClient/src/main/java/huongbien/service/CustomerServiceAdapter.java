@@ -2,229 +2,184 @@ package huongbien.service;
 
 import huongbien.entity.Customer;
 import huongbien.rmi.RmiClient;
+import huongbien.util.ExceptionHandler;
 
 import java.rmi.RemoteException;
-import java.time.LocalDate;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Client-side adapter for the CustomerService.
- * Provides error handling and simplifies the use of the remote CustomerService.
+ * Adapter for CustomerService remote interface.
+ * Provides a simplified API for UI components and handles remote exceptions.
  */
 public class CustomerServiceAdapter {
     
     /**
-     * Get all customers from the remote service.
+     * Gets all customers from the server.
      * 
-     * @return List of all customers, or an empty list if an error occurs.
+     * @return List of all customers or empty list if an error occurs
      */
     public static List<Customer> getAllCustomers() {
         try {
             return RmiClient.getCustomerService().getAllCustomers();
         } catch (RemoteException e) {
-            handleRemoteException("Error retrieving all customers", e);
-            return Collections.emptyList();
+            ExceptionHandler.handleRemoteException(
+                "Customer Service Error", 
+                "Failed to retrieve customers", 
+                e
+            );
+            return new ArrayList<>();
         }
     }
     
     /**
-     * Get a customer by their ID.
+     * Gets a customer by ID from the server.
      * 
-     * @param id Customer ID to search for.
-     * @return Customer if found, null otherwise.
+     * @param id The customer ID
+     * @return The customer with the specified ID or null if not found or an error occurs
      */
     public static Customer getCustomerById(String id) {
         try {
             return RmiClient.getCustomerService().getCustomerById(id);
         } catch (RemoteException e) {
-            handleRemoteException("Error retrieving customer with ID: " + id, e);
+            ExceptionHandler.handleRemoteException(
+                "Customer Service Error", 
+                "Failed to retrieve customer with ID: " + id, 
+                e
+            );
             return null;
         }
     }
     
     /**
-     * Get a customer by phone number.
+     * Searches for customers by name.
      * 
-     * @param phoneNumber Phone number to search for.
-     * @return Customer if found, null otherwise.
+     * @param name The name to search for
+     * @return List of customers matching the name or empty list if an error occurs
      */
-    public static Customer getCustomerByPhoneNumber(String phoneNumber) {
+    public static List<Customer> searchCustomersByName(String name) {
         try {
-            return RmiClient.getCustomerService().getCustomerByPhoneNumber(phoneNumber);
+            return RmiClient.getCustomerService().searchCustomersByName(name);
         } catch (RemoteException e) {
-            handleRemoteException("Error retrieving customer with phone number: " + phoneNumber, e);
-            return null;
+            ExceptionHandler.handleRemoteException(
+                "Customer Service Error", 
+                "Failed to search customers by name: " + name, 
+                e
+            );
+            return new ArrayList<>();
         }
     }
     
     /**
-     * Get customers by name.
+     * Searches for customers by phone.
      * 
-     * @param name Name to search for.
-     * @return List of matching customers, or an empty list if an error occurs.
+     * @param phone The phone number to search for
+     * @return List of customers matching the phone number or empty list if an error occurs
      */
-    public static List<Customer> getCustomersByName(String name) {
+    public static List<Customer> searchCustomersByPhone(String phone) {
         try {
-            return RmiClient.getCustomerService().getCustomersByName(name);
+            return RmiClient.getCustomerService().searchCustomersByPhone(phone);
         } catch (RemoteException e) {
-            handleRemoteException("Error retrieving customers with name: " + name, e);
-            return Collections.emptyList();
+            ExceptionHandler.handleRemoteException(
+                "Customer Service Error", 
+                "Failed to search customers by phone: " + phone, 
+                e
+            );
+            return new ArrayList<>();
         }
     }
     
     /**
-     * Get customers with pagination.
+     * Adds a new customer to the server.
      * 
-     * @param offset Starting position in the result set.
-     * @param limit Maximum number of records to return.
-     * @return Paginated list of customers, or an empty list if an error occurs.
-     */
-    public static List<Customer> getCustomersWithPagination(int offset, int limit) {
-        try {
-            return RmiClient.getCustomerService().getCustomersWithPagination(offset, limit);
-        } catch (RemoteException e) {
-            handleRemoteException("Error retrieving customers with pagination", e);
-            return Collections.emptyList();
-        }
-    }
-    
-    /**
-     * Get customers by ID with pagination.
-     * 
-     * @param offset Starting position in the result set.
-     * @param limit Maximum number of records to return.
-     * @param id ID to search for.
-     * @return Paginated list of matching customers, or an empty list if an error occurs.
-     */
-    public static List<Customer> getCustomersByIdWithPagination(int offset, int limit, String id) {
-        try {
-            return RmiClient.getCustomerService().getCustomersByIdWithPagination(offset, limit, id);
-        } catch (RemoteException e) {
-            handleRemoteException("Error retrieving customers by ID with pagination", e);
-            return Collections.emptyList();
-        }
-    }
-    
-    /**
-     * Get customers by name with pagination.
-     * 
-     * @param offset Starting position in the result set.
-     * @param limit Maximum number of records to return.
-     * @param name Name to search for.
-     * @return Paginated list of matching customers, or an empty list if an error occurs.
-     */
-    public static List<Customer> getCustomersByNameWithPagination(int offset, int limit, String name) {
-        try {
-            return RmiClient.getCustomerService().getCustomersByNameWithPagination(offset, limit, name);
-        } catch (RemoteException e) {
-            handleRemoteException("Error retrieving customers by name with pagination", e);
-            return Collections.emptyList();
-        }
-    }
-    
-    /**
-     * Get customers by phone number with pagination.
-     * 
-     * @param offset Starting position in the result set.
-     * @param limit Maximum number of records to return.
-     * @param phoneNumber Phone number to search for.
-     * @return Paginated list of matching customers, or an empty list if an error occurs.
-     */
-    public static List<Customer> getCustomersByPhoneNumberWithPagination(int offset, int limit, String phoneNumber) {
-        try {
-            return RmiClient.getCustomerService().getCustomersByPhoneNumberWithPagination(offset, limit, phoneNumber);
-        } catch (RemoteException e) {
-            handleRemoteException("Error retrieving customers by phone number with pagination", e);
-            return Collections.emptyList();
-        }
-    }
-    
-    /**
-     * Get a customer for reservation search.
-     * 
-     * @param search Search text.
-     * @return Customer if found, null otherwise.
-     */
-    public static Customer getCustomerSearchReservation(String search) {
-        try {
-            return RmiClient.getCustomerService().getCustomerSearchReservation(search);
-        } catch (RemoteException e) {
-            handleRemoteException("Error searching for customer reservation: " + search, e);
-            return null;
-        }
-    }
-    
-    /**
-     * Get the total count of customers.
-     * 
-     * @return Total number of customers, or 0 if an error occurs.
-     */
-    public static int getTotalCustomerCount() {
-        try {
-            return RmiClient.getCustomerService().getTotalCustomerCount();
-        } catch (RemoteException e) {
-            handleRemoteException("Error retrieving total customer count", e);
-            return 0;
-        }
-    }
-    
-    /**
-     * Add a new customer.
-     * 
-     * @param customer Customer to add.
-     * @return true if successful, false otherwise.
+     * @param customer The customer to add
+     * @return true if successful, false otherwise
      */
     public static boolean addCustomer(Customer customer) {
         try {
             return RmiClient.getCustomerService().addCustomer(customer);
         } catch (RemoteException e) {
-            handleRemoteException("Error adding customer", e);
+            ExceptionHandler.handleRemoteException(
+                "Customer Service Error", 
+                "Failed to add customer", 
+                e
+            );
             return false;
         }
     }
     
     /**
-     * Update customer information.
+     * Updates an existing customer on the server.
      * 
-     * @param customer Customer with updated information.
-     * @return true if successful, false otherwise.
+     * @param customer The customer with updated information
+     * @return true if successful, false otherwise
      */
-    public static boolean updateCustomerInfo(Customer customer) {
+    public static boolean updateCustomer(Customer customer) {
         try {
-            return RmiClient.getCustomerService().updateCustomerInfo(customer);
+            return RmiClient.getCustomerService().updateCustomer(customer);
         } catch (RemoteException e) {
-            handleRemoteException("Error updating customer information", e);
+            ExceptionHandler.handleRemoteException(
+                "Customer Service Error", 
+                "Failed to update customer", 
+                e
+            );
             return false;
         }
     }
     
     /**
-     * Increase a customer's membership points.
+     * Deletes a customer from the server.
      * 
-     * @param id Customer ID.
-     * @param point Number of points to add.
-     * @return true if successful, false otherwise.
+     * @param id The ID of the customer to delete
+     * @return true if successful, false otherwise
      */
-    public static boolean increasePoint(String id, int point) {
+    public static boolean deleteCustomer(String id) {
         try {
-            return RmiClient.getCustomerService().increasePoint(id, point);
+            return RmiClient.getCustomerService().deleteCustomer(id);
         } catch (RemoteException e) {
-            handleRemoteException("Error increasing points for customer: " + id, e);
+            ExceptionHandler.handleRemoteException(
+                "Customer Service Error", 
+                "Failed to delete customer with ID: " + id, 
+                e
+            );
             return false;
         }
     }
     
     /**
-     * Handle RemoteException by logging and possibly displaying an error message.
+     * Gets the total number of customers in the system.
      * 
-     * @param message Error message to log.
-     * @param e The exception that occurred.
+     * @return The total number of customers or 0 if an error occurs
      */
-    private static void handleRemoteException(String message, RemoteException e) {
-        System.err.println(message + ": " + e.getMessage());
-        e.printStackTrace();
-        
-        // TODO: Add proper logging and/or user notification
+    public static int getTotalCustomerCount() {
+        try {
+            return RmiClient.getCustomerService().getTotalCustomerCount();
+        } catch (RemoteException e) {
+            ExceptionHandler.handleRemoteException(
+                "Customer Service Error", 
+                "Failed to get total customer count", 
+                e
+            );
+            return 0;
+        }
+    }
+    
+    /**
+     * Gets customers registered in the last X days.
+     * 
+     * @param days Number of days to look back
+     * @return List of customers registered in the specified period or empty list if an error occurs
+     */
+    public static List<Customer> getRecentCustomers(int days) {
+        try {
+            return RmiClient.getCustomerService().getRecentCustomers(days);
+        } catch (RemoteException e) {
+            ExceptionHandler.handleRemoteException(
+                "Customer Service Error", 
+                "Failed to retrieve recent customers", 
+                e
+            );
+            return new ArrayList<>();
+        }
     }
 }

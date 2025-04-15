@@ -1,80 +1,117 @@
 package huongbien.config;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * Configuration class for the HuongBien client.
- * Loads client settings from a properties file.
+ * Client configuration manager for HuongBien Restaurant Management System.
+ * Handles loading and accessing client configuration properties.
  */
 public class ClientConfig {
-    private static final String DEFAULT_CONFIG_PATH = "client.properties";
-    private static Properties properties = new Properties();
+    private static final Properties properties = new Properties();
+    private static boolean isInitialized = false;
     
-    // Default client settings
-    private static final int DEFAULT_RMI_PORT = 1099;
+    // Default values
     private static final String DEFAULT_RMI_HOST = "localhost";
-    
-    static {
-        loadConfig();
-    }
-    
-    /**
-     * Load the client configuration from the default properties file.
-     */
-    public static void loadConfig() {
-        loadConfig(DEFAULT_CONFIG_PATH);
-    }
+    private static final int DEFAULT_RMI_PORT = 1099;
+    private static final int DEFAULT_CONNECTION_TIMEOUT = 5000;
+    private static final int DEFAULT_CONNECTION_RETRIES = 3;
     
     /**
-     * Load the client configuration from a specific properties file.
-     * 
-     * @param configPath Path to the properties file.
+     * Loads the client configuration properties from the client.properties file.
      */
-    public static void loadConfig(String configPath) {
-        try {
-            properties.load(new FileInputStream(configPath));
-            System.out.println("Successfully loaded client configuration from " + configPath);
-        } catch (IOException e) {
-            System.err.println("Warning: Could not load client configuration file: " + e.getMessage());
-            System.out.println("Using default client configuration");
+    public static void init() {
+        if (isInitialized) {
+            return;
         }
+        
+        try (InputStream is = ClientConfig.class.getClassLoader().getResourceAsStream("client.properties")) {
+            if (is != null) {
+                properties.load(is);
+                System.out.println("Client configuration loaded successfully");
+            } else {
+                System.out.println("client.properties not found, using default values");
+            }
+        } catch (IOException e) {
+            System.err.println("Error loading client configuration: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        isInitialized = true;
     }
     
     /**
-     * Get the RMI port for connecting to the server.
+     * Gets the RMI host from the configuration.
      * 
-     * @return The configured RMI port, or the default if not specified.
-     */
-    public static int getRmiPort() {
-        return Integer.parseInt(properties.getProperty("rmi.port", String.valueOf(DEFAULT_RMI_PORT)));
-    }
-    
-    /**
-     * Get the RMI host for connecting to the server.
-     * 
-     * @return The configured RMI host, or the default if not specified.
+     * @return The configured RMI host or the default value if not specified
      */
     public static String getRmiHost() {
+        init();
         return properties.getProperty("rmi.host", DEFAULT_RMI_HOST);
     }
     
     /**
-     * Get the application UI theme.
+     * Gets the RMI port from the configuration.
      * 
-     * @return The configured UI theme.
+     * @return The configured RMI port or the default value if not specified
+     */
+    public static int getRmiPort() {
+        init();
+        return Integer.parseInt(properties.getProperty("rmi.port", String.valueOf(DEFAULT_RMI_PORT)));
+    }
+    
+    /**
+     * Gets the connection timeout from the configuration.
+     * 
+     * @return The configured connection timeout or the default value if not specified
+     */
+    public static int getConnectionTimeout() {
+        init();
+        return Integer.parseInt(properties.getProperty("connection.timeout", 
+                               String.valueOf(DEFAULT_CONNECTION_TIMEOUT)));
+    }
+    
+    /**
+     * Gets the connection retry count from the configuration.
+     * 
+     * @return The configured connection retry count or the default value if not specified
+     */
+    public static int getConnectionRetries() {
+        init();
+        return Integer.parseInt(properties.getProperty("connection.retries", 
+                               String.valueOf(DEFAULT_CONNECTION_RETRIES)));
+    }
+    
+    /**
+     * Gets the UI theme from the configuration.
+     * 
+     * @return The configured UI theme or "light" if not specified
      */
     public static String getUiTheme() {
+        init();
         return properties.getProperty("ui.theme", "light");
     }
     
     /**
-     * Get the locale for the application.
+     * Gets the UI locale from the configuration.
      * 
-     * @return The configured locale.
+     * @return The configured UI locale or "vi_VN" if not specified
      */
-    public static String getLocale() {
+    public static String getUiLocale() {
+        init();
         return properties.getProperty("ui.locale", "vi_VN");
+    }
+    
+    /**
+     * Gets a general property from the configuration.
+     * 
+     * @param key The property key
+     * @param defaultValue The default value if the property is not found
+     * @return The property value or the default value if not found
+     */
+    public static String getProperty(String key, String defaultValue) {
+        init();
+        return properties.getProperty(key, defaultValue);
     }
 }

@@ -1,62 +1,95 @@
 package huongbien.config;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * Configuration class for the HuongBien server.
- * Loads server settings from a properties file.
+ * Server configuration manager for HuongBien Restaurant Management System.
+ * Handles loading and accessing server configuration properties.
  */
 public class ServerConfig {
-    private static final String DEFAULT_CONFIG_PATH = "server.properties";
-    private static Properties properties = new Properties();
+    private static final Properties properties = new Properties();
+    private static boolean isInitialized = false;
     
-    // Default server settings
+    // Default values
     private static final int DEFAULT_RMI_PORT = 1099;
-    private static final String DEFAULT_RMI_HOST = "localhost";
-    
-    static {
-        loadConfig();
-    }
+    private static final String DEFAULT_DB_URL = "jdbc:mariadb://localhost:3306/huongbien";
+    private static final String DEFAULT_DB_USERNAME = "root";
+    private static final String DEFAULT_DB_PASSWORD = "";
     
     /**
-     * Load the server configuration from the default properties file.
+     * Loads the server configuration properties from the server.properties file.
      */
-    public static void loadConfig() {
-        loadConfig(DEFAULT_CONFIG_PATH);
-    }
-    
-    /**
-     * Load the server configuration from a specific properties file.
-     * 
-     * @param configPath Path to the properties file.
-     */
-    public static void loadConfig(String configPath) {
-        try {
-            properties.load(new FileInputStream(configPath));
-            System.out.println("Successfully loaded server configuration from " + configPath);
-        } catch (IOException e) {
-            System.err.println("Warning: Could not load server configuration file: " + e.getMessage());
-            System.out.println("Using default server configuration");
+    public static void init() {
+        if (isInitialized) {
+            return;
         }
+        
+        try (InputStream is = ServerConfig.class.getClassLoader().getResourceAsStream("server.properties")) {
+            if (is != null) {
+                properties.load(is);
+                System.out.println("Server configuration loaded successfully");
+            } else {
+                System.out.println("server.properties not found, using default values");
+            }
+        } catch (IOException e) {
+            System.err.println("Error loading server configuration: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        isInitialized = true;
     }
     
     /**
-     * Get the RMI port for the server.
+     * Gets the RMI port from the configuration.
      * 
-     * @return The configured RMI port, or the default if not specified.
+     * @return The configured RMI port or the default value if not specified
      */
     public static int getRmiPort() {
+        init();
         return Integer.parseInt(properties.getProperty("rmi.port", String.valueOf(DEFAULT_RMI_PORT)));
     }
     
     /**
-     * Get the RMI host for the server.
+     * Gets the database URL from the configuration.
      * 
-     * @return The configured RMI host, or the default if not specified.
+     * @return The configured database URL or the default value if not specified
      */
-    public static String getRmiHost() {
-        return properties.getProperty("rmi.host", DEFAULT_RMI_HOST);
+    public static String getDbUrl() {
+        init();
+        return properties.getProperty("db.url", DEFAULT_DB_URL);
+    }
+    
+    /**
+     * Gets the database username from the configuration.
+     * 
+     * @return The configured database username or the default value if not specified
+     */
+    public static String getDbUsername() {
+        init();
+        return properties.getProperty("db.username", DEFAULT_DB_USERNAME);
+    }
+    
+    /**
+     * Gets the database password from the configuration.
+     * 
+     * @return The configured database password or the default value if not specified
+     */
+    public static String getDbPassword() {
+        init();
+        return properties.getProperty("db.password", DEFAULT_DB_PASSWORD);
+    }
+    
+    /**
+     * Gets a general property from the configuration.
+     * 
+     * @param key The property key
+     * @param defaultValue The default value if the property is not found
+     * @return The property value or the default value if not found
+     */
+    public static String getProperty(String key, String defaultValue) {
+        init();
+        return properties.getProperty(key, defaultValue);
     }
 }

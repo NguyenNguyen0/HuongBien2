@@ -17,19 +17,18 @@ public class RmiClient {
     
     // Remote service instances
     private static CustomerService customerService;
-    private static CuisineService cuisineService;
-    private static EmployeeService employeeService;
-    private static OrderService orderService;
-    private static PromotionService promotionService;
-    private static ReservationService reservationService;
-    private static StatisticsService statisticsService;
     private static TableService tableService;
+    private static ReservationService reservationService;
+    // TODO: Add more service references as they are implemented
     
     // Connection management
     private static boolean isConnected = false;
     
     /**
-     * Connect to the RMI server with settings from client.properties.
+     * Connect to the RMI server using settings from configuration.
+     * 
+     * @throws RemoteException if a connection error occurs
+     * @throws NotBoundException if a service is not bound in the registry
      */
     public static void connect() throws RemoteException, NotBoundException {
         String host = ClientConfig.getRmiHost();
@@ -40,8 +39,10 @@ public class RmiClient {
     /**
      * Connect to a specific RMI server.
      * 
-     * @param host The host name or IP address of the RMI server.
-     * @param port The port of the RMI registry.
+     * @param host The host name or IP address of the RMI server
+     * @param port The port of the RMI registry
+     * @throws RemoteException if a connection error occurs
+     * @throws NotBoundException if a service is not bound in the registry
      */
     public static void connect(String host, int port) throws RemoteException, NotBoundException {
         if (isConnected) {
@@ -53,13 +54,9 @@ public class RmiClient {
         
         // Lookup all remote services
         customerService = (CustomerService) registry.lookup("CustomerService");
-        cuisineService = (CuisineService) registry.lookup("CuisineService");
-        employeeService = (EmployeeService) registry.lookup("EmployeeService");
-        orderService = (OrderService) registry.lookup("OrderService");
-        promotionService = (PromotionService) registry.lookup("PromotionService");
-        reservationService = (ReservationService) registry.lookup("ReservationService");
-        statisticsService = (StatisticsService) registry.lookup("StatisticsService");
         tableService = (TableService) registry.lookup("TableService");
+        reservationService = (ReservationService) registry.lookup("ReservationService");
+        // TODO: Add more service lookups as they are implemented
         
         isConnected = true;
         System.out.println("Successfully connected to RMI server at " + host + ":" + port);
@@ -69,14 +66,14 @@ public class RmiClient {
      * Disconnect from the RMI server.
      */
     public static void disconnect() {
+        if (!isConnected) {
+            return;
+        }
+        
         customerService = null;
-        cuisineService = null;
-        employeeService = null;
-        orderService = null;
-        promotionService = null;
-        reservationService = null;
-        statisticsService = null;
         tableService = null;
+        reservationService = null;
+        // TODO: Clear other service references
         
         registry = null;
         isConnected = false;
@@ -84,54 +81,54 @@ public class RmiClient {
     }
     
     /**
-     * @return true if connected to the RMI server, false otherwise.
+     * Check if connected to the RMI server.
+     * 
+     * @return true if connected to the RMI server, false otherwise
      */
     public static boolean isConnected() {
         return isConnected;
     }
     
-    // Getters for remote services
-    
+    /**
+     * Get the CustomerService remote interface.
+     * 
+     * @return the CustomerService interface
+     * @throws NotConnectedException if not connected to the RMI server
+     */
     public static CustomerService getCustomerService() throws NotConnectedException {
         checkConnection();
         return customerService;
     }
     
-    public static CuisineService getCuisineService() throws NotConnectedException {
-        checkConnection();
-        return cuisineService;
-    }
-    
-    public static EmployeeService getEmployeeService() throws NotConnectedException {
-        checkConnection();
-        return employeeService;
-    }
-    
-    public static OrderService getOrderService() throws NotConnectedException {
-        checkConnection();
-        return orderService;
-    }
-    
-    public static PromotionService getPromotionService() throws NotConnectedException {
-        checkConnection();
-        return promotionService;
-    }
-    
-    public static ReservationService getReservationService() throws NotConnectedException {
-        checkConnection();
-        return reservationService;
-    }
-    
-    public static StatisticsService getStatisticsService() throws NotConnectedException {
-        checkConnection();
-        return statisticsService;
-    }
-    
+    /**
+     * Get the TableService remote interface.
+     * 
+     * @return the TableService interface
+     * @throws NotConnectedException if not connected to the RMI server
+     */
     public static TableService getTableService() throws NotConnectedException {
         checkConnection();
         return tableService;
     }
     
+    /**
+     * Get the ReservationService remote interface.
+     * 
+     * @return the ReservationService interface
+     * @throws NotConnectedException if not connected to the RMI server
+     */
+    public static ReservationService getReservationService() throws NotConnectedException {
+        checkConnection();
+        return reservationService;
+    }
+    
+    // TODO: Add more getters for other services
+    
+    /**
+     * Check if connected to the RMI server.
+     * 
+     * @throws NotConnectedException if not connected to the RMI server
+     */
     private static void checkConnection() throws NotConnectedException {
         if (!isConnected) {
             throw new NotConnectedException("Not connected to RMI server. Call connect() first.");

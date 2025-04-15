@@ -1,227 +1,265 @@
 package huongbien.service;
 
+import huongbien.entity.Category;
 import huongbien.entity.Cuisine;
+import huongbien.entity.CuisineStatus;
 import huongbien.rmi.RmiClient;
+import huongbien.util.ExceptionHandler;
 
 import java.rmi.RemoteException;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Client-side adapter for the CuisineService.
- * Provides error handling and simplifies the use of the remote CuisineService.
+ * Adapter for CuisineService remote interface.
+ * Provides a simplified API for UI components and handles remote exceptions.
  */
 public class CuisineServiceAdapter {
-    
+
     /**
-     * Get all cuisines from the remote service.
+     * Gets all cuisines.
      * 
-     * @return List of all cuisines, or an empty list if an error occurs.
+     * @return List of all cuisines or empty list if an error occurs
      */
-    public static List<Cuisine> getAllCuisine() {
+    public static List<Cuisine> getAllCuisines() {
         try {
-            return RmiClient.getCuisineService().getAllCuisine();
+            return RmiClient.getCuisineService().getAllCuisines();
         } catch (RemoteException e) {
-            handleRemoteException("Error retrieving all cuisines", e);
-            return Collections.emptyList();
+            ExceptionHandler.handleRemoteException(
+                "Cuisine Service Error", 
+                "Failed to retrieve cuisines", 
+                e
+            );
+            return new ArrayList<>();
         }
     }
     
     /**
-     * Get a cuisine by its ID.
+     * Gets a cuisine by its ID.
      * 
-     * @param cuisineId Cuisine ID to retrieve.
-     * @return The cuisine if found, null otherwise.
+     * @param id The cuisine ID
+     * @return The cuisine with the specified ID or null if not found or an error occurs
      */
-    public static Cuisine getCuisineById(String cuisineId) {
+    public static Cuisine getCuisineById(String id) {
         try {
-            return RmiClient.getCuisineService().getCuisineById(cuisineId);
+            return RmiClient.getCuisineService().getCuisineById(id);
         } catch (RemoteException e) {
-            handleRemoteException("Error retrieving cuisine with ID: " + cuisineId, e);
+            ExceptionHandler.handleRemoteException(
+                "Cuisine Service Error", 
+                "Failed to retrieve cuisine with ID: " + id, 
+                e
+            );
             return null;
         }
     }
     
     /**
-     * Get cuisines by name.
+     * Gets cuisines by name.
      * 
-     * @param name Name to search for.
-     * @return List of matching cuisines, or an empty list if an error occurs.
+     * @param name The name to search for
+     * @return List of cuisines matching the name or empty list if an error occurs
      */
-    public static List<Cuisine> getCuisineByName(String name) {
+    public static List<Cuisine> getCuisinesByName(String name) {
         try {
-            return RmiClient.getCuisineService().getCuisineByName(name);
+            return RmiClient.getCuisineService().getCuisinesByName(name);
         } catch (RemoteException e) {
-            handleRemoteException("Error retrieving cuisines by name: " + name, e);
-            return Collections.emptyList();
+            ExceptionHandler.handleRemoteException(
+                "Cuisine Service Error", 
+                "Failed to retrieve cuisines by name: " + name, 
+                e
+            );
+            return new ArrayList<>();
         }
     }
     
     /**
-     * Get cuisines with pagination.
+     * Gets cuisines by category.
      * 
-     * @param offset Starting index.
-     * @param limit Maximum number of records to return.
-     * @return Paginated list of cuisines, or an empty list if an error occurs.
+     * @param category The category to filter by
+     * @return List of cuisines in the specified category or empty list if an error occurs
      */
-    public static List<Cuisine> getAllCuisineWithPagination(int offset, int limit) {
+    public static List<Cuisine> getCuisinesByCategory(Category category) {
         try {
-            return RmiClient.getCuisineService().getAllCuisineWithPagination(offset, limit);
+            return RmiClient.getCuisineService().getCuisinesByCategory(category);
         } catch (RemoteException e) {
-            handleRemoteException("Error retrieving cuisines with pagination", e);
-            return Collections.emptyList();
+            ExceptionHandler.handleRemoteException(
+                "Cuisine Service Error", 
+                "Failed to retrieve cuisines by category", 
+                e
+            );
+            return new ArrayList<>();
         }
     }
     
     /**
-     * Get cuisines by name with pagination.
+     * Gets cuisines by status.
      * 
-     * @param offset Starting index.
-     * @param limit Maximum number of records to return.
-     * @param name Name to search for.
-     * @return Paginated list of matching cuisines, or an empty list if an error occurs.
+     * @param status The status to filter by
+     * @return List of cuisines with the specified status or empty list if an error occurs
      */
-    public static List<Cuisine> getCuisinesByNameWithPagination(int offset, int limit, String name) {
+    public static List<Cuisine> getCuisinesByStatus(CuisineStatus status) {
         try {
-            return RmiClient.getCuisineService().getCuisinesByNameWithPagination(offset, limit, name);
+            return RmiClient.getCuisineService().getCuisinesByStatus(status);
         } catch (RemoteException e) {
-            handleRemoteException("Error retrieving cuisines by name with pagination", e);
-            return Collections.emptyList();
+            ExceptionHandler.handleRemoteException(
+                "Cuisine Service Error", 
+                "Failed to retrieve cuisines by status", 
+                e
+            );
+            return new ArrayList<>();
         }
     }
     
     /**
-     * Get cuisines by category with pagination.
+     * Gets cuisines by price range.
      * 
-     * @param offset Starting index.
-     * @param limit Maximum number of records to return.
-     * @param category Category to filter by.
-     * @return Paginated list of matching cuisines, or an empty list if an error occurs.
+     * @param minPrice The minimum price
+     * @param maxPrice The maximum price
+     * @return List of cuisines in the specified price range or empty list if an error occurs
      */
-    public static List<Cuisine> getCuisinesByCategoryWithPagination(int offset, int limit, String category) {
+    public static List<Cuisine> getCuisinesByPriceRange(double minPrice, double maxPrice) {
         try {
-            return RmiClient.getCuisineService().getCuisinesByCategoryWithPagination(offset, limit, category);
+            return RmiClient.getCuisineService().getCuisinesByPriceRange(minPrice, maxPrice);
         } catch (RemoteException e) {
-            handleRemoteException("Error retrieving cuisines by category with pagination", e);
-            return Collections.emptyList();
+            ExceptionHandler.handleRemoteException(
+                "Cuisine Service Error", 
+                "Failed to retrieve cuisines by price range", 
+                e
+            );
+            return new ArrayList<>();
         }
     }
     
     /**
-     * Perform a cuisine lookup with filters.
+     * Adds a new cuisine.
      * 
-     * @param name Name filter.
-     * @param category Category filter.
-     * @param pageIndex Page index for pagination.
-     * @return List of matching cuisines, or an empty list if an error occurs.
+     * @param cuisine The cuisine to add
+     * @return The added cuisine with its ID set, or null if an error occurs
      */
-    public static List<Cuisine> getLookUpCuisine(String name, String category, int pageIndex) {
-        try {
-            return RmiClient.getCuisineService().getLookUpCuisine(name, category, pageIndex);
-        } catch (RemoteException e) {
-            handleRemoteException("Error performing cuisine lookup", e);
-            return Collections.emptyList();
-        }
-    }
-    
-    /**
-     * Get all cuisine names.
-     * 
-     * @return List of all cuisine names, or an empty list if an error occurs.
-     */
-    public static List<String> getAllCuisineNames() {
-        try {
-            return RmiClient.getCuisineService().getAllCuisineNames();
-        } catch (RemoteException e) {
-            handleRemoteException("Error retrieving all cuisine names", e);
-            return Collections.emptyList();
-        }
-    }
-    
-    /**
-     * Get cuisine names by category.
-     * 
-     * @param categoryName Category name.
-     * @return List of cuisine names in the specified category, or an empty list if an error occurs.
-     */
-    public static List<String> getCuisineNamesByCategory(String categoryName) {
-        try {
-            return RmiClient.getCuisineService().getCuisineNamesByCategory(categoryName);
-        } catch (RemoteException e) {
-            handleRemoteException("Error retrieving cuisine names by category", e);
-            return Collections.emptyList();
-        }
-    }
-    
-    /**
-     * Get all cuisine categories.
-     * 
-     * @return List of cuisine categories, or an empty list if an error occurs.
-     */
-    public static List<String> getCuisineCategory() {
-        try {
-            return RmiClient.getCuisineService().getCuisineCategory();
-        } catch (RemoteException e) {
-            handleRemoteException("Error retrieving cuisine categories", e);
-            return Collections.emptyList();
-        }
-    }
-    
-    /**
-     * Update a cuisine's information.
-     * 
-     * @param cuisine Cuisine with updated information.
-     * @return true if successful, false otherwise.
-     */
-    public static boolean updateCuisineInfo(Cuisine cuisine) {
-        try {
-            return RmiClient.getCuisineService().updateCuisineInfo(cuisine);
-        } catch (RemoteException e) {
-            handleRemoteException("Error updating cuisine information", e);
-            return false;
-        }
-    }
-    
-    /**
-     * Add a new cuisine.
-     * 
-     * @param cuisine Cuisine to add.
-     * @return true if successful, false otherwise.
-     */
-    public static boolean addCuisine(Cuisine cuisine) {
+    public static Cuisine addCuisine(Cuisine cuisine) {
         try {
             return RmiClient.getCuisineService().addCuisine(cuisine);
         } catch (RemoteException e) {
-            handleRemoteException("Error adding cuisine", e);
-            return false;
+            ExceptionHandler.handleRemoteException(
+                "Cuisine Service Error", 
+                "Failed to add cuisine", 
+                e
+            );
+            return null;
         }
     }
     
     /**
-     * Stop selling a cuisine.
+     * Updates an existing cuisine.
      * 
-     * @param cuisineId ID of the cuisine to stop selling.
-     * @return true if successful, false otherwise.
+     * @param cuisine The cuisine with updated information
+     * @return true if successful, false otherwise
      */
-    public static boolean stopSellCuisine(String cuisineId) {
+    public static boolean updateCuisine(Cuisine cuisine) {
         try {
-            return RmiClient.getCuisineService().stopSellCuisine(cuisineId);
+            return RmiClient.getCuisineService().updateCuisine(cuisine);
         } catch (RemoteException e) {
-            handleRemoteException("Error stopping sale of cuisine", e);
+            ExceptionHandler.handleRemoteException(
+                "Cuisine Service Error", 
+                "Failed to update cuisine", 
+                e
+            );
             return false;
         }
     }
     
     /**
-     * Handle RemoteException by logging and possibly displaying an error message.
+     * Updates cuisine status.
      * 
-     * @param message Error message to log.
-     * @param e The exception that occurred.
+     * @param id The cuisine ID
+     * @param status The new status
+     * @return true if successful, false otherwise
      */
-    private static void handleRemoteException(String message, RemoteException e) {
-        System.err.println(message + ": " + e.getMessage());
-        e.printStackTrace();
-        
-        // TODO: Add proper logging and/or user notification
+    public static boolean updateCuisineStatus(String id, CuisineStatus status) {
+        try {
+            return RmiClient.getCuisineService().updateCuisineStatus(id, status);
+        } catch (RemoteException e) {
+            ExceptionHandler.handleRemoteException(
+                "Cuisine Service Error", 
+                "Failed to update cuisine status", 
+                e
+            );
+            return false;
+        }
+    }
+    
+    /**
+     * Gets all cuisine categories.
+     * 
+     * @return List of all categories or empty list if an error occurs
+     */
+    public static List<Category> getAllCategories() {
+        try {
+            return RmiClient.getCuisineService().getAllCategories();
+        } catch (RemoteException e) {
+            ExceptionHandler.handleRemoteException(
+                "Cuisine Service Error", 
+                "Failed to retrieve categories", 
+                e
+            );
+            return new ArrayList<>();
+        }
+    }
+    
+    /**
+     * Gets a category by its ID.
+     * 
+     * @param id The category ID
+     * @return The category with the specified ID or null if not found or an error occurs
+     */
+    public static Category getCategoryById(String id) {
+        try {
+            return RmiClient.getCuisineService().getCategoryById(id);
+        } catch (RemoteException e) {
+            ExceptionHandler.handleRemoteException(
+                "Cuisine Service Error", 
+                "Failed to retrieve category with ID: " + id, 
+                e
+            );
+            return null;
+        }
+    }
+    
+    /**
+     * Adds a new category.
+     * 
+     * @param category The category to add
+     * @return true if successful, false otherwise
+     */
+    public static boolean addCategory(Category category) {
+        try {
+            return RmiClient.getCuisineService().addCategory(category);
+        } catch (RemoteException e) {
+            ExceptionHandler.handleRemoteException(
+                "Cuisine Service Error", 
+                "Failed to add category", 
+                e
+            );
+            return false;
+        }
+    }
+    
+    /**
+     * Updates an existing category.
+     * 
+     * @param category The category with updated information
+     * @return true if successful, false otherwise
+     */
+    public static boolean updateCategory(Category category) {
+        try {
+            return RmiClient.getCuisineService().updateCategory(category);
+        } catch (RemoteException e) {
+            ExceptionHandler.handleRemoteException(
+                "Cuisine Service Error", 
+                "Failed to update category", 
+                e
+            );
+            return false;
+        }
     }
 }

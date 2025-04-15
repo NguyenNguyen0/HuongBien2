@@ -1,204 +1,232 @@
 package huongbien.service;
 
+import huongbien.entity.Customer;
+import huongbien.entity.FoodOrder;
 import huongbien.entity.Reservation;
 import huongbien.entity.ReservationStatus;
 import huongbien.entity.Table;
 import huongbien.rmi.RmiClient;
+import huongbien.util.ExceptionHandler;
 
 import java.rmi.RemoteException;
-import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.Collections;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Client-side adapter for the ReservationService.
- * Provides error handling and simplifies the use of the remote ReservationService.
+ * Adapter for ReservationService remote interface.
+ * Provides a simplified API for UI components and handles remote exceptions.
  */
 public class ReservationServiceAdapter {
+
+    /**
+     * Gets all reservations.
+     * 
+     * @return List of all reservations or empty list if an error occurs
+     */
+    public static List<Reservation> getAllReservations() {
+        try {
+            return RmiClient.getReservationService().getAllReservations();
+        } catch (RemoteException e) {
+            ExceptionHandler.handleRemoteException(
+                "Reservation Service Error", 
+                "Failed to retrieve reservations", 
+                e
+            );
+            return new ArrayList<>();
+        }
+    }
     
     /**
-     * Get a reservation by its ID.
+     * Gets a reservation by ID.
      * 
-     * @param reservationId Reservation ID to retrieve.
-     * @return The reservation if found, null otherwise.
+     * @param id The reservation ID
+     * @return The reservation with the specified ID or null if not found or an error occurs
      */
-    public static Reservation getReservationById(String reservationId) {
+    public static Reservation getReservationById(String id) {
         try {
-            return RmiClient.getReservationService().getReservationById(reservationId);
+            return RmiClient.getReservationService().getReservationById(id);
         } catch (RemoteException e) {
-            handleRemoteException("Error retrieving reservation with ID: " + reservationId, e);
+            ExceptionHandler.handleRemoteException(
+                "Reservation Service Error", 
+                "Failed to retrieve reservation with ID: " + id, 
+                e
+            );
             return null;
         }
     }
     
     /**
-     * Get all reservations for a customer.
+     * Gets reservations by customer.
      * 
-     * @param customerId Customer ID.
-     * @return List of reservations, or an empty list if an error occurs.
+     * @param customer The customer to filter by
+     * @return List of reservations for the specified customer or empty list if an error occurs
      */
-    public static List<Reservation> getReservationsByCustomerId(String customerId) {
+    public static List<Reservation> getReservationsByCustomer(Customer customer) {
         try {
-            return RmiClient.getReservationService().getReservationsByCustomerId(customerId);
+            return RmiClient.getReservationService().getReservationsByCustomer(customer);
         } catch (RemoteException e) {
-            handleRemoteException("Error retrieving reservations for customer ID: " + customerId, e);
-            return Collections.emptyList();
+            ExceptionHandler.handleRemoteException(
+                "Reservation Service Error", 
+                "Failed to retrieve reservations for customer: " + customer.getName(), 
+                e
+            );
+            return new ArrayList<>();
         }
     }
     
     /**
-     * Get all reservations that are waiting today.
+     * Gets reservations by status.
      * 
-     * @return List of today's waiting reservations, or an empty list if an error occurs.
+     * @param status The status to filter by
+     * @return List of reservations with the specified status or empty list if an error occurs
      */
-    public static List<Reservation> getListWaitedToday() {
+    public static List<Reservation> getReservationsByStatus(ReservationStatus status) {
         try {
-            return RmiClient.getReservationService().getListWaitedToday();
+            return RmiClient.getReservationService().getReservationsByStatus(status);
         } catch (RemoteException e) {
-            handleRemoteException("Error retrieving today's waiting reservations", e);
-            return Collections.emptyList();
+            ExceptionHandler.handleRemoteException(
+                "Reservation Service Error", 
+                "Failed to retrieve reservations with status: " + status.getStatus(), 
+                e
+            );
+            return new ArrayList<>();
         }
     }
     
     /**
-     * Perform a reservation lookup with filters.
+     * Gets pending reservations for today.
      * 
-     * @param reservationId Reservation ID filter.
-     * @param reservationCusId Customer ID filter.
-     * @param reservationDate Reservation date filter.
-     * @param receiveDate Reception date filter.
-     * @param pageIndex Page index for pagination.
-     * @return List of matching reservations, or an empty list if an error occurs.
+     * @return List of pending reservations for today or empty list if an error occurs
      */
-    public static List<Reservation> getLookUpReservation(String reservationId, String reservationCusId, 
-                                                      LocalDate reservationDate, LocalDate receiveDate, 
-                                                      int pageIndex) {
+    public static List<Reservation> getPendingReservationsForToday() {
         try {
-            return RmiClient.getReservationService().getLookUpReservation(reservationId, reservationCusId, 
-                                                                        reservationDate, receiveDate, pageIndex);
+            return RmiClient.getReservationService().getPendingReservationsForToday();
         } catch (RemoteException e) {
-            handleRemoteException("Error performing reservation lookup", e);
-            return Collections.emptyList();
+            ExceptionHandler.handleRemoteException(
+                "Reservation Service Error", 
+                "Failed to retrieve today's pending reservations", 
+                e
+            );
+            return new ArrayList<>();
         }
     }
     
     /**
-     * Count total reservations.
+     * Gets reservations by date.
      * 
-     * @return Total number of reservations, or 0 if an error occurs.
+     * @param date The date to filter by
+     * @return List of reservations for the specified date or empty list if an error occurs
      */
-    public static int countTotalReservations() {
+    public static List<Reservation> getReservationsByDate(LocalDate date) {
         try {
-            return RmiClient.getReservationService().countTotalReservations();
+            return RmiClient.getReservationService().getReservationsByDate(date);
         } catch (RemoteException e) {
-            handleRemoteException("Error counting total reservations", e);
-            return 0;
+            ExceptionHandler.handleRemoteException(
+                "Reservation Service Error", 
+                "Failed to retrieve reservations for date: " + date, 
+                e
+            );
+            return new ArrayList<>();
         }
     }
     
     /**
-     * Count reservations that match the given filters.
+     * Creates a new reservation.
      * 
-     * @param reservationId Reservation ID filter.
-     * @param reservationCusId Customer ID filter.
-     * @param reservationDate Reservation date filter.
-     * @param receiveDate Reception date filter.
-     * @return Count of matching reservations, or 0 if an error occurs.
+     * @param customer The customer making the reservation
+     * @param tables The tables to reserve
+     * @param date The reservation date
+     * @param time The reservation time
+     * @param partySize The party size
+     * @param partyType The party type (e.g., dinner, celebration)
+     * @param note Any special notes for the reservation
+     * @param foodOrders Any pre-ordered food
+     * @param deposit The deposit amount
+     * @return The created reservation or null if an error occurs
      */
-    public static int getCountLookUpReservation(String reservationId, String reservationCusId, 
-                                             LocalDate reservationDate, LocalDate receiveDate) {
+    public static Reservation createReservation(
+            Customer customer, 
+            List<Table> tables, 
+            LocalDate date, 
+            LocalTime time, 
+            int partySize,
+            String partyType,
+            String note, 
+            List<FoodOrder> foodOrders, 
+            double deposit) {
+        
         try {
-            return RmiClient.getReservationService().getCountLookUpReservation(reservationId, reservationCusId, 
-                                                                             reservationDate, receiveDate);
+            return RmiClient.getReservationService().createReservation(
+                customer, tables, date, time, partySize, partyType, note, foodOrders, deposit);
         } catch (RemoteException e) {
-            handleRemoteException("Error counting reservations for lookup", e);
-            return 0;
+            ExceptionHandler.handleRemoteException(
+                "Reservation Service Error", 
+                "Failed to create reservation", 
+                e
+            );
+            return null;
         }
     }
     
     /**
-     * Add a new reservation.
+     * Updates reservation status.
      * 
-     * @param reservation Reservation to add.
-     * @return true if successful, false otherwise.
+     * @param id The reservation ID
+     * @param status The new status
+     * @return true if successful, false otherwise
      */
-    public static boolean addReservation(Reservation reservation) {
+    public static boolean updateReservationStatus(String id, ReservationStatus status) {
         try {
-            return RmiClient.getReservationService().addReservation(reservation);
+            return RmiClient.getReservationService().updateReservationStatus(id, status);
         } catch (RemoteException e) {
-            handleRemoteException("Error adding reservation", e);
+            ExceptionHandler.handleRemoteException(
+                "Reservation Service Error", 
+                "Failed to update reservation status", 
+                e
+            );
             return false;
         }
     }
     
     /**
-     * Update a reservation's information.
+     * Cancels a reservation and processes refund.
      * 
-     * @param reservation Reservation with updated information.
-     * @return true if successful, false otherwise.
+     * @param id The reservation ID
+     * @param refundAmount The amount to refund
+     * @return true if successful, false otherwise
      */
-    public static boolean updateReservation(Reservation reservation) {
+    public static boolean cancelReservation(String id, double refundAmount) {
         try {
-            return RmiClient.getReservationService().updateReservation(reservation);
+            return RmiClient.getReservationService().cancelReservation(id, refundAmount);
         } catch (RemoteException e) {
-            handleRemoteException("Error updating reservation", e);
+            ExceptionHandler.handleRemoteException(
+                "Reservation Service Error", 
+                "Failed to cancel reservation", 
+                e
+            );
             return false;
         }
     }
     
     /**
-     * Update a reservation's status.
+     * Updates food orders for a reservation.
      * 
-     * @param reservationId Reservation ID.
-     * @param status New status.
+     * @param reservationId The reservation ID
+     * @param foodOrders The updated food orders
+     * @return true if successful, false otherwise
      */
-    public static void updateStatus(String reservationId, ReservationStatus status) {
+    public static boolean updateFoodOrders(String reservationId, List<FoodOrder> foodOrders) {
         try {
-            RmiClient.getReservationService().updateStatus(reservationId, status);
+            return RmiClient.getReservationService().updateFoodOrders(reservationId, foodOrders);
         } catch (RemoteException e) {
-            handleRemoteException("Error updating reservation status", e);
+            ExceptionHandler.handleRemoteException(
+                "Reservation Service Error", 
+                "Failed to update food orders", 
+                e
+            );
+            return false;
         }
-    }
-    
-    /**
-     * Get table status for today based on reservations.
-     * 
-     * @param reservationList List of reservations to check.
-     * @return List of tables with their status, or an empty list if an error occurs.
-     */
-    public static List<Table> getListTableStatusToday(List<Reservation> reservationList) {
-        try {
-            return RmiClient.getReservationService().getListTableStatusToday(reservationList);
-        } catch (RemoteException | SQLException e) {
-            handleException("Error retrieving table statuses", e);
-            return Collections.emptyList();
-        }
-    }
-    
-    /**
-     * Handle RemoteException by logging and possibly displaying an error message.
-     * 
-     * @param message Error message to log.
-     * @param e The exception that occurred.
-     */
-    private static void handleRemoteException(String message, RemoteException e) {
-        System.err.println(message + ": " + e.getMessage());
-        e.printStackTrace();
-        
-        // TODO: Add proper logging and/or user notification
-    }
-    
-    /**
-     * Handle any exception by logging and possibly displaying an error message.
-     * 
-     * @param message Error message to log.
-     * @param e The exception that occurred.
-     */
-    private static void handleException(String message, Exception e) {
-        System.err.println(message + ": " + e.getMessage());
-        e.printStackTrace();
-        
-        // TODO: Add proper logging and/or user notification
     }
 }
