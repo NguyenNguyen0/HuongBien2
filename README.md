@@ -1,6 +1,6 @@
 # Huong Bien 2
 
-Huong Bien 2 is a monolithic Java application that leverages JavaFX for its graphical user interface and JPA Hibernate for its data persistence layer. The project is designed to demonstrate the integration of modern Java technologies to create a robust and interactive desktop application.
+Huong Bien 2 is a distributed Java application that implements a client-server architecture using Java RMI (Remote Method Invocation). The client features a modern JavaFX graphical user interface, while the server handles business logic and persistence through JPA Hibernate.
 
 ## Members
 - Nguyễn Trung Nguyên
@@ -8,14 +8,19 @@ Huong Bien 2 is a monolithic Java application that leverages JavaFX for its grap
 - Nguyễn Văn Minh
 - Trần Di Phong
 
+## Architecture
+- **Client**: JavaFX-based user interface that communicates with the server via RMI
+- **Server**: Backend service exposing remote methods and managing data persistence
+- **RMI Layer**: Enables transparent method invocation between distributed components
+- **JPA Hibernate**: Handles object-relational mapping for database operations
+
 ## Key Features
-- **JavaFX**: Utilized for building the user interface, providing a rich set of UI controls and capabilities.
-- **JPA Hibernate**: Used for ORM (Object-Relational Mapping) to manage database interactions seamlessly.
-- **Multi-Database Support**: Configured to work with both Microsoft SQL Server and MariaDB.
-- **Modular Design**: Structured using Java modules to enhance maintainability and scalability.
+- **Distributed System**: Client and server components can run on separate machines
+- **JavaFX**: Rich and responsive user interface with modern controls and capabilities
+- **Java RMI**: Secure and efficient remote method invocation for client-server communication
+- **JPA Hibernate**: Seamless object-relational mapping for database interactions
+- **Multi-Database Support**: Compatible with both Microsoft SQL Server and MariaDB
+- **Modular Design**: Structured using Java modules for enhanced maintainability and scalability
 
 ## Getting Started
-To run the application, ensure you have Java 17 or higher installed. Use the provided Gradle wrapper to build and run the project:
-
-```sh
-./gradlew run
+To run the application, ensure you have Java 21 or higher installed.

@@ -1,0 +1,9 @@
+.table-view .table-cell {
+    -fx-font-size: 16px; /* Giảm kích thước font chữ */
+    -fx-padding: 4px 8px; /* Giảm padding để cell nhỏ hơn */
+}
+
+.table-view .column-header {
+    -fx-font-size: 16px; /* Giảm kích thước font chữ */
+    -fx-padding: 2px 8px;
+}

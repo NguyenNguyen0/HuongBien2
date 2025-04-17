@@ -1,0 +1,86 @@
+plugins {
+    id 'java'
+    id 'org.openjfx.javafxplugin' version '0.0.13'
+}
+
+group 'main'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    junitVersion = '5.11.0'
+    javafxVersion = '21.0.2'
+}
+
+sourceCompatibility = '21'
+targetCompatibility = '21'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+javafx {
+    version = '17.0.6'
+    modules = ['javafx.controls', 'javafx.fxml', 'javafx.web', 'javafx.swing' , 'javafx.media']
+}
+
+dependencies {
+    //  OpenCV dependencies
+    implementation(files('libs/native/opencv_java451.dll'))
+
+    //  JavaFX dependencies
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.8.0'
+    implementation('org.controlsfx:controlsfx:11.2.1')
+    implementation('com.dlsc.formsfx:formsfx-core:11.6.0') {
+        exclude(group: 'org.openjfx')
+    }
+    implementation('org.kordamp.ikonli:ikonli-javafx:12.3.1')
+    implementation('org.kordamp.bootstrapfx:bootstrapfx-core:0.4.0')
+    implementation('eu.hansolo:tilesfx:21.0.3') {
+        exclude(group: 'org.openjfx')
+    }
+    implementation('com.github.almasb:fxgl:17.3') {
+        exclude(group: 'org.openjfx')
+        exclude(group: 'org.jetbrains.kotlin')
+    }
+
+    // Database drivers
+    implementation 'com.microsoft.sqlserver:mssql-jdbc:11.2.3.jre17'
+    implementation 'org.mariadb.jdbc:mariadb-java-client:3.0.8'
+
+    // Hibernate ORM
+    implementation 'org.hibernate:hibernate-core:6.2.7.Final'
+    implementation 'org.hibernate.orm:hibernate-jpamodelgen:6.2.7.Final'
+    implementation 'com.h2database:h2:2.1.214'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.36'
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
+    testCompileOnly 'org.projectlombok:lombok:1.18.36'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.36'
+
+    // Environment config
+    implementation 'io.github.cdimascio:java-dotenv:5.2.2'
+
+    // JSON processing
+    implementation 'com.google.code.gson:gson:2.8.8'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.4'
+
+    // Email
+    implementation 'com.sun.mail:javax.mail:1.5.5'
+
+    // Data faker for testing
+    implementation 'net.datafaker:datafaker:2.4.2'
+
+    // JUnit 5
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+}
+
+test {
+    useJUnitPlatform()
+}
