@@ -7,6 +7,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
 
 import java.io.Serializable;
@@ -19,6 +20,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "customers")
 public class Customer implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -51,7 +53,7 @@ public class Customer implements Serializable {
         setName(name);
         setAddress(address);
         setGender(gender);
-        setPhoneNumber(phoneNumber);
+        setPhoneNumber(phone);
         setEmail(email);
         setBirthday(birthday);
         setRegistrationDate(LocalDate.now());

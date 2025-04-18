@@ -57,9 +57,11 @@ public class Reservation implements Serializable {
     private Payment payment;
 
     @ManyToOne
+    @JoinColumn(name = "employee_id")
     private Employee employee;
 
     @ManyToOne
+    @JoinColumn(name = "customer_id")
     private Customer customer;
 
     @ToString.Exclude

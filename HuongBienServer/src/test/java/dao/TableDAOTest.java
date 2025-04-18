@@ -352,6 +352,7 @@ class TableDAOTest {
         List<String> types = tableDAO.getDistinctTableType();
 
         // Assert
+        System.out.println("Distinct Table Types: " + types);
         assertNotNull(types);
         assertTrue(types.contains("Thường"));
     }

@@ -19,12 +19,6 @@ public class RMIClient {
     private static volatile RMIClient instance;
 
     private static Registry registry;
-    /**
-     * -- GETTER --
-     * Checks if client is connected to the RMI server
-     *
-     * @return true if connected, false otherwise
-     */
     @Getter
     private static boolean connected = false;
 
@@ -33,11 +27,6 @@ public class RMIClient {
         connect();
     }
 
-    /**
-     * Gets the singleton instance of RMIClient
-     *
-     * @return The singleton instance
-     */
     public static RMIClient getInstance() {
         // Double-checked locking for thread safety
         if (instance == null) {
@@ -112,11 +101,6 @@ public class RMIClient {
         return connect();
     }
 
-    /**
-     * Gets a remote ReservationDAO object
-     *
-     * @return The remote ReservationDAO
-     */
     public IReservationDAO getReservationDAO() throws RemoteException, NotBoundException {
         ensureConnected();
 
@@ -216,11 +200,6 @@ public class RMIClient {
         }
     }
 
-    /**
-     * Gets a remote PaymentDAO object
-     *
-     * @return The remote PaymentDAO
-     */
     public IPaymentDAO getPaymentDAO() throws RemoteException, NotBoundException {
         ensureConnected();
 
@@ -232,11 +211,6 @@ public class RMIClient {
         }
     }
 
-    /**
-     * Gets a remote PromotionDAO object
-     *
-     * @return The remote PromotionDAO
-     */
     public IPromotionDAO getPromotionDAO() throws RemoteException, NotBoundException {
         ensureConnected();
 
@@ -248,11 +222,6 @@ public class RMIClient {
         }
     }
 
-    /**
-     * Gets a remote StatisticsDAO object
-     *
-     * @return The remote StatisticsDAO
-     */
     public IStatisticsDAO getStatisticsDAO() throws RemoteException, NotBoundException {
         ensureConnected();
 
@@ -264,11 +233,6 @@ public class RMIClient {
         }
     }
 
-    /**
-     * Gets a remote TableDAO object
-     *
-     * @return The remote TableDAO
-     */
     public ITableDAO getTableDAO() throws RemoteException, NotBoundException {
         ensureConnected();
 
@@ -280,11 +244,6 @@ public class RMIClient {
         }
     }
 
-    /**
-     * Gets a remote TableTypeDAO object
-     *
-     * @return The remote TableTypeDAO
-     */
     public ITableTypeDAO getTableTypeDAO() throws RemoteException, NotBoundException {
         ensureConnected();
 
@@ -296,11 +255,6 @@ public class RMIClient {
         }
     }
 
-    /**
-     * Ensures the client is connected to the RMI server
-     *
-     * @throws IllegalStateException if not connected and reconnection fails
-     */
     private void ensureConnected() {
         if (!connected && !connect()) {
             throw new IllegalStateException("Not connected to RMI server and reconnection failed");

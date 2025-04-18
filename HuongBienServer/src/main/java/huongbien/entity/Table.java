@@ -29,6 +29,7 @@ public class Table implements Serializable {
     private TableStatus status;
 
     @ManyToOne
+    @JoinColumn(name = "table_type_id")
     private TableType tableType;
 
     public Table(String name, int seats, int floor, String status, TableType selectedTableType) {

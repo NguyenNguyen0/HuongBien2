@@ -29,6 +29,7 @@ public class FoodOrder implements Serializable {
     private double salePrice;
 
     @ManyToOne
+    @JoinColumn(name = "food_id")
     private Cuisine cuisine;
 
     @ToString.Exclude

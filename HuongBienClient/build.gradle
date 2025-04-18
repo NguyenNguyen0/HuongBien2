@@ -29,7 +29,7 @@ javafx {
 
 dependencies {
     //  Entities and DAO Interfaces dependencies
-    implementation(files('libs/HuongBienShared.jar'))
+    implementation(files('libs/HuongBienServer-1.0-SNAPSHOT.jar'))
 
     //  OpenCV dependencies
     implementation(files('libs/native/opencv_java451.dll'))

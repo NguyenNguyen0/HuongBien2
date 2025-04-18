@@ -1,7 +1,9 @@
 package huongbien.dao.impl;
 
-import huongbien.bus.OrderBUS;
-import huongbien.bus.ReservationBUS;
+import huongbien.dao.impl.OrderDAO;
+import huongbien.dao.impl.ReservationDAO;
+import huongbien.dao.remote.IOrderDAO;
+import huongbien.dao.remote.IReservationDAO;
 import huongbien.dao.remote.IStatisticsDAO;
 import huongbien.jpa.JPAUtil;
 import huongbien.util.Utils;
@@ -598,14 +600,14 @@ public class StatisticsDAO extends UnicastRemoteObject implements IStatisticsDAO
 
     @Override
     public int getTotalOrders() throws RemoteException {
-        OrderBUS orderBUS = new OrderBUS();
-        return orderBUS.countTotalOrders();
+        IOrderDAO orderDAO = new OrderDAO();
+        return orderDAO.countTotal();
     }
 
     @Override
     public int getTotalReservations() throws RemoteException {
-        ReservationBUS reservationBUS = new ReservationBUS();
-        return reservationBUS.countTotalReservations();
+        IReservationDAO reservationDAO = new ReservationDAO();
+        return reservationDAO.countTotal();
     }
 
     @Override

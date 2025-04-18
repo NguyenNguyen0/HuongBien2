@@ -20,11 +20,11 @@ public class RestaurantMainManagerGUI extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/huongbien/fxml/RestaurantMainManager.fxml")));
-        primaryStage.initStyle(StageStyle.UNDECORATED);
+//        primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.getIcons().add(new Image("/huongbien/icon/favicon/favicon-logo-restaurant-128px.png"));
         primaryStage.setScene(new Scene(root, 1200, 700));
         primaryStage.setTitle("Dashboard - Huong Bien Restaurant");
-        primaryStage.setMaximized(true);
+//        primaryStage.setMaximized(true);
         primaryStage.show();
     }
 }

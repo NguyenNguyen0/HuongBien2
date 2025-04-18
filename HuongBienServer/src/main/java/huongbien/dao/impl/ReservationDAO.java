@@ -1,7 +1,7 @@
 package huongbien.dao.impl;
 
-import huongbien.bus.TableBUS;
 import huongbien.dao.remote.IReservationDAO;
+import huongbien.dao.remote.ITableDAO;
 import huongbien.entity.Reservation;
 import huongbien.entity.ReservationStatus;
 import huongbien.entity.Table;
@@ -118,8 +118,8 @@ public class ReservationDAO extends GenericDAO<Reservation> implements IReservat
 
     @Override
     public List<Table> getListTableStatusToday(List<Reservation> reservationList) throws RemoteException {
-        TableBUS tableBUS = new TableBUS();
-        return tableBUS.getListTableStatusToday(reservationList);
+        ITableDAO tableDAO = new TableDAO();
+        return tableDAO.getListTableStatusToday(reservationList);
     }
 
     @Override
