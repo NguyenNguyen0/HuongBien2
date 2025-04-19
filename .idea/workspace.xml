@@ -461,7 +461,7 @@
     "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/WorkSpace/java/HuongBien2/HuongBienServer",
+    "last_opened_file_path": "F:/University/HK2/06_LapTrinhPhanTanVoiCongNgheJava/project/HuongBien2",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -519,7 +519,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.26053.27" />
+        <option value="bundled-jdk-9823dce3aa75-125ca727e0f0-intellij.indexing.shared.core-IU-243.23654.189" />
+        <option value="bundled-js-predefined-d6986cc7102b-822845ee3bb5-JavaScript-IU-243.23654.189" />
       </set>
     </attachedChunks>
   </component>
@@ -593,6 +594,7 @@
       <workItem from="1744890668111" duration="1920000" />
       <workItem from="1744899944018" duration="880000" />
       <workItem from="1744904755088" duration="902000" />
+      <workItem from="1745033225129" duration="5000" />
     </task>
     <servers />
   </component>

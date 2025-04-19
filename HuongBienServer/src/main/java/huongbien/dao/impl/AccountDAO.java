@@ -37,20 +37,22 @@ public class AccountDAO extends GenericDAO<Account> implements IAccountDAO {
     public boolean changePassword(String email, String newPassword) throws RemoteException {
         Account account = getByEmail(email);
         if (account == null) return false;
-        account.setHashcode(Utils.hashPassword(newPassword));
+        account.setHashcode(newPassword);  // Không băm lại mật khẩu, vì nó đã được băm ở phía client
         return update(account);
     }
 
     @Override
     public boolean updateEmail(String employeeId, String email) throws RemoteException {
-        Account account = getByEmployeeId(employeeId);
+        Account account = getByUsername(employeeId);
         if (account == null) return false;
         account.setEmail(email);
         return update(account);
     }
 
     private Account getByEmployeeId(String employeeId) throws RemoteException {
-        return findOne("SELECT a FROM Account a WHERE a.employeeId = ?1", Account.class, employeeId);
+        // The correct way to query Account by employee ID
+        // Since username is the same as employee ID in this mapping
+        return getByUsername(employeeId);
     }
 
     @Override

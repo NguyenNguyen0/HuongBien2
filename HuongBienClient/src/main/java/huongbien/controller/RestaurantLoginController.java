@@ -226,7 +226,7 @@ public class RestaurantLoginController implements Initializable {
             return;
         }
 
-        if (username.equals(account.getUsername().trim()) && passwordHash.equals(account.getHashcode().trim())) {
+        if (username.equals(account.getUsername()) && passwordHash.equals(account.getHashcode())) {
             ToastsMessage.showMessage("Đăng nhập thành công", "success");
             //Role check
             String path;
