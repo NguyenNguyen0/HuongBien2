@@ -258,8 +258,9 @@ public class TableDAO extends GenericDAO<Table> implements ITableDAO {
         if (reservationList != null && !reservationList.isEmpty()) {
             try {
                 for (Reservation reservation : reservationList) {
+                    // Sử dụng join với Reservation thay vì truy vấn trực tiếp bảng join
                     List<Table> tables = findMany(
-                        "SELECT t FROM Table t JOIN t.reservations r WHERE r.id = ?1", 
+                        "SELECT DISTINCT t FROM Reservation r JOIN r.tables t WHERE r.id = ?1",
                         Table.class, 
                         reservation.getId()
                     );
