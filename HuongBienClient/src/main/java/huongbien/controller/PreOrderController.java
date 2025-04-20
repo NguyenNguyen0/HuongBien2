@@ -47,6 +47,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -509,6 +510,13 @@ public class PreOrderController implements Initializable {
                         .replaceAll(" VNĐ", "")
         );
 
+        // Tạo ID mới cho reservation nếu là đơn đặt mới
+        if (reservationID == null) {
+            LocalDate currentDate = LocalDate.now();
+            LocalTime currentTime = LocalTime.now();
+            reservationID = Reservation.generateId(currentDate, currentTime);
+        }
+        
         reservation.setId(reservationID);
         reservation.setPartyType(partyType);
         reservation.setPartySize(partySize);
@@ -521,15 +529,22 @@ public class PreOrderController implements Initializable {
         reservation.setEmployee(employee);
         reservation.setCustomer(customer);
 
+        // Sửa đổi: Load các đối tượng Table từ database thay vì tạo mới
         ArrayList<Table> tables = new ArrayList<>();
         for (JsonElement element : jsonArrayTable) {
             JsonObject jsonObject = element.getAsJsonObject();
             String tableID = jsonObject.get("Table ID").getAsString();
-            Table table = new Table();
-            table.setId(tableID);
-            tables.add(table);
+            // Load đối tượng Table từ database
+            Table table = tableDAO.getById(tableID);
+            if (table != null) {
+                tables.add(table);
+            } else {
+                ToastsMessage.showMessage("Không tìm thấy bàn với ID: " + tableID + ", vui lòng thử lại", "error");
+                return;
+            }
         }
 
+        // Sửa đổi: Tạo FoodOrder với đúng entitys từ database và gán ID
         ArrayList<FoodOrder> foodOrders = new ArrayList<>();
         for (JsonElement element : jsonArrayCuisine) {
             JsonObject jsonObject = element.getAsJsonObject();
@@ -540,15 +555,35 @@ public class PreOrderController implements Initializable {
             int cuisineQuantity = jsonObject.get("Cuisine Quantity").getAsInt();
 
             FoodOrder foodOrder = new FoodOrder();
-            foodOrder.setId(reservation.getId());
+            // Tạo ID cho FoodOrder ngay tại đây
+            LocalDate currentDate = LocalDate.now();
+            LocalTime currentTime = LocalTime.now();
+            String foodOrderId = String.format("FD%02d%02d%02d%02d%02d%02d%03d",
+                    currentDate.getYear() % 100,
+                    currentDate.getMonthValue(),
+                    currentDate.getDayOfMonth(),
+                    currentTime.getHour(),
+                    currentTime.getMinute(),
+                    currentTime.getSecond(),
+                    (int)(Math.random() * 999));
+            foodOrder.setId(foodOrderId);
             foodOrder.setQuantity(cuisineQuantity);
             foodOrder.setNote(cuisineNote);
             foodOrder.setSalePrice(cuisinePrice);
 
-            Cuisine cuisine = new Cuisine();
-            cuisine.setId(cuisineID);
-
-            foodOrder.setCuisine(cuisine);
+            // Load đối tượng Cuisine từ database
+            try {
+                Cuisine cuisine = RMIClient.getInstance().getCuisineDAO().getById(cuisineID);
+                if (cuisine != null) {
+                    foodOrder.setCuisine(cuisine);
+                } else {
+                    ToastsMessage.showMessage("Không tìm thấy món ăn với ID: " + cuisineID + ", vui lòng thử lại", "error");
+                    return;
+                }
+            } catch (NotBoundException e) {
+                throw new RuntimeException(e);
+            }
+            
             foodOrders.add(foodOrder);
         }
 
@@ -556,7 +591,11 @@ public class PreOrderController implements Initializable {
         reservation.setFoodOrders(foodOrders);
 
         ReservationBUS reservationBUS = new ReservationBUS();
-        if (reservationID == null) {
+        // Thay đổi kiểm tra để tránh dựa vào reservationDAO.getById()
+        boolean isNewReservation = reservationID == null || 
+                                  (reservationID != null && !isReservationExist(reservationID));
+
+        if (isNewReservation) {
             //Check receive time is valid
             LocalDateTime receiveDateTime = LocalDateTime.of(receiveDatePicker.getValue(), LocalTime.of(Integer.parseInt(hourComboBox.getValue()), Integer.parseInt(minuteComboBox.getValue())));
             LocalDateTime currentDateTime = LocalDateTime.now();
@@ -620,8 +659,8 @@ public class PreOrderController implements Initializable {
         } else {
             //Temporary solution for updating reservation
             Reservation reservationUpdate = reservationDAO.getById(reservationID);
-            reservation.setStatus(reservationUpdate.getStatus());
-            reservation.setPayment(reservationUpdate.getPayment());
+            reservation.setStatus(reservationUpdate != null ? reservationUpdate.getStatus() : ReservationStatus.PENDING);
+            reservation.setPayment(reservationUpdate != null ? reservationUpdate.getPayment() : null);
 
             if (reservationBUS.updateReservation(reservation)) {
                 ToastsMessage.showMessage("Cập nhật đơn đặt trước: " + reservationID + " thành công", "success");
@@ -635,6 +674,21 @@ public class PreOrderController implements Initializable {
             restaurantMainManagerController.openReservationManagement();
         } else {
             restaurantMainStaffController.openReservationManagement();
+        }
+    }
+
+    // Thêm phương thức kiểm tra tồn tại của Reservation
+    private boolean isReservationExist(String reservationId) {
+        try {
+            List<Reservation> allReservations = reservationDAO.getAll();
+            for (Reservation r : allReservations) {
+                if (r.getId().equals(reservationId)) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (Exception e) {
+            return false;
         }
     }
 

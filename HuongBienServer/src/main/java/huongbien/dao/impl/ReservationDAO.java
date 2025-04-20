@@ -5,13 +5,17 @@ import huongbien.dao.remote.ITableDAO;
 import huongbien.entity.Reservation;
 import huongbien.entity.ReservationStatus;
 import huongbien.entity.Table;
+import huongbien.entity.FoodOrder;
+import huongbien.entity.Cuisine;
 import huongbien.jpa.JPAUtil;
 import huongbien.jpa.PersistenceUnit;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Query;
 
 import java.rmi.RemoteException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ReservationDAO extends GenericDAO<Reservation> implements IReservationDAO {
@@ -65,7 +69,11 @@ public class ReservationDAO extends GenericDAO<Reservation> implements IReservat
 
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            ReservationStatus enumStatus = ReservationStatus.valueOf(status);
+            // Thay đổi từ valueOf sang fromStatus để xử lý đúng giá trị tiếng Việt
+            ReservationStatus enumStatus = ReservationStatus.fromStatus(status);
+            if (enumStatus == null) {
+                return 0; // Trả về 0 nếu không tìm thấy enum tương ứng
+            }
 
             Query query = em.createQuery(jpql);
             query.setParameter("status", enumStatus);
@@ -74,7 +82,7 @@ public class ReservationDAO extends GenericDAO<Reservation> implements IReservat
 
             Object result = query.getSingleResult();
             return result instanceof Number ? ((Number) result).intValue() : 0;
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return 0;
         }
@@ -124,12 +132,114 @@ public class ReservationDAO extends GenericDAO<Reservation> implements IReservat
 
     @Override
     public boolean add(Reservation reservation) throws RemoteException {
-        return super.add(reservation);
+        if (reservation == null) {
+            return false;
+        }
+
+        EntityManager em = JPAUtil.getEntityManager();
+        EntityTransaction transaction = em.getTransaction();
+        try {
+            transaction.begin();
+            
+            // Đảm bảo các Table đã tồn tại và ở trạng thái managed
+            if (reservation.getTables() != null) {
+                List<Table> managedTables = new ArrayList<>();
+                for (Table table : reservation.getTables()) {
+                    // Tìm bàn từ database và sử dụng reference thay vì entity mới
+                    Table managedTable = em.find(Table.class, table.getId());
+                    if (managedTable != null) {
+                        managedTables.add(managedTable);
+                    }
+                }
+                // Gán lại danh sách bàn đã managed
+                reservation.setTables(managedTables);
+            }
+            
+            // Lưu Reservation
+            em.persist(reservation);
+            transaction.commit();
+            return true;
+        } catch (Exception e) {
+            if (transaction.isActive()) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
     public boolean update(Reservation reservation) throws RemoteException {
-        return super.update(reservation);
+        if (reservation == null) {
+            return false;
+        }
+
+        EntityManager em = JPAUtil.getEntityManager();
+        EntityTransaction transaction = em.getTransaction();
+        try {
+            transaction.begin();
+            
+            // Đảm bảo reservation hiện tại là managed
+            Reservation managedReservation = em.find(Reservation.class, reservation.getId());
+            if (managedReservation == null) {
+                transaction.rollback();
+                return false;
+            }
+            
+            // Cập nhật các thuộc tính cơ bản
+            managedReservation.setPartyType(reservation.getPartyType());
+            managedReservation.setPartySize(reservation.getPartySize());
+            managedReservation.setReceiveDate(reservation.getReceiveDate());
+            managedReservation.setReceiveTime(reservation.getReceiveTime());
+            managedReservation.setDeposit(reservation.getDeposit());
+            managedReservation.setNote(reservation.getNote());
+            managedReservation.setEmployee(reservation.getEmployee());
+            managedReservation.setCustomer(reservation.getCustomer());
+            
+            // Cập nhật danh sách bàn một cách an toàn
+            if (reservation.getTables() != null) {
+                // Xóa tất cả các mối quan hệ bàn hiện tại
+                managedReservation.getTables().clear();
+                
+                // Thêm các bàn mới vào (sử dụng references)
+                for (Table table : reservation.getTables()) {
+                    Table managedTable = em.find(Table.class, table.getId());
+                    if (managedTable != null) {
+                        managedReservation.getTables().add(managedTable);
+                    }
+                }
+            }
+            
+            // Cập nhật danh sách food orders
+            if (reservation.getFoodOrders() != null) {
+                // Xóa các food orders cũ
+                for (FoodOrder oldOrder : managedReservation.getFoodOrders()) {
+                    em.remove(oldOrder);
+                }
+                managedReservation.getFoodOrders().clear();
+                
+                // Thêm food orders mới
+                for (FoodOrder foodOrder : reservation.getFoodOrders()) {
+                    // Đảm bảo Cuisine là managed
+                    Cuisine managedCuisine = em.find(Cuisine.class, foodOrder.getCuisine().getId());
+                    if (managedCuisine != null) {
+                        foodOrder.setCuisine(managedCuisine);
+                        foodOrder.setReservation(managedReservation);
+                        em.persist(foodOrder);
+                        managedReservation.getFoodOrders().add(foodOrder);
+                    }
+                }
+            }
+            
+            transaction.commit();
+            return true;
+        } catch (Exception e) {
+            if (transaction.isActive()) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
