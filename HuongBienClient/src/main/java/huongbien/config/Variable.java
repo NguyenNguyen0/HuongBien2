@@ -27,7 +27,7 @@ public class Variable {
 
     //ReservationManagementController.java
     //---
-    public static String[] statusReservation = {"Chưa nhận", "Hoàn thành", "Đã hủy"};
+    public static String[] statusReservation = {"Chưa xác nhận", "Đã xác nhận", "Đã hủy", "Đã hoàn thành"};
 
     //PreOrderController.java
     //---

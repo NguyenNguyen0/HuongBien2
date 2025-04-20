@@ -253,12 +253,31 @@ public class ReservationDAO extends GenericDAO<Reservation> implements IReservat
 
     @Override
     public void updateStatus(String reservationId, ReservationStatus status) throws RemoteException {
-        Reservation reservation = getById(reservationId);
-        if (reservation == null) {
-            return;
+        EntityManager em = JPAUtil.getEntityManager();
+        EntityTransaction transaction = em.getTransaction();
+        try {
+            transaction.begin();
+            
+            // Đảm bảo reservation hiện tại là managed
+            Reservation managedReservation = em.find(Reservation.class, reservationId);
+            if (managedReservation == null) {
+                transaction.rollback();
+                return;
+            }
+            
+            // Cập nhật trạng thái trực tiếp trong transaction
+            managedReservation.setStatus(status);
+            
+            // Commit transaction
+            transaction.commit();
+            System.out.println("Đã cập nhật trạng thái thành " + status.getStatus() + " cho đơn hàng: " + reservationId);
+        } catch (Exception e) {
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();
+            }
+            System.err.println("Lỗi khi cập nhật trạng thái cho đơn hàng " + reservationId + ": " + e.getMessage());
+            e.printStackTrace();
         }
-        reservation.setStatus(status);
-        update(reservation);
     }
 
     @Override

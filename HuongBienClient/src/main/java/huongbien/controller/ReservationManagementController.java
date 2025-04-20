@@ -591,48 +591,77 @@ public class ReservationManagementController implements Initializable {
         if (selectedIndex != -1) {
             Reservation reservation = preOrderTableView.getSelectionModel().getSelectedItem();
             //check status before write JSON
-            if (!reservation.getStatus().equals(Variable.statusReservation[0])) {
+            if (!reservation.getStatus().equals(ReservationStatus.PENDING)) {
                 ToastsMessage.showMessage("Đơn đặt đang ở trạng thái: " + reservation.getStatus() + ", nên không thể nhận bàn", "warning");
                 return;
             }
-            //check receice date valid
+            //check receive date valid
             if (!reservation.getReceiveDate().equals(LocalDate.now())) {
                 ToastsMessage.showMessage("Vui lòng đợi đến ngày: " + reservation.getReceiveDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + " để nhận bàn.", "success");
                 ToastsMessage.showMessage("Chưa đến ngày nhận bàn này!", "warning");
                 return;
             }
-            ////----Table
-            JsonArray jsonArrayTable = new JsonArray();
-            for (Table table : reservation.getTables()) {
-                JsonObject tableObject = new JsonObject();
-                tableObject.addProperty("Table ID", table.getId());
-                jsonArrayTable.add(tableObject);
-            }
-            ////----Customer
-            JsonArray jsonArrayCustomer = new JsonArray();
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("Customer ID", reservation.getCustomer().getId());
-            jsonArrayCustomer.add(jsonObject);
-            ////----Cuisine
-            JsonArray jsonArrayCuisine = new JsonArray();
-            for (FoodOrder foodOrder : reservation.getFoodOrders()) {
-                JsonObject foodOrderObject = new JsonObject();
-                foodOrderObject.addProperty("Cuisine ID", foodOrder.getCuisine().getId());
-                foodOrderObject.addProperty("Cuisine Name", foodOrder.getCuisine().getName());
-                foodOrderObject.addProperty("Cuisine Price", foodOrder.getCuisine().getPrice());
-                foodOrderObject.addProperty("Cuisine Note", foodOrder.getNote());
-                foodOrderObject.addProperty("Cuisine Quantity", foodOrder.getQuantity());
-                foodOrderObject.addProperty("Cuisine Money", foodOrder.getQuantity() * foodOrder.getCuisine().getPrice());
-                jsonArrayCuisine.add(foodOrderObject);
-            }
-            Utils.writeJsonToFile(jsonArrayTable, Constants.TABLE_PATH);
-            Utils.writeJsonToFile(jsonArrayCustomer, Constants.CUSTOMER_PATH);
-            Utils.writeJsonToFile(jsonArrayCuisine, Constants.CUISINE_PATH);
-            reservationDAO.updateStatus(reservation.getId(), ReservationStatus.COMPLETED);
-            if (restaurantMainManagerController != null) {
-                restaurantMainManagerController.openOrderPayment();
-            } else {
-                restaurantMainStaffController.openOrderPayment();
+            
+            try {
+                // Fetch tables separately to avoid LazyInitializationException
+                ITableDAO tableDAO = RMIClient.getInstance().getTableDAO();
+                List<Table> tables = tableDAO.getAllByReservationId(reservation.getId());
+                
+                // Fetch food orders separately to avoid LazyInitializationException
+                IFoodOrderDAO foodOrderDAO = RMIClient.getInstance().getFoodOrderDAO();
+                List<FoodOrder> foodOrders = foodOrderDAO.getAllByReservationId(reservation.getId());
+                
+                ////----Table
+                JsonArray jsonArrayTable = new JsonArray();
+                for (Table table : tables) {
+                    JsonObject tableObject = new JsonObject();
+                    tableObject.addProperty("Table ID", table.getId());
+                    jsonArrayTable.add(tableObject);
+                }
+                
+                ////----Customer
+                JsonArray jsonArrayCustomer = new JsonArray();
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("Customer ID", reservation.getCustomer().getId());
+                jsonArrayCustomer.add(jsonObject);
+                
+                ////----Cuisine
+                JsonArray jsonArrayCuisine = new JsonArray();
+                for (FoodOrder foodOrder : foodOrders) {
+                    JsonObject foodOrderObject = new JsonObject();
+                    foodOrderObject.addProperty("Cuisine ID", foodOrder.getCuisine().getId());
+                    foodOrderObject.addProperty("Cuisine Name", foodOrder.getCuisine().getName());
+                    foodOrderObject.addProperty("Cuisine Price", foodOrder.getCuisine().getPrice());
+                    foodOrderObject.addProperty("Cuisine Note", foodOrder.getNote());
+                    foodOrderObject.addProperty("Cuisine Quantity", foodOrder.getQuantity());
+                    foodOrderObject.addProperty("Cuisine Money", foodOrder.getQuantity() * foodOrder.getCuisine().getPrice());
+                    jsonArrayCuisine.add(foodOrderObject);
+                }
+                
+                Utils.writeJsonToFile(jsonArrayTable, Constants.TABLE_PATH);
+                Utils.writeJsonToFile(jsonArrayCustomer, Constants.CUSTOMER_PATH);
+                Utils.writeJsonToFile(jsonArrayCuisine, Constants.CUISINE_PATH);
+                
+                // Update table statuses to RESERVED (Đang phục vụ)
+                TableBUS tableBUS = new TableBUS();
+                for (Table table : tables) {
+                    tableBUS.updateStatusTable(table.getId(), TableStatus.RESERVED);
+                }
+                
+                // Update reservation status to CONFIRMED (Đã xác nhận)
+                reservationDAO.updateStatus(reservation.getId(), ReservationStatus.CONFIRMED);
+                
+                // Refresh the table view to reflect the status change
+                setPreOrderTableViewColumn();
+                
+                if (restaurantMainManagerController != null) {
+                    restaurantMainManagerController.openOrderPayment();
+                } else {
+                    restaurantMainStaffController.openOrderPayment();
+                }
+            } catch (RemoteException | NotBoundException e) {
+                ToastsMessage.showMessage("Lỗi khi xử lý đơn đặt bàn: " + e.getMessage(), "error");
+                e.printStackTrace();
             }
         } else {
             ToastsMessage.showMessage("Vui lòng chọn một đơn đặt để xác nhận", "warning");
@@ -645,10 +674,13 @@ public class ReservationManagementController implements Initializable {
         if (selectedIndex != -1) {
             Reservation reservation = preOrderTableView.getSelectionModel().getSelectedItem();
             String id = reservation.getId();
-            String status = reservation.getStatus().getStatus();
+            ReservationStatus currentStatus = reservation.getStatus();
+            String statusText = currentStatus.getStatus();
             double deposit = reservation.getDeposit();
             double refundDeposit = 0;
-            if (status.equals(Variable.statusReservation[0])) {
+            
+            // Cho phép hủy đơn khi trạng thái là "Chưa xác nhận" hoặc "Đã xác nhận"
+            if (currentStatus == ReservationStatus.PENDING || currentStatus == ReservationStatus.CONFIRMED) {
                 //deposit refund processing
                 ////---Check deposit refund by datetime (ke tu luc dat den truoc luc huy la 12h 50%, con lai 0%)
                 LocalDateTime reservationDateTime = LocalDateTime.of(reservation.getReservationDate(), reservation.getReservationTime());
@@ -679,25 +711,40 @@ public class ReservationManagementController implements Initializable {
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.isPresent() && result.get() == btn_ok) {
                     try {
+                        // Update deposit refund amount and status
                         reservationDAO.updateRefundDeposit(id, refundDeposit);
-                        reservationDAO.updateStatus(id, ReservationStatus.CANCELLED);
-                    } catch (RemoteException e) {
-                        throw new RuntimeException(e);
+                        
+                        // Gọi rõ ràng phương thức updateStatus
+                        try {
+                            reservationDAO.updateStatus(id, ReservationStatus.CANCELLED);
+                            System.out.println("Đã cập nhật trạng thái thành CANCELLED cho đơn hàng: " + id);
+                        } catch (Exception e) {
+                            System.err.println("Lỗi cập nhật trạng thái: " + e.getMessage());
+                            e.printStackTrace();
+                        }
+                        
+                        // Fetch tables separately to avoid LazyInitializationException
+                        ITableDAO tableDAO = RMIClient.getInstance().getTableDAO();
+                        List<Table> tables = tableDAO.getAllByReservationId(id);
+                        
+                        // Update table statuses back to AVAILABLE
+                        TableBUS tableBUS = new TableBUS();
+                        for (Table table : tables) {
+                            tableBUS.updateStatusTable(table.getId(), TableStatus.AVAILABLE);
+                        }
+                        
+                        // Refresh the table view
+                        setPreOrderTableViewColumn();
+                        
+                        ToastsMessage.showMessage("Đã huỷ đơn đặt ID: " + id + ", thành công", "success");
+                        ToastsMessage.showMessage("Đã hoàn số tiền: " + Converter.formatMoney(refundDeposit) + " VNĐ", "success");
+                    } catch (RemoteException | NotBoundException e) {
+                        ToastsMessage.showMessage("Lỗi khi huỷ đơn đặt bàn: " + e.getMessage(), "error");
+                        e.printStackTrace();
                     }
-                    setPreOrderTableViewColumn();
-                    ToastsMessage.showMessage("Đã huỷ đơn đặt ID: " + id + ", thành công", "success");
-                    ToastsMessage.showMessage("Đã hoàn số tiền: " + Converter.formatMoney(refundDeposit) + " VNĐ", "success");
-                }
-                try {
-                    TableBUS tableBUS = new TableBUS();
-                    for (Table table : reservation.getTables()) {
-                        tableBUS.updateStatusTable(table.getId(), TableStatus.AVAILABLE);
-                    }
-                } catch (RemoteException e) {
-                    throw new RuntimeException(e);
                 }
             } else {
-                ToastsMessage.showMessage("Đơn hàng đang trạng thái " + status + ", nên không thể huỷ", "warning");
+                ToastsMessage.showMessage("Đơn hàng đang trạng thái " + statusText + ", nên không thể huỷ", "warning");
             }
         } else {
             ToastsMessage.showMessage("Vui lòng chọn một đơn đặt để huỷ", "warning");
