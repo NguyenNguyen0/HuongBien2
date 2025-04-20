@@ -257,20 +257,20 @@ public class TableDAO extends GenericDAO<Table> implements ITableDAO {
         List<Table> tableList = new ArrayList<>();
         if (reservationList != null && !reservationList.isEmpty()) {
             try {
-                reservationList.forEach(reservation -> {
-                    List<Table> tables = null;
-                    try {
-                        tables = findMany("SELECT * FROM reservation_tables WHERE reservation_id ", Table.class, reservation.getId());
-                    } catch (RemoteException e) {
-                        throw new RuntimeException(e);
+                for (Reservation reservation : reservationList) {
+                    List<Table> tables = findMany(
+                        "SELECT t FROM Table t JOIN t.reservations r WHERE r.id = ?1", 
+                        Table.class, 
+                        reservation.getId()
+                    );
+                    if (tables != null && !tables.isEmpty()) {
+                        tableList.addAll(tables);
                     }
-                    tables.addAll(tables);
-                });
+                }
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new RemoteException("Error getting tables for reservations", e);
             }
         }
-
         return tableList;
     }
 
