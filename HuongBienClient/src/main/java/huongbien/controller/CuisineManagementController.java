@@ -164,7 +164,7 @@ public class CuisineManagementController implements Initializable {
     }
 
     public void setSearchMethodComboBoxValue() {
-        ObservableList<String> searchMethods = FXCollections.observableArrayList("Tất cả", "Tìm theo tên", "Tìm theo loại món");
+        ObservableList<String> searchMethods = FXCollections.observableArrayList("Tất cả", "Tìm theo tên");
         searchMethodComboBox.setItems(searchMethods);
         searchMethodComboBox.getSelectionModel().selectFirst();
     }
@@ -373,10 +373,39 @@ public class CuisineManagementController implements Initializable {
 
     private void addCuisine() throws RemoteException {
         Cuisine cuisine = createCuisineFromForm(null);
-        if (cuisineBUS.addCuisine(cuisine)) {
-            ToastsMessage.showMessage("Thêm món thành công", "success");
-        } else {
-            ToastsMessage.showMessage("Thêm món không thành công", "error");
+        
+        // Thêm kiểm tra và log để xác định vấn đề
+        if (cuisine.getName() == null || cuisine.getName().trim().isEmpty()) {
+            ToastsMessage.showMessage("Tên món ăn không được để trống", "error");
+            return;
+        }
+        
+        if (cuisine.getCategory() == null) {
+            ToastsMessage.showMessage("Vui lòng chọn loại món ăn", "error");
+            return;
+        }
+        
+        if (cuisine.getPrice() <= 0) {
+            ToastsMessage.showMessage("Giá món ăn phải lớn hơn 0", "error");
+            return;
+        }
+        
+        try {
+            // Sinh ID tự động nếu cần
+            if (cuisine.getId() == null || cuisine.getId().trim().isEmpty()) {
+                String randomId = "M" + System.currentTimeMillis() % 100000;
+                cuisine = new Cuisine(randomId, cuisine.getName(), cuisine.getPrice(), 
+                    cuisine.getDescription(), cuisine.getImage(), "AVAILABLE", cuisine.getCategory());
+            }
+            
+            if (cuisineBUS.addCuisine(cuisine)) {
+                ToastsMessage.showMessage("Thêm món thành công", "success");
+            } else {
+                ToastsMessage.showMessage("Thêm món không thành công", "error");
+            }
+        } catch (Exception e) {
+            ToastsMessage.showMessage("Lỗi: " + e.getMessage(), "error");
+            e.printStackTrace();
         }
         clearCuisineForm();
     }
@@ -386,7 +415,18 @@ public class CuisineManagementController implements Initializable {
         double price = cuisinePriceField.getText().isEmpty() ? 0.0 : Converter.parseMoney(cuisinePriceField.getText());
         String description = cuisineDescriptionTextArea.getText();
         Category category = cuisineCategoryComboBox.getValue();
-        String status = cuisineStatusComboBox.getValue();
+        
+        // Fix for the encoding issue - map UI display values to proper enum constants
+        String status = "AVAILABLE"; // Default value
+        if (cuisineStatusComboBox.getValue() != null) {
+            String selectedStatus = cuisineStatusComboBox.getValue();
+            if (selectedStatus.equals("Còn bán") || selectedStatus.equals("Con ban")) {
+                status = "AVAILABLE";
+            } else if (selectedStatus.equals("Ngừng bán") || selectedStatus.equals("Ngung ban")) {
+                status = "UNAVAILABLE";
+            }
+        }
+        
         return new Cuisine(cuisineId, name, price, description, imageCuisineByte, status, category);
     }
 
