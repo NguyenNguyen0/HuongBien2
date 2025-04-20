@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import huongbien.config.Constants;
 import huongbien.config.Variable;
 import huongbien.dao.remote.ICustomerDAO;
+import huongbien.dao.remote.IFoodOrderDAO;
 import huongbien.dao.remote.IPromotionDAO;
 import huongbien.dao.remote.IReservationDAO;
 import huongbien.dao.remote.ITableDAO;
@@ -459,33 +460,53 @@ public class ReservationManagementController implements Initializable {
     void onPreOrderTableViewClicked(MouseEvent event) throws FileNotFoundException {
         int selectedIndex = preOrderTableView.getSelectionModel().getSelectedIndex();
         if (selectedIndex != -1) {
-            Reservation reservation = preOrderTableView.getSelectionModel().getSelectedItem();
-            customerPreOrderLabel.setText(reservation.getCustomer().getName());
-            //Format Table label
-            List<Table> tables = reservation.getTables();
-            StringBuilder tableInfo = new StringBuilder();
-            for (Table table : tables) {
-                String tableFloorStr = (table.getFloor() == 0) ? "Tầng trệt" : "Tầng " + table.getFloor();
-                tableInfo.append(table.getName())
-                        .append(" (")
-                        .append(tableFloorStr)
-                        .append(" - ")
-                        .append(table.getTableType().getName())
-                        .append("), ");
+            Reservation selectedReservation = preOrderTableView.getSelectionModel().getSelectedItem();
+            String reservationId = selectedReservation.getId();
+            
+            try {
+                // Get basic information from the selectedReservation
+                customerPreOrderLabel.setText(selectedReservation.getCustomer().getName());
+                depositPreOrderLabel.setText(String.format("%,.0f VNĐ", selectedReservation.getDeposit()));
+                refundDepositPreOrderLabel.setText(String.format("%,.0f VNĐ", selectedReservation.getRefundDeposit()));
+                notePreOrderLabel.setText(selectedReservation.getNote() != null ? selectedReservation.getNote() : "");
+                
+                // Instead of accessing the tables collection directly from the reservation,
+                // fetch them separately from the TableDAO
+                ITableDAO tableDAO = RMIClient.getInstance().getTableDAO();
+                List<Table> tables = tableDAO.getAllByReservationId(reservationId);
+                
+                // Format Table label
+                StringBuilder tableInfo = new StringBuilder();
+                for (Table table : tables) {
+                    String tableFloorStr = (table.getFloor() == 0) ? "Tầng trệt" : "Tầng " + table.getFloor();
+                    tableInfo.append(table.getName())
+                            .append(" (")
+                            .append(tableFloorStr)
+                            .append(" - ")
+                            .append(table.getTableType().getName())
+                            .append("), ");
+                }
+                if (!tableInfo.isEmpty()) {
+                    tableInfo.setLength(tableInfo.length() - 2);
+                }
+                tablePreOrderLabel.setText(tableInfo.toString());
+                
+                // Instead of accessing the foodOrders collection directly,
+                // fetch food orders separately
+                IFoodOrderDAO foodOrderDAO = RMIClient.getInstance().getFoodOrderDAO();
+                List<FoodOrder> foodOrders = foodOrderDAO.getAllByReservationId(reservationId);
+                
+                int cuisineQuantity = 0;
+                for (FoodOrder foodOrder : foodOrders) {
+                    cuisineQuantity += foodOrder.getQuantity();
+                }
+                cuisinePreOrderLabel.setText(cuisineQuantity + " món");
+                
+                enablePreOrderButton();
+            } catch (RemoteException | NotBoundException e) {
+                ToastsMessage.showMessage("Lỗi khi truy xuất thông tin chi tiết đơn đặt bàn", "error");
+                e.printStackTrace();
             }
-            if (!tableInfo.isEmpty()) {
-                tableInfo.setLength(tableInfo.length() - 2);
-            }
-            tablePreOrderLabel.setText(tableInfo.toString());
-            int cuisineQuantity = 0;
-            for (FoodOrder foodOrder : reservation.getFoodOrders()) {
-                cuisineQuantity += foodOrder.getQuantity();
-            }
-            cuisinePreOrderLabel.setText(cuisineQuantity + " món");
-            depositPreOrderLabel.setText(String.format("%,.0f VNĐ", reservation.getDeposit()));
-            refundDepositPreOrderLabel.setText(String.format("%,.0f VNĐ", reservation.getRefundDeposit()));
-            notePreOrderLabel.setText(reservation.getNote() != null ? reservation.getNote() : "");
-            enablePreOrderButton();
         }
     }
 
@@ -513,38 +534,49 @@ public class ReservationManagementController implements Initializable {
             jsonArrayReservation.add(jsonObjectReservation);
             Utils.writeJsonToFile(jsonArrayReservation, Constants.RESERVATION_PATH);
 
-            //Convert Reservation Database to JSON
-            //cuisine
-            List<FoodOrder> foodOrders = reservation.getFoodOrders();
-            JsonArray jsonArrayCuisine = new JsonArray();
-            for (FoodOrder foodOrder : foodOrders) {
-                JsonObject jsonObjectCuisine = new JsonObject();
-                jsonObjectCuisine.addProperty("Cuisine ID", foodOrder.getCuisine().getId());
-                jsonObjectCuisine.addProperty("Cuisine Name", foodOrder.getCuisine().getName());
-                jsonObjectCuisine.addProperty("Cuisine Price", foodOrder.getCuisine().getPrice());
-                jsonObjectCuisine.addProperty("Cuisine Note", foodOrder.getNote());
-                jsonObjectCuisine.addProperty("Cuisine Quantity", foodOrder.getQuantity());
-                jsonObjectCuisine.addProperty("Cuisine Money", foodOrder.getQuantity() * foodOrder.getCuisine().getPrice());
-                jsonArrayCuisine.add(jsonObjectCuisine);
-            }
-            Utils.writeJsonToFile(jsonArrayCuisine, Constants.CUISINE_PATH);
+            try {
+                // Fetch tables and food orders separately to avoid LazyInitializationException
+                ITableDAO tableDAO = RMIClient.getInstance().getTableDAO();
+                List<Table> tables = tableDAO.getAllByReservationId(id);
 
-            //table
-            List<Table> tables = reservation.getTables();
-            JsonArray jsonArrayTable = new JsonArray();
-            for (Table table : tables) {
-                JsonObject jsonObjectTable = new JsonObject();
-                jsonObjectTable.addProperty("Table ID", table.getId());
-                jsonArrayTable.add(jsonObjectTable);
-            }
-            Utils.writeJsonToFile(jsonArrayTable, Constants.TABLE_PATH);
+                IFoodOrderDAO foodOrderDAO = RMIClient.getInstance().getFoodOrderDAO();
+                List<FoodOrder> foodOrders = foodOrderDAO.getAllByReservationId(id);
 
-            //customer
-            JsonArray jsonArrayCustomer = new JsonArray();
-            JsonObject jsonObjectCustomer = new JsonObject();
-            jsonObjectCustomer.addProperty("Customer ID", reservation.getCustomer().getId());
-            jsonArrayCustomer.add(jsonObjectCustomer);
-            Utils.writeJsonToFile(jsonArrayCustomer, Constants.CUSTOMER_PATH);
+                //Convert Reservation Database to JSON
+                //cuisine
+                JsonArray jsonArrayCuisine = new JsonArray();
+                for (FoodOrder foodOrder : foodOrders) {
+                    JsonObject jsonObjectCuisine = new JsonObject();
+                    jsonObjectCuisine.addProperty("Cuisine ID", foodOrder.getCuisine().getId());
+                    jsonObjectCuisine.addProperty("Cuisine Name", foodOrder.getCuisine().getName());
+                    jsonObjectCuisine.addProperty("Cuisine Price", foodOrder.getCuisine().getPrice());
+                    jsonObjectCuisine.addProperty("Cuisine Note", foodOrder.getNote());
+                    jsonObjectCuisine.addProperty("Cuisine Quantity", foodOrder.getQuantity());
+                    jsonObjectCuisine.addProperty("Cuisine Money", foodOrder.getQuantity() * foodOrder.getCuisine().getPrice());
+                    jsonArrayCuisine.add(jsonObjectCuisine);
+                }
+                Utils.writeJsonToFile(jsonArrayCuisine, Constants.CUISINE_PATH);
+
+                //table
+                JsonArray jsonArrayTable = new JsonArray();
+                for (Table table : tables) {
+                    JsonObject jsonObjectTable = new JsonObject();
+                    jsonObjectTable.addProperty("Table ID", table.getId());
+                    jsonArrayTable.add(jsonObjectTable);
+                }
+                Utils.writeJsonToFile(jsonArrayTable, Constants.TABLE_PATH);
+
+                //customer
+                JsonArray jsonArrayCustomer = new JsonArray();
+                JsonObject jsonObjectCustomer = new JsonObject();
+                jsonObjectCustomer.addProperty("Customer ID", reservation.getCustomer().getId());
+                jsonArrayCustomer.add(jsonObjectCustomer);
+                Utils.writeJsonToFile(jsonArrayCustomer, Constants.CUSTOMER_PATH);
+            } catch (RemoteException | NotBoundException e) {
+                ToastsMessage.showMessage("Lỗi khi truy xuất thông tin chi tiết đơn đặt bàn", "error");
+                e.printStackTrace();
+                return;
+            }
         }
         if (restaurantMainManagerController != null) {
             restaurantMainManagerController.openPreOrder();

@@ -102,7 +102,7 @@ public class RMIServer {
     private void bindService(String name, Object service) {
         try {
             String jndiUrl = "rmi://" + RMI_HOST + ":" + RMI_PORT + "/" + name;
-            context.bind(jndiUrl, service);
+            context.rebind(jndiUrl, service);
             LOGGER.info(name + " bound to JNDI at " + jndiUrl);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Failed to bind " + name, e);

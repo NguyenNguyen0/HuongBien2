@@ -40,7 +40,13 @@ public class TableDAO extends GenericDAO<Table> implements ITableDAO {
 
     @Override
     public List<Table> getAllByReservationId(String reservationId) throws RemoteException {
-        return findMany("SELECT t FROM Table t WHERE t.id IN (SELECT rt.table.id FROM ReservationTable rt WHERE rt.reservation.id = ?1)", Table.class, reservationId);
+        // Sử dụng subquery để tìm tất cả các bàn liên kết với reservation có ID cụ thể
+        return findMany(
+            "SELECT t FROM Table t WHERE t.id IN " +
+            "(SELECT rt.id FROM Reservation r JOIN r.tables rt WHERE r.id = ?1)", 
+            Table.class, 
+            reservationId
+        );
     }
 
     @Override
