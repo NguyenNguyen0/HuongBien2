@@ -222,8 +222,27 @@ public class CustomerManagementController implements Initializable {
     public Customer getCustomerInfoFromForm() {
         Customer customer = customerTable.getSelectionModel().getSelectedItem();
         String id = customer == null ? null : customer.getId();
-        int accumulatedPoints = Integer.parseInt(customerAccumulatedPointsField.getText());
-        int membershipLevel = customerMembershipLevelField.getText().isEmpty() ? 0 : Utils.toIntMembershipLevel(customerMembershipLevelField.getText().trim());
+        
+        // Xử lý trường hợp chuỗi rỗng cho accumulatedPoints
+        int accumulatedPoints = 0;
+        if (!customerAccumulatedPointsField.getText().trim().isEmpty()) {
+            try {
+                accumulatedPoints = Integer.parseInt(customerAccumulatedPointsField.getText().trim());
+            } catch (NumberFormatException e) {
+                // Để giá trị mặc định là 0
+            }
+        }
+        
+        // Xử lý trường hợp chuỗi rỗng cho membershipLevel
+        int membershipLevel = 0;
+        if (!customerMembershipLevelField.getText().trim().isEmpty()) {
+            try {
+                membershipLevel = Utils.toIntMembershipLevel(customerMembershipLevelField.getText().trim());
+            } catch (Exception e) {
+                // Để giá trị mặc định là 0
+            }
+        }
+        
         LocalDate registrationDate = customerRegistrationDateDatePicker.getValue();
         String name = customerNameField.getText();
         String phone = customerPhoneField.getText();
@@ -244,6 +263,19 @@ public class CustomerManagementController implements Initializable {
         if (!validateCustomerData()) return;
 
         try {
+            // Tạo ID cho khách hàng mới nếu là null
+            if (customer.getId() == null) {
+                // Tạo ID theo định dạng KH + năm hiện tại 2 số + số ngẫu nhiên 6 số
+                java.time.LocalDate today = java.time.LocalDate.now();
+                String year = String.valueOf(today.getYear()).substring(2); // Lấy 2 số cuối của năm
+                
+                // Tạo số ngẫu nhiên 6 chữ số
+                int randomNum = (int)(Math.random() * 900000) + 1000000;
+                
+                String newCustomerId = "KH" + year + randomNum;
+                customer.setId(newCustomerId);
+            }
+            
             if (customerBUS.addCustomer(customer)) {
                 setCustomerTableValues();
                 clearCustomerForm();

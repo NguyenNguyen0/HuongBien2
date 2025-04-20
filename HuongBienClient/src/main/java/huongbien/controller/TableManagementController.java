@@ -254,7 +254,7 @@ public class TableManagementController implements Initializable {
         String name = tableNameField.getText();
         int seats;
         int floor;
-        String status = tableStatusComboBox.getValue();
+        String statusDisplayValue = tableStatusComboBox.getValue();
         TableType selectedTableType = tableTypeComboBox.getValue();
 
         try {
@@ -270,8 +270,14 @@ public class TableManagementController implements Initializable {
             ToastsMessage.showMessage("Chưa chọn loại bàn.", "error");
             return null;
         }
-
-        return new Table(name, seats, floor, status, selectedTableType);
+        
+        if (statusDisplayValue == null) {
+            ToastsMessage.showMessage("Vui lòng chọn trạng thái bàn", "error");
+            return null;
+        }
+        
+        // Chỉ cần truyền giá trị String vào constructor, constructor sẽ tự chuyển đổi sang enum
+        return new Table(name, seats, floor, statusDisplayValue, selectedTableType);
     }
 
     public void addNewTable() {
