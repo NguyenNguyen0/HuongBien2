@@ -519,12 +519,6 @@ public class RestaurantMainStaffController implements Initializable {
                                             
                                                         <p class="message">Nếu quý khách có bất kỳ câu hỏi nào hoặc cần thay đổi thông tin đặt bàn, vui lòng liên hệ với chúng tôi qua số điện thoại <span class="highlight">0123 456 789</span>.</p>
                                                     </div>
-                                            
-                                                    <div class="email-footer">
-                                                        <div class="footer-logo">NHÀ HÀNG HƯƠNG BIỂN</div>
-                                                        <div class="footer-info">12 Nguyễn Văn Bảo, Phường 1, Gò Vấp, TP. Hồ Chí Minh</div>
-                                                        <div class="footer-info">Email: huongbienrestaurantcskh@gmail.com | Hotline: 0123 456 789</div>
-                                                    </div>
                                                 </div>
                                             </body>
                                             </html>
