@@ -65,7 +65,7 @@ public class Employee implements Serializable {
     private List<Employee> subordinates;
 
     public Employee(String id, String name, String address, String citizenId, String phoneNumber, LocalDate birthday, Gender gender, String status, String email, LocalDate hireDate, String position, double workHours, double hourlyPay, double salary, byte[] profileImage, Employee manager) {
-        this.id = id;
+        this.id = id == null ? generateId(hireDate) : id;
         this.name = name;
         this.address = address;
         this.citizenId = citizenId;
@@ -84,7 +84,7 @@ public class Employee implements Serializable {
     }
 
     public Employee(String employeeId, String name, String phone, String citizenId, int gender, String address, LocalDate birthDate, String email, String status, LocalDate hireDate, String position, double workHours, double hourPay, double salary, Employee managerId, byte[] profileImage) {
-        this.id = employeeId;
+        this.id = employeeId == null ? generateId(hireDate) : employeeId;
         this.name = name;
         this.phoneNumber = phone;
         this.citizenId = citizenId;

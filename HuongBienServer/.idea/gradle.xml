@@ -4,9 +4,7 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="distributionType" value="LOCAL" />
         <option name="externalProjectPath" value="$PROJECT_DIR$/../HuongBienClient" />
-        <option name="gradleHome" value="D:/library/gradle-8.12.1" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/../HuongBienClient" />
